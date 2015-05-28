@@ -12,7 +12,10 @@ namespace prj_chamadosBRA.Models
     {
         [Key]
         public int idAnexo { get; set; }
-        public Chamado idChamado { get; set; }
-        public HttpPostedFile arquivoAnexo { get; set; }
+        public Chamado Chamado { get; set; }
+        public byte[] arquivoAnexo { get; set; }
+        public string NomeAnexo { get; set; }
+        public string ContentType { get; set; }
+
     }
 }

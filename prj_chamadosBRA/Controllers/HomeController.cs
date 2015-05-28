@@ -8,9 +8,18 @@ namespace prj_chamadosBRA.Controllers
 {
     public class HomeController : Controller
     {
+        [Authorize]
         public ActionResult Index()
         {
-            return View();
+            if (Session["PerfilUsuario"].ToString() == "1")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Chamado");
+            }
+            
         }
 
         public ActionResult About()

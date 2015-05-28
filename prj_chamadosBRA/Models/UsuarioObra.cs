@@ -7,11 +7,12 @@ using System.Web;
 
 namespace prj_chamadosBRA.Models
 {
+    [Table("UsuarioObra")]
     public class UsuarioObra
     {
         [Key]
         public int idUsuarioObra { get; set; }
-        public string idUsuario { get; set; }
+        public ApplicationUser Usuario { get; set; }
         public int idObra { get; set; }
     }
 }

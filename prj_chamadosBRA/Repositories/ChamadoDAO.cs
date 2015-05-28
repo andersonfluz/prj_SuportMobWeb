@@ -8,11 +8,56 @@ namespace prj_chamadosBRA.Repositories
 {
     public class ChamadoDAO
     {
+        ApplicationDbContext db;
+        public ChamadoDAO(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
+
         public List<Chamado> BuscarChamados()
         {
             using (var ctx = new ApplicationDbContext())
             {
                 List<Chamado> chamados = (from e in ctx.Chamado select e).ToList();
+                foreach (var chamado in chamados)
+                {
+                    ApplicationUser resp = chamado.ResponsavelChamado;
+                    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                    chamado.ResponsavelChamado = resp;
+                    chamado.ResponsavelAberturaChamado = respAb;
+                }
+                return chamados;
+            }
+        }
+
+        public List<Chamado> BuscarChamadosDoUsuario(ApplicationUser user)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                List<Chamado> chamados = (from e in ctx.Chamado where e.ResponsavelAberturaChamado.Id == user.Id select e).ToList();
+                foreach (var chamado in chamados)
+                {
+                    ApplicationUser resp = chamado.ResponsavelChamado;
+                    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                    chamado.ResponsavelChamado = resp;
+                    chamado.ResponsavelAberturaChamado = respAb;
+                }
+                return chamados;
+            }
+        }
+
+        public List<Chamado> BuscarChamadosDeObras(List<Obra> obras)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                List<Chamado> chamados = (from e in ctx.Chamado where obras.Contains(e.ObraDestino) select e).ToList();
+                foreach (var chamado in chamados)
+                {
+                    ApplicationUser resp = chamado.ResponsavelChamado;
+                    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                    chamado.ResponsavelChamado = resp;
+                    chamado.ResponsavelAberturaChamado = respAb;
+                }
                 return chamados;
             }
         }
@@ -37,12 +82,9 @@ namespace prj_chamadosBRA.Repositories
 
         public Boolean salvarChamado(Chamado chamado)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                ctx.Chamado.Add(chamado);
-                ctx.SaveChanges();
-                return true;
-            }
+            db.Chamado.Add(chamado);
+            db.SaveChanges();
+            return true;
         }
 
         //public void eliminarSetor(int id)
@@ -67,5 +109,6 @@ namespace prj_chamadosBRA.Repositories
         //        ctx.SaveChanges();
         //    }
         //}
+
     }
 }

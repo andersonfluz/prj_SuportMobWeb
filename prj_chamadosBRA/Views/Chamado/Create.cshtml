@@ -7,10 +7,10 @@
 <h2>Novo Chamado</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Create", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -39,31 +39,41 @@
         </div>
 
         <div class="form-group">
-            @Html.Label("Anexo", new { @class = "col-md-2 control-label" })
+            @Html.Label("Anexo", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBox("tb_Anexos","",  new { type = "file", multiple = "true", @class = "form-control" })
+                <input type="file" id="anexo" name="upload" />
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.IdSetorDestino, new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetores(), "Id", "Nome"), new { @class = "form-control" })
-                @*@Html.DropDownList("Obras", "---- Selecione ----")*@
-                @Html.ValidationMessageFor(m => m.IdSetorDestino)
+        @if ((bool)Session["ObraVisivel"])
+        {
+            <div class="form-group">
+                @Html.Label("Obra Destino", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.ObraDestino, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.User), "IDO", "Descricao"), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.ObraDestino)
+                </div>
             </div>
-        </div>          
-
+        }
+        @if ((bool)Session["SetorVisivel"])
+        {
+            <div class="form-group">
+                @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.IdSetorDestino, new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetores(), "Id", "Nome"), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdSetorDestino)
+                </div>
+            </div>
+        }
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Salvar" class="btn btn-default" />
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Voltar para Acompanhamento", "Index")
 </div>
 
 @section Scripts {

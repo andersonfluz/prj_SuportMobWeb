@@ -7,6 +7,7 @@ using System.Web;
 
 namespace prj_chamadosBRA.Models
 {
+    [Table("Chamado")]
     public class Chamado
     {
         [Key]
@@ -21,9 +22,15 @@ namespace prj_chamadosBRA.Models
         [Required]
         [Display(Name = "Setor")]
         public int IdSetorDestino { get; set; }
-        public string ResponsavelChamado { get; set; }
+        public virtual ApplicationUser ResponsavelAberturaChamado { get; set; }
+        [Display(Name = "Responsavel do Chamado")]
+        public virtual ApplicationUser ResponsavelChamado { get; set; }
+        [Display(Name = "Data Chamado")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}",
+               ApplyFormatInEditMode = true)]
         public DateTime DataHoraAbertura { get; set; }
-
-        public ICollection<ChamadoAnexo> Anexos { get; set; }
+        public Obra ObraDestino { get; set; }
+        [Display(Name = "Anexo")]
+        public virtual ICollection<ChamadoAnexo> Anexos { get; set; }
     }
 }

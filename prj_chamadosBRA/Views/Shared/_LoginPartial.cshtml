@@ -16,7 +16,9 @@
 else
 {
     <ul class="nav navbar-nav navbar-right">
+        @if (Session["PerfilUsuario"] == "1") { 
         <li>@Html.ActionLink("Registrar", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        }
         <li>@Html.ActionLink("Entrar", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
     </ul>
 }

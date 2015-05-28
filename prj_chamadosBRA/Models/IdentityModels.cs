@@ -35,6 +35,11 @@ namespace prj_chamadosBRA.Models
         //{
         //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         //}
+
+        //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)
+        //{
+        //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+        //}
         //public static ApplicationDbContext Create()
         //{
         //    return new ApplicationDbContext();

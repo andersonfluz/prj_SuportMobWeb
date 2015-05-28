@@ -16,5 +16,15 @@ namespace prj_chamadosBRA.Repositories
                 return obras;
             }
         }
+
+        public List<Obra> BuscarObrasPorUsuario(ApplicationUser user)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                List<int> idObras = (from e in ctx.UsuarioObra where e.Usuario.Id == user.Id select e.idObra).ToList();
+                List<Obra> obras = (from o in ctx.Obra where idObras.Contains(o.IDO) select o).ToList();
+                return obras;
+            }
+        }
     }
 }

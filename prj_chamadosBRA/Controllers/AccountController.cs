@@ -56,8 +56,31 @@ namespace prj_chamadosBRA.Controllers
                 if (user != null)
                 {
                     Session["PerfilUsuario"] = user.PerfilUsuario;
+                    switch (Session["PerfilUsuario"].ToString())
+                    {
+                        case "1":
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = true;
+                            break;
+                        case "2":
+                            Session["SetorVisivel"] = false;
+                            Session["ObraVisivel"] = true;
+                            break;
+                        default:
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            break;
+                    }
+
                     await SignInAsync(user, model.RememberMe);
-                    return RedirectToLocal(returnUrl);
+                    if (user.PerfilUsuario == 1)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Chamado");
+                    }
                 }
                 else
                 {
@@ -99,13 +122,14 @@ namespace prj_chamadosBRA.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            ApplicationDbContext context = new ApplicationDbContext();
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser() { UserName = model.UserName, PerfilUsuario = model.perfil, Nome = model.Nome, Contato = model.Contato };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    if (new UsuarioObraDAO().salvarUsuarioObra(user.Id, model.obra))
+                    if (new UsuarioObraDAO().salvarUsuarioObra(user, model.obra))
                     {
                         Session["PerfilUsuario"] = user.PerfilUsuario;
                         await SignInAsync(user, isPersistent: false);
@@ -321,7 +345,7 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //
