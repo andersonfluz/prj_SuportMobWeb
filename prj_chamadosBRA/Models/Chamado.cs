@@ -19,9 +19,8 @@ namespace prj_chamadosBRA.Models
         public string Descricao { get; set; }
         [DataType(DataType.MultilineText)]
         public string Observacao { get; set; }
-        [Required]
         [Display(Name = "Setor")]
-        public int IdSetorDestino { get; set; }
+        public virtual Setor SetorDestino { get; set; }
         public virtual ApplicationUser ResponsavelAberturaChamado { get; set; }
         [Display(Name = "Responsavel do Chamado")]
         public virtual ApplicationUser ResponsavelChamado { get; set; }
@@ -29,7 +28,7 @@ namespace prj_chamadosBRA.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}",
                ApplyFormatInEditMode = true)]
         public DateTime DataHoraAbertura { get; set; }
-        public Obra ObraDestino { get; set; }
+        public virtual Obra ObraDestino { get; set; }
         [Display(Name = "Anexo")]
         public virtual ICollection<ChamadoAnexo> Anexos { get; set; }
     }

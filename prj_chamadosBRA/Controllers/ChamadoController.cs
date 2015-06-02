@@ -4,6 +4,7 @@ using prj_chamadosBRA.Models;
 using prj_chamadosBRA.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -26,34 +27,41 @@ namespace prj_chamadosBRA.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            ApplicationUser user = manager.FindById(User.Identity.GetUserId());
-            //Usuario Administrador
-            if (Session["PerfilUsuario"].ToString().Equals("1"))
+            try
             {
-                //Usuario Vinculado a Obras
-                List<Obra> obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
-                Boolean isMatriz = false;
-                foreach (var obra in obras)
+                ApplicationUser user = manager.FindById(User.Identity.GetUserId());
+                //Usuario Administrador
+                if (Session["PerfilUsuario"].ToString().Equals("1"))
                 {
-                    if (obra.Matriz.Value)
+                    //Usuario Vinculado a Obras
+                    List<Obra> obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
+                    Boolean isMatriz = false;
+                    foreach (var obra in obras)
                     {
-                        isMatriz = true;
+                        if (obra.Matriz.Value)
+                        {
+                            isMatriz = true;
+                        }
                     }
-                }
-                if (isMatriz)
-                {
-                    return View(new ChamadoDAO(db).BuscarChamados());
+                    if (isMatriz)
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamados());
+                    }
+                    else
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras));
+                    }
+
                 }
                 else
                 {
-                    return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras));
+
+                    return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user));
                 }
-
             }
-            else
+            catch (NullReferenceException ne)
             {
-
-                return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user));
+                return RedirectToAction("Login", "Account");
             }
         }
 
@@ -67,26 +75,43 @@ namespace prj_chamadosBRA.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            ApplicationUser user = manager.FindById(User.Identity.GetUserId());
-            ViewBag.User = user;          
+            ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome");
+            ViewBag.ObraDestino = new SelectList(new prj_chamadosBRA.Repositories.ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId()), "IDO", "Descricao");
             return View();
         }
 
         // POST: Chamado/Create
         [HttpPost]
-        public ActionResult Create(Chamado chamado, HttpPostedFileBase upload)
+        public ActionResult Create(Chamado chamado, HttpPostedFileBase upload, String SetorDestino, String ObraDestino)
         {
             try
             {
                 ChamadoDAO cDAO = new ChamadoDAO(db);
+                ObraDAO oDAO = new ObraDAO(db);
+                SetorDAO sDAO = new SetorDAO(db);
+                Setor setor;
+                Obra obra;
+
+                if (SetorDestino != null)
+                {
+                    setor = sDAO.BuscarSetorId(Int32.Parse(SetorDestino));
+                    chamado.SetorDestino = setor;
+                }
+
+                if (ObraDestino != null)
+                {
+                    obra = oDAO.BuscarObraId(Int32.Parse(ObraDestino));
+                    chamado.ObraDestino = obra;
+                }
 
                 ApplicationUser user = manager.FindById(User.Identity.GetUserId());
                 chamado.DataHoraAbertura = DateTime.Now;
+
                 if (user != null)
                 {
-                    chamado.ResponsavelChamado = user;
-                }                
-                
+                    chamado.ResponsavelAberturaChamado = user;
+                }
+
                 if (upload != null && upload.ContentLength > 0)
                 {
                     ChamadoAnexoDAO caDAO = new ChamadoAnexoDAO(db);
@@ -99,16 +124,16 @@ namespace prj_chamadosBRA.Controllers
                     {
                         anexo.arquivoAnexo = reader.ReadBytes(upload.ContentLength);
                     }
-                    //anexo.idChamado = chamado;
-                    //caDAO.salvarChamadoAnexo(anexo);
                     chamado.Anexos = new List<ChamadoAnexo> { anexo };
                 }
                 cDAO.salvarChamado(chamado);
-                
+
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception e)
             {
+                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome");
+                ViewBag.ObraDestino = new SelectList(new prj_chamadosBRA.Repositories.ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId()), "IDO", "Descricao");
                 return View();
             }
         }
@@ -117,7 +142,8 @@ namespace prj_chamadosBRA.Controllers
         [Authorize]
         public ActionResult Edit(int id)
         {
-            return View();
+            Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            return View(chamado);
         }
 
         // POST: Chamado/Edit/5
@@ -126,7 +152,7 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
-                // TODO: Add update logic here
+                
 
                 return RedirectToAction("Index");
             }

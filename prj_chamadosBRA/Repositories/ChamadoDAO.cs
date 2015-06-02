@@ -16,68 +16,53 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Chamado> BuscarChamados()
         {
-            using (var ctx = new ApplicationDbContext())
+            List<Chamado> chamados = (from e in db.Chamado select e).ToList();
+            foreach (var chamado in chamados)
             {
-                List<Chamado> chamados = (from e in ctx.Chamado select e).ToList();
-                foreach (var chamado in chamados)
-                {
-                    ApplicationUser resp = chamado.ResponsavelChamado;
-                    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
-                    chamado.ResponsavelChamado = resp;
-                    chamado.ResponsavelAberturaChamado = respAb;
-                }
-                return chamados;
+                ApplicationUser resp = chamado.ResponsavelChamado;
+                ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                chamado.ResponsavelChamado = resp;
+                chamado.ResponsavelAberturaChamado = respAb;
             }
+            return chamados;
         }
 
         public List<Chamado> BuscarChamadosDoUsuario(ApplicationUser user)
         {
-            using (var ctx = new ApplicationDbContext())
+            List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id select e).ToList();
+            foreach (var chamado in chamados)
             {
-                List<Chamado> chamados = (from e in ctx.Chamado where e.ResponsavelAberturaChamado.Id == user.Id select e).ToList();
-                foreach (var chamado in chamados)
-                {
-                    ApplicationUser resp = chamado.ResponsavelChamado;
-                    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
-                    chamado.ResponsavelChamado = resp;
-                    chamado.ResponsavelAberturaChamado = respAb;
-                }
-                return chamados;
+                ApplicationUser resp = chamado.ResponsavelChamado;
+                ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                chamado.ResponsavelChamado = resp;
+                chamado.ResponsavelAberturaChamado = respAb;
             }
+            return chamados;
         }
 
         public List<Chamado> BuscarChamadosDeObras(List<Obra> obras)
         {
-            using (var ctx = new ApplicationDbContext())
+            List<Chamado> chamados = (from e in db.Chamado where obras.Contains(e.ObraDestino) select e).ToList();
+            foreach (var chamado in chamados)
             {
-                List<Chamado> chamados = (from e in ctx.Chamado where obras.Contains(e.ObraDestino) select e).ToList();
-                foreach (var chamado in chamados)
-                {
-                    ApplicationUser resp = chamado.ResponsavelChamado;
-                    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
-                    chamado.ResponsavelChamado = resp;
-                    chamado.ResponsavelAberturaChamado = respAb;
-                }
-                return chamados;
+                ApplicationUser resp = chamado.ResponsavelChamado;
+                ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                chamado.ResponsavelChamado = resp;
+                chamado.ResponsavelAberturaChamado = respAb;
             }
+            return chamados;
         }
 
-        public List<Chamado> BuscarChamadoId(int id)
+        public Chamado BuscarChamadoId(int id)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                List<Chamado> chamado = (from e in ctx.Chamado where e.Id == id select e).ToList();
-                return chamado;
-            }
+            Chamado chamado = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
+            return chamado;
         }
 
         public Chamado DetalhesChamado(int id)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                Chamado chamado = (from e in ctx.Chamado where e.Id == id select e).SingleOrDefault();
-                return chamado;
-            }
+            Chamado chamado = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
+            return chamado;
         }
 
         public Boolean salvarChamado(Chamado chamado)

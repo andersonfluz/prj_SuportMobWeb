@@ -1,63 +1,84 @@
 ﻿@model IEnumerable<prj_chamadosBRA.Models.Chamado>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Acompanhamento de Chamados";
 }
 
-<h2>Index</h2>
+<h2>Acompanhamento de Chamados</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Novo Chamado", "Create")
 </p>
-<table class="table">
+<table class="table" data-row-style="rowStyle">
     <tr>
         <th>
             @Html.DisplayName("Chamado N°")
         </th>
         <th>
+            @Html.DisplayName("Abertura")
+        </th>
+        <th>
+            @Html.DisplayName("Solicitante")
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Assunto)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Descricao)
+            @Html.DisplayName("Responsavel")
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Observacao)
+            @if ((bool)Session["SetorVisivel"])
+            {
+                @Html.DisplayName("Setor")
+            }
+            @if ((bool)Session["ObraVisivel"])
+            {
+                @Html.DisplayName("Obra")
+            }
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ResponsavelChamado.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DataHoraAbertura)
-        </th>
-        <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Assunto)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Descricao)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Observacao)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ResponsavelChamado.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DataHoraAbertura)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Id.ToString(), "Edit", new { id = item.Id })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraAbertura)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ResponsavelAberturaChamado.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assunto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ResponsavelChamado.Nome)
+            </td>
+            <td>
+                @if ((bool)Session["SetorVisivel"])
+                {
+                    @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
+                }
+                @if ((bool)Session["ObraVisivel"])
+                {
+                    @Html.DisplayFor(modelItem => item.ObraDestino.Descricao)
+                }
+            </td>
+        </tr>
+    }
 
 </table>
+<script>
+    function rowStyle(row, index) {
+        var classes = ['active', 'success', 'info', 'warning', 'danger'];
+
+        if (index % 2 === 0 && index / 2 < classes.length) {
+            return {
+                classes: classes[index / 2]
+            };
+        }
+        return {};
+    }
+</script>

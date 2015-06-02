@@ -55,6 +55,7 @@ namespace prj_chamadosBRA.Controllers
                 var user = await UserManager.FindAsync(model.UserName, model.Password);
                 if (user != null)
                 {
+                    Session["UserId"] = user.Id;
                     Session["PerfilUsuario"] = user.PerfilUsuario;
                     switch (Session["PerfilUsuario"].ToString())
                     {
@@ -131,7 +132,23 @@ namespace prj_chamadosBRA.Controllers
                 {
                     if (new UsuarioObraDAO().salvarUsuarioObra(user, model.obra))
                     {
+                        Session["UserId"] = user.Id;
                         Session["PerfilUsuario"] = user.PerfilUsuario;
+                        switch (Session["PerfilUsuario"].ToString())
+                        {
+                            case "1":
+                                Session["SetorVisivel"] = true;
+                                Session["ObraVisivel"] = true;
+                                break;
+                            case "2":
+                                Session["SetorVisivel"] = false;
+                                Session["ObraVisivel"] = true;
+                                break;
+                            default:
+                                Session["SetorVisivel"] = true;
+                                Session["ObraVisivel"] = false;
+                                break;
+                        }
                         await SignInAsync(user, isPersistent: false);
                         return RedirectToAction("Index", "Chamado");
                     }

@@ -8,23 +8,31 @@ namespace prj_chamadosBRA.Repositories
 {
     public class ObraDAO
     {
-        public List<Obra> BuscarObras()
+        ApplicationDbContext db;
+        public ObraDAO(ApplicationDbContext db)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                List<Obra> obras = (from e in ctx.Obra select e).ToList();
-                return obras;
-            }
+            this.db = db;
         }
 
-        public List<Obra> BuscarObrasPorUsuario(ApplicationUser user)
+        public List<Obra> BuscarObras()
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                List<int> idObras = (from e in ctx.UsuarioObra where e.Usuario.Id == user.Id select e.idObra).ToList();
-                List<Obra> obras = (from o in ctx.Obra where idObras.Contains(o.IDO) select o).ToList();
-                return obras;
-            }
+
+            List<Obra> obras = (from e in db.Obra select e).ToList();
+            return obras;
+        }
+
+        public Obra BuscarObraId(int ido)
+        {
+
+            Obra obra = (from e in db.Obra where e.IDO == ido select e).SingleOrDefault();
+            return obra;
+        }
+
+        public List<Obra> BuscarObrasPorUsuario(String userId)
+        {
+            List<int> idObras = (from e in db.UsuarioObra where e.Usuario.Id == userId select e.idObra).ToList();
+            List<Obra> obras = (from o in db.Obra where idObras.Contains(o.IDO) select o).ToList();
+            return obras;
         }
     }
 }
