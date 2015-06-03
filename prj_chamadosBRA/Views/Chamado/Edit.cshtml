@@ -26,23 +26,21 @@
                     @Html.DisplayFor(model => model.Id)
                 </div>
                 <div class="col-md-4">
-                    @Html.Label("Data Abertura:")
+                    @Html.Label("Abertura:")
                     @Html.DisplayFor(model => model.DataHoraAbertura, "{0:hh:mm tt}")
                 </div>
-                @if (Model.ObraDestino != null)
-                {
-                    <div class="col-md-4">
-                        @Html.Label("Obra Destino:")
-                        @Html.DisplayFor(model => model.ObraDestino.Descricao)
-                    </div>
-                }
-                @if (Model.SetorDestino != null)
-                {
-                    <div class="col-md-4">
-                        @Html.Label("Setor Destino:")
-                        @Html.DisplayFor(model => model.SetorDestino.Descricao)
-                    </div>
-                }
+
+                <div class="col-md-4">
+                    @Html.Label("Setor Destino:")
+                    @if (Model.SetorDestino != null)
+                    {
+                        @Html.DropDownList("SetorDestino")
+                    }
+                    else
+                    {
+                        @Html.DropDownList("SetorDestino", "-- Selecione o Setor --")
+                    }
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-4">
@@ -54,20 +52,21 @@
                     @Html.DisplayFor(model => model.ResponsavelAberturaChamado.UserName)
                 </div>
                 <div class="col-md-4">
-                    @Html.LabelFor(model => model.Descricao)
-                    @Html.DisplayFor(model => model.Descricao)
+                    @Html.Label("Obra Destino:")
+                    @Html.DisplayFor(model => model.ObraDestino.Descricao)
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-10">
-                    @Html.LabelFor(model => model.Observacao)
-                    @Html.DisplayFor(model => model.Observacao)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-10">
-                    @Html.LabelFor(model => model.DataHoraAbertura)
-                    @Html.DisplayFor(model => model.DataHoraAbertura)
+                    @Html.Label("Responsavel:")
+                    @if (Model.ResponsavelChamado != null)
+                    {
+                        @Html.DropDownList("ddlResponsavelChamado")
+                    }
+                    else
+                    {
+                        @Html.DropDownList("ddlResponsavelChamado")
+                    }
                 </div>
             </div>
         </div>
@@ -101,16 +100,105 @@
         </div>
     </div>
 
+    <div class="panel panel-default">
+        <div class="panel-heading">Anexos do Chamado</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <table class="table" data-row-style="rowStyle">
+                        <tr>
+                            <th>
+                                @Html.DisplayName("Nome Arquivo")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Baixar")
+                            </th>
+                        </tr>
+
+                        @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoAnexo>)ViewBag.listaChamadoAnexo))
+                        {
+                            <tr>
+                                <td>
+                                    @item.NomeAnexo
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Baixar", "Filedownload", new { id = @item.idAnexo })
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Historico de Chamados</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <table class="table" data-row-style="rowStyle">
+                        <tr>
+                            <th>
+                                @Html.DisplayName("Data")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Hora")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Responsável")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Histórico")
+                            </th>
+                        </tr>
+
+                        @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoHistorico>)ViewBag.listaChamadoHistorico))
+                        {
+                            <tr>
+                                <td>
+                                    @item.Data
+                                </td>
+                                <td>
+                                    @item.Hora
+                                </td>
+                                <td>
+                                    @item.Responsavel.Nome
+                                </td>
+                                <td>
+                                    @item.Historico
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Informações Internas</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-10">
+                    @Html.Label("Obsevação Interna:")
+                    @Html.TextArea("ObsInterna", htmlAttributes: new { @class = "form-control", Style = "max-width:1500px" })
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-default" />
+        <div class="col-md-2 col-md-10">
+            <input type="submit" value="Atualizar" class="btn btn-default" />
         </div>
     </div>
 
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Voltar para Acompanhamento", "Index")
 </div>
 
 @section Scripts {

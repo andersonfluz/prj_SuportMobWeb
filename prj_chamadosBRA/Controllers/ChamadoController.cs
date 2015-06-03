@@ -143,17 +143,57 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult Edit(int id)
         {
             Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            ViewBag.listaChamadoHistorico = new ChamadoHistoricoDAO(db).buscarHistoricosPorIdChamado(id);
+            ViewBag.listaChamadoAnexo = new ChamadoAnexoDAO(db).retornarListaAnexoChamado(id);
+            if (chamado.SetorDestino != null) { 
+                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetoresPorObra(chamado.ObraDestino.IDO), "Id", "Nome",chamado.SetorDestino.Id);
+                if (chamado.ResponsavelChamado != null)
+                {
+                    ViewBag.ddlResponsavelChamado = new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino), "Id", "Nome", chamado.ResponsavelChamado.Id);
+                }
+                else
+                {
+                    ViewBag.ddlResponsavelChamado = new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino), "Id", "Nome");
+                }
+            }
+            else
+            {
+                List<SelectListItem> responsavel = new List<SelectListItem>();
+                ViewBag.ddlResponsavelChamado = new SelectList(responsavel);
+                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome", "-- Selecione o Setor --");
+            }
+            
             return View(chamado);
+        }
+
+        public FileContentResult FileDownload(int id)
+        {
+            //declare byte array to get file content from database and string to store file name
+            byte[] fileData;
+            string fileName;
+            //using LINQ expression to get record from database for given id value
+            var record = from p in db.ChamadoAnexo
+                         where p.idAnexo == id
+                         select p;
+            //only one record will be returned from database as expression uses condtion on primary field
+            //so get first record from returned values and retrive file content (binary) and filename
+            fileData = (byte[])record.First().arquivoAnexo.ToArray();
+            fileName = record.First().NomeAnexo.Trim();
+            //return file and provide byte file content and file name
+            return File(fileData, "text", fileName);
         }
 
         // POST: Chamado/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado)
         {
             try
             {
-                
+                if (SetorDestino != chamado.SetorDestino)
+                {
 
+
+                }
                 return RedirectToAction("Index");
             }
             catch

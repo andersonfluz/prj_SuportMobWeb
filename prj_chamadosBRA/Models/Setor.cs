@@ -17,5 +17,6 @@ namespace prj_chamadosBRA.Models
         public string Responsavel { get; set; }
         public string EmailResponsavel { get; set; }
         public string EmailSetor { get; set; }
+        public virtual Obra obra { get; set; }
     }
 }

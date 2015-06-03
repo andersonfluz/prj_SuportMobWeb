@@ -25,8 +25,8 @@ namespace prj_chamadosBRA.Models
         [Display(Name = "Responsavel do Chamado")]
         public virtual ApplicationUser ResponsavelChamado { get; set; }
         [Display(Name = "Data Chamado")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}",
-               ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}",
+        //       ApplyFormatInEditMode = true)]
         public DateTime DataHoraAbertura { get; set; }
         public virtual Obra ObraDestino { get; set; }
         [Display(Name = "Anexo")]

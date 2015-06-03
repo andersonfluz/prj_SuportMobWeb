@@ -14,10 +14,20 @@ namespace prj_chamadosBRA.Repositories
             this.db = db;
         }
 
+        public SetorDAO()
+        {
+            this.db = new ApplicationDbContext();
+        }
+
         public List<Setor> BuscarSetores()
         {
-
             List<Setor> setores = (from e in db.Setor select e).ToList();
+            return setores;
+        }
+
+        public List<Setor> BuscarSetoresPorObra(int idObra)
+        {
+            List<Setor> setores = (from e in db.Setor where e.obra.IDO == idObra select e).ToList();
             return setores;
         }
 

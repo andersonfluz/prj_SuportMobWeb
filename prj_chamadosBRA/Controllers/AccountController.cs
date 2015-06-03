@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using prj_chamadosBRA.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using prj_chamadosBRA.Repositories;
+using System.Collections.Generic;
 
 namespace prj_chamadosBRA.Controllers
 {
@@ -121,46 +122,61 @@ namespace prj_chamadosBRA.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            ApplicationDbContext context = new ApplicationDbContext();
-            if (ModelState.IsValid)
+            try
             {
-                var user = new ApplicationUser() { UserName = model.UserName, PerfilUsuario = model.perfil, Nome = model.Nome, Contato = model.Contato };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                ApplicationDbContext context = new ApplicationDbContext();
+                if (ModelState.IsValid)
                 {
-                    if (new UsuarioObraDAO().salvarUsuarioObra(user, model.obra))
+                    var user = new ApplicationUser() { UserName = model.UserName, PerfilUsuario = model.perfil, Nome = model.Nome, Contato = model.Contato };
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
                     {
-                        Session["UserId"] = user.Id;
-                        Session["PerfilUsuario"] = user.PerfilUsuario;
-                        switch (Session["PerfilUsuario"].ToString())
+                        if (new UsuarioObraDAO().salvarUsuarioObra(user, model.obra))
                         {
-                            case "1":
-                                Session["SetorVisivel"] = true;
-                                Session["ObraVisivel"] = true;
-                                break;
-                            case "2":
-                                Session["SetorVisivel"] = false;
-                                Session["ObraVisivel"] = true;
-                                break;
-                            default:
-                                Session["SetorVisivel"] = true;
-                                Session["ObraVisivel"] = false;
-                                break;
+                            Session["UserId"] = user.Id;
+                            Session["PerfilUsuario"] = user.PerfilUsuario;
+                            switch (Session["PerfilUsuario"].ToString())
+                            {
+                                case "1":
+                                    Session["SetorVisivel"] = true;
+                                    Session["ObraVisivel"] = true;
+                                    break;
+                                case "2":
+                                    Session["SetorVisivel"] = false;
+                                    Session["ObraVisivel"] = true;
+                                    break;
+                                default:
+                                    Session["SetorVisivel"] = true;
+                                    Session["ObraVisivel"] = false;
+                                    break;
+                            }
+                            await SignInAsync(user, isPersistent: false);
+                            return RedirectToAction("Index", "Chamado");
                         }
-                        await SignInAsync(user, isPersistent: false);
-                        return RedirectToAction("Index", "Chamado");
+                    }
+                    else
+                    {
+                        AddErrors(result);
                     }
                 }
-                else
-                {
-                    AddErrors(result);
-                }
+            }
+            catch
+            {
+
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+
+        public ActionResult RetornaSetoresPorObra(string selectedValue)
+        {
+            List<Setor> setores = new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(selectedValue));
+            return Json(new { setoresList = setores });
         }
 
         //
@@ -435,6 +451,7 @@ namespace prj_chamadosBRA.Controllers
             RemoveLoginSuccess,
             Error
         }
+
 
         private ActionResult RedirectToLocal(string returnUrl)
         {

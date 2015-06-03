@@ -14,6 +14,11 @@ namespace prj_chamadosBRA.Repositories
             this.db = db;
         }
 
+        public ObraDAO()
+        {
+            this.db = new ApplicationDbContext();
+        }
+
         public List<Obra> BuscarObras()
         {
 

@@ -65,6 +65,10 @@ namespace prj_chamadosBRA.Models
         public int obra { get; set; }
 
         [Required]
+        [Display(Name = "Setor")]
+        public int setor { get; set; }
+
+        [Required]
         [Display(Name = "PerfilUsuario")]
         public int perfil { get; set; }
 

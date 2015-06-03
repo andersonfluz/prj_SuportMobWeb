@@ -24,6 +24,8 @@ namespace prj_chamadosBRA.Models
         public DbSet<UsuarioObra> UsuarioObra { get; set; }
         public DbSet<CentroAdministrativo> CentroAdministrativo { get; set; }
         public DbSet<ChamadoAnexo> ChamadoAnexo { get; set; }
+        public DbSet<UsuarioSetor> UsuarioSetor { get; set; }
+        public DbSet<ChamadoHistorico> ChamadoHistorico { get; set; }
 
         public ApplicationDbContext()
             : base("ChamadosBRAConnectionString", throwIfV1Schema: false)

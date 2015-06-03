@@ -38,7 +38,7 @@
     <div class="form-group">
         @Html.Label("Perfil", new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.perfil, new SelectList(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao"), new { @class = "form-control" }) 
+            @Html.DropDownListFor(m => m.perfil, new SelectList(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao"), new { @class = "form-control" })
             @*@Html.DropDownList("Perfis", "---- Selecione ----")*@
             @Html.ValidationMessageFor(m => m.perfil)
         </div>
@@ -46,9 +46,15 @@
     <div class="form-group">
         @Html.Label("Obra", new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.obra, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObras(), "IDO", "Descricao"), new { @class = "form-control" })            
+            @Html.DropDownListFor(m => m.obra, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObras(), "IDO", "Descricao"), new { @class = "form-control" })
             @*@Html.DropDownList("Obras", "---- Selecione ----")*@
             @Html.ValidationMessageFor(m => m.obra)
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.Label("Setor", new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            <select id="setores" class="form-control"></select>
         </div>
     </div>
     
@@ -57,7 +63,7 @@
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.Contato, new { @class = "form-control" })
         </div>
-    </div>    
+    </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" class="btn btn-default" value="Registrar" />
@@ -65,6 +71,31 @@
     </div>
 }
 
+
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+
+<script type="text/javascript">
+    $("#obra").change(function () {
+        var selectedValue = $(this).val();
+        $.ajax({
+            url: '@Url.Action("RetornaSetoresPorObra", "Account")',
+            type: 'POST',
+            data: { 'selectedValue': selectedValue },
+            dataType: 'json',
+            success: function (response) {
+                var items = "";
+                $.each(response.setores, function (i, item) {
+                    items += "<option value=\"" + item.Id + "\">" + item.Nome + "</option>";
+                });
+                $("#setore").html(items);
+            },
+            error: function (error) {
+
+            }
+        });
+    });
+</script>
