@@ -31,5 +31,10 @@ namespace prj_chamadosBRA.Models
         public virtual Obra ObraDestino { get; set; }
         [Display(Name = "Anexo")]
         public virtual ICollection<ChamadoAnexo> Anexos { get; set; }
+        public Boolean StatusChamado { get; set; }
+        public string ObsevacaoInterna { get; set; }
+        public DateTime? DataHoraBaixa { get; set; }
+        [Display(Name = "Solução")]
+        public string Solucao { get; set; }
     }
 }

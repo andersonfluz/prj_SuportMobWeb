@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using prj_chamadosBRA.Models;
 using prj_chamadosBRA.Repositories;
+using prj_chamadosBRA.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
@@ -68,7 +69,8 @@ namespace prj_chamadosBRA.Controllers
         // GET: Chamado/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            return View(chamado);
         }
 
         // GET: Chamado/Create
@@ -127,7 +129,8 @@ namespace prj_chamadosBRA.Controllers
                     chamado.Anexos = new List<ChamadoAnexo> { anexo };
                 }
                 cDAO.salvarChamado(chamado);
-
+                EmailService email = new EmailService();
+                email.envioEmailAberturaChamado(chamado);
                 return RedirectToAction("Index");
             }
             catch (Exception e)
@@ -145,8 +148,9 @@ namespace prj_chamadosBRA.Controllers
             Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
             ViewBag.listaChamadoHistorico = new ChamadoHistoricoDAO(db).buscarHistoricosPorIdChamado(id);
             ViewBag.listaChamadoAnexo = new ChamadoAnexoDAO(db).retornarListaAnexoChamado(id);
-            if (chamado.SetorDestino != null) { 
-                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetoresPorObra(chamado.ObraDestino.IDO), "Id", "Nome",chamado.SetorDestino.Id);
+            if (chamado.SetorDestino != null)
+            {
+                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetoresPorObra(chamado.ObraDestino.IDO), "Id", "Nome", chamado.SetorDestino.Id);
                 if (chamado.ResponsavelChamado != null)
                 {
                     ViewBag.ddlResponsavelChamado = new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino), "Id", "Nome", chamado.ResponsavelChamado.Id);
@@ -162,7 +166,6 @@ namespace prj_chamadosBRA.Controllers
                 ViewBag.ddlResponsavelChamado = new SelectList(responsavel);
                 ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome", "-- Selecione o Setor --");
             }
-            
             return View(chamado);
         }
 
@@ -189,11 +192,54 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
-                if (SetorDestino != chamado.SetorDestino)
+                ChamadoDAO cDAO = new ChamadoDAO(db);
+                SetorDAO sDAO = new SetorDAO(db);
+                Chamado chamadoOrigem = cDAO.BuscarChamadoId(id);
+                ChamadoHistorico chamadoHistorico;
+                chamadoOrigem.ObsevacaoInterna = chamado.ObsevacaoInterna;
+                //Atualização de Setor
+                if (chamadoOrigem.SetorDestino != null && SetorDestino != null)
                 {
-
-
+                    if (chamadoOrigem.SetorDestino.Id != Convert.ToInt32(SetorDestino))
+                    {
+                        Setor setor = sDAO.BuscarSetorId(Convert.ToInt32(SetorDestino));
+                        chamadoOrigem.SetorDestino = setor;
+                        chamadoOrigem.ResponsavelChamado = null;
+                        cDAO.atualizarChamado(id, chamadoOrigem);
+                        chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
+                        new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                    }
                 }
+                else if (chamadoOrigem.SetorDestino == null && SetorDestino != null)
+                {
+                    Setor setor = sDAO.BuscarSetorId(Convert.ToInt32(SetorDestino));
+                    chamadoOrigem.SetorDestino = setor;
+                    cDAO.atualizarChamado(id, chamadoOrigem);
+                    chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
+                    new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                }
+
+                //Atualização de Responsavel pelo Chamado
+                if (chamadoOrigem.ResponsavelChamado != null && ddlResponsavelChamado != null)
+                {
+                    if (chamadoOrigem.ResponsavelChamado.Id != ddlResponsavelChamado)
+                    {
+                        ApplicationUser user = manager.FindById(ddlResponsavelChamado);
+                        chamadoOrigem.ResponsavelChamado = user;
+                        cDAO.atualizarChamado(id, chamadoOrigem);
+                        chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
+                        new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                    }
+                }
+                else if (chamadoOrigem.ResponsavelChamado == null && ddlResponsavelChamado != "")
+                {
+                    ApplicationUser user = manager.FindById(ddlResponsavelChamado);
+                    chamadoOrigem.ResponsavelChamado = user;
+                    cDAO.atualizarChamado(id, chamadoOrigem);
+                    chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
+                    new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                }
+
                 return RedirectToAction("Index");
             }
             catch
@@ -206,7 +252,8 @@ namespace prj_chamadosBRA.Controllers
         [Authorize]
         public ActionResult Delete(int id)
         {
-            return View();
+            Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            return View(chamado);
         }
 
         // POST: Chamado/Delete/5
@@ -224,5 +271,29 @@ namespace prj_chamadosBRA.Controllers
                 return View();
             }
         }
+
+        // GET: Chamado/Encerrar/5
+        public ActionResult Encerrar(int id)
+        {
+            Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            return View(chamado);
+        }
+
+        // POST: Chamado/Encerrar/5
+        [HttpPost]
+        public ActionResult Encerrar(int id, FormCollection collection)
+        {
+            try
+            {
+                // TODO: Add encerrar logic here
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
     }
 }

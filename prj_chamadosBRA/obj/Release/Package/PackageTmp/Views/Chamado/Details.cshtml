@@ -1,0 +1,32 @@
+﻿@model prj_chamadosBRA.Models.Chamado
+
+@{
+    Layout = null;
+    ViewBag.Title = "Consulta Chamado";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Consulta do Chamado</h4>
+        </div>
+        <div class="modal-body">
+            <p>@Html.DisplayNameFor(model => model.Assunto)</p>
+            <p>@Html.DisplayFor(model => model.Assunto)</p>
+            <p>@Html.DisplayNameFor(model => model.Descricao)</p>
+            <p>@Html.DisplayFor(model => model.Descricao)</p>
+            <p>@Html.DisplayNameFor(model => model.Observacao)</p>
+            <p>@Html.DisplayFor(model => model.Observacao)</p>
+            <p>@Html.DisplayNameFor(model => model.DataHoraAbertura)</p>
+            <p>@Html.DisplayFor(model => model.DataHoraAbertura)</p>
+            <p>@Html.DisplayNameFor(model => model.StatusChamado)</p>
+            <p>@Html.DisplayFor(model => model.StatusChamado)</p>
+            <p>@Html.DisplayNameFor(model => model.ObsevacaoInterna)</p>
+            <p>@Html.DisplayFor(model => model.ObsevacaoInterna)</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        </div>
+    </div>
+</div>

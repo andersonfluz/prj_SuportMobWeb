@@ -72,28 +72,33 @@ namespace prj_chamadosBRA.Repositories
             return true;
         }
 
-        //public void eliminarSetor(int id)
-        //{
-        //    using (var ctx = new ApplicationDbContext())
-        //    {
-        //        ctx.Entry(this.DetalhesSetor(id)).State = System.Data.Entity.EntityState.Deleted;
-        //        ctx.SaveChanges();
-        //    }
-        //}
+        public ChamadoHistorico registrarHistorico(DateTime dataHora, ApplicationUser responsavel, String Historico, Chamado chamado)
+        {
+            try
+            {
+                ChamadoHistorico ch = new ChamadoHistorico();
+                ch.chamado = chamado;
+                ch.Data = dataHora;
+                ch.Hora = dataHora;
+                ch.Responsavel = responsavel;
+                ch.Historico = Historico;
+                new ChamadoHistoricoDAO(db).salvarHistorico(ch);
+                return ch;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-        //public void atualizarSetor(int id, Setor setor)
-        //{
-        //    using (var ctx = new ApplicationDbContext())
-        //    {
-        //        Setor setorUpdate = (from e in ctx.Setor where e.Id == id select e).SingleOrDefault();
-        //        setorUpdate.Nome = setor.Nome;
-        //        setorUpdate.Descricao = setor.Descricao;
-        //        setorUpdate.Responsavel = setor.Responsavel;
-        //        setorUpdate.EmailResponsavel = setor.EmailResponsavel;
-        //        setorUpdate.EmailSetor = setor.EmailSetor;
-        //        ctx.SaveChanges();
-        //    }
-        //}
+        public void atualizarChamado(int id, Chamado chamado)
+        {
+            Chamado chamadoUpdate = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
+            chamadoUpdate.ObsevacaoInterna = chamado.ObsevacaoInterna;
+            chamadoUpdate.SetorDestino = chamado.SetorDestino;
+            chamadoUpdate.ResponsavelChamado = chamado.ResponsavelChamado;
+            db.SaveChanges();
+        }
 
     }
 }

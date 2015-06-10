@@ -6,7 +6,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>C:\Users\02023029\Desktop\ChamadosBRA</_PublishTargetUrl>
+    <_PublishTargetUrl>D:\publicacao\chamadosBRA</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/Antlr3.Runtime.dll">
@@ -64,7 +64,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 10:15:02</publishTime>
     </File>
     <File Include="bin/prj_chamadosBRA.dll">
-      <publishTime>05/08/2015 13:52:03</publishTime>
+      <publishTime>06/10/2015 16:35:59</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
       <publishTime>05/07/2015 10:14:52</publishTime>
@@ -97,7 +97,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 10:14:37</publishTime>
     </File>
     <File Include="Content/Site.css">
-      <publishTime>05/07/2015 10:14:22</publishTime>
+      <publishTime>06/09/2015 16:15:04</publishTime>
     </File>
     <File Include="favicon.ico">
       <publishTime>05/07/2015 10:14:22</publishTime>
@@ -116,6 +116,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Global.asax">
       <publishTime>05/07/2015 10:14:22</publishTime>
+    </File>
+    <File Include="Images/logo_Web.png">
+      <publishTime>05/25/2015 15:24:06</publishTime>
     </File>
     <File Include="packages.config">
       <publishTime>05/07/2015 10:15:03</publishTime>
@@ -169,13 +172,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/17/2015 14:00:04</publishTime>
     </File>
     <File Include="Views/Account/Login.cshtml">
-      <publishTime>05/07/2015 14:49:30</publishTime>
+      <publishTime>05/25/2015 15:19:03</publishTime>
     </File>
     <File Include="Views/Account/Manage.cshtml">
       <publishTime>05/07/2015 16:34:52</publishTime>
     </File>
     <File Include="Views/Account/Register.cshtml">
-      <publishTime>05/07/2015 16:40:53</publishTime>
+      <publishTime>06/02/2015 21:47:05</publishTime>
     </File>
     <File Include="Views/Account/_ChangePasswordPartial.cshtml">
       <publishTime>05/07/2015 17:22:39</publishTime>
@@ -190,10 +193,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 16:43:54</publishTime>
     </File>
     <File Include="Views/Chamado/Create.cshtml">
-      <publishTime>05/07/2015 14:39:09</publishTime>
+      <publishTime>05/29/2015 09:16:41</publishTime>
+    </File>
+    <File Include="Views/Chamado/Details.cshtml">
+      <publishTime>06/09/2015 17:08:28</publishTime>
+    </File>
+    <File Include="Views/Chamado/Edit.cshtml">
+      <publishTime>06/10/2015 16:29:44</publishTime>
+    </File>
+    <File Include="Views/Chamado/Encerrar.cshtml">
+      <publishTime>06/10/2015 15:52:22</publishTime>
     </File>
     <File Include="Views/Chamado/Index.cshtml">
-      <publishTime>05/07/2015 14:36:49</publishTime>
+      <publishTime>06/10/2015 15:13:49</publishTime>
     </File>
     <File Include="Views/Home/About.cshtml">
       <publishTime>05/07/2015 10:14:22</publishTime>
@@ -202,7 +214,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 10:14:22</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>05/07/2015 10:26:06</publishTime>
+      <publishTime>05/25/2015 16:36:51</publishTime>
     </File>
     <File Include="Views/Manage/AddPhoneNumber.cshtml">
       <publishTime>05/07/2015 10:14:57</publishTime>
@@ -229,10 +241,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 10:14:58</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>05/07/2015 14:37:55</publishTime>
+      <publishTime>05/29/2015 08:33:37</publishTime>
     </File>
     <File Include="Views/Shared/_LoginPartial.cshtml">
-      <publishTime>05/07/2015 16:14:21</publishTime>
+      <publishTime>05/27/2015 15:19:10</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>05/07/2015 10:14:22</publishTime>
@@ -241,7 +253,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 10:14:22</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>05/08/2015 13:52:03</publishTime>
+      <publishTime>06/10/2015 16:37:23</publishTime>
     </File>
   </ItemGroup>
 </Project>

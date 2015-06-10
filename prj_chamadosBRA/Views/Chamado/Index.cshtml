@@ -9,6 +9,9 @@
 <p>
     @Html.ActionLink("Novo Chamado", "Create")
 </p>
+<div class="modal" id="modal">
+
+</div>
 <table class="table" data-row-style="rowStyle">
     <tr>
         <th>
@@ -26,16 +29,26 @@
         <th>
             @Html.DisplayName("Responsavel")
         </th>
-        <th>
-            @if ((bool)Session["SetorVisivel"])
-            {
-                @Html.DisplayName("Setor")
-            }
-            @if ((bool)Session["ObraVisivel"])
-            {
+        @if ((bool)Session["ObraVisivel"])
+        {
+            <th>
                 @Html.DisplayName("Obra")
-            }
-        </th>
+            </th>
+        }
+        @if ((bool)Session["SetorVisivel"])
+        {
+            <th>
+                @Html.DisplayName("Setor")
+            </th>
+        }
+        @if (Session["PerfilUsuario"].ToString() == "2")
+        {
+            <th>
+                @Html.DisplayName("Visualizar")
+            </th>
+        }
+        
+
     </tr>
 
     @foreach (var item in Model)
@@ -63,29 +76,31 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ResponsavelChamado.Nome)
             </td>
-            <td>
-                @if ((bool)Session["SetorVisivel"])
-                {
-                    @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
-                }
-                @if ((bool)Session["ObraVisivel"])
-                {
+            @if ((bool)Session["ObraVisivel"])
+            {
+                <td>
                     @Html.DisplayFor(modelItem => item.ObraDestino.Descricao)
-                }
-            </td>
+                </td>
+            }
+            @if ((bool)Session["SetorVisivel"])
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
+                </td>
+            }
+            @if (Session["PerfilUsuario"].ToString() == "2")
+            {
+                <td align="center">
+                    <button class="btn btn-default details" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
+                </td>
+            }
+            
+
         </tr>
     }
 
 </table>
-<script>
-    function rowStyle(row, index) {
-        var classes = ['active', 'success', 'info', 'warning', 'danger'];
 
-        if (index % 2 === 0 && index / 2 < classes.length) {
-            return {
-                classes: classes[index / 2]
-            };
-        }
-        return {};
-    }
-</script>
+@section scripts{
+    
+}

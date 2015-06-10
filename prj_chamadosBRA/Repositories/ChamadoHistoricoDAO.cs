@@ -19,5 +19,19 @@ namespace prj_chamadosBRA.Repositories
             List<ChamadoHistorico> chamadoHistoricos = (from ch in db.ChamadoHistorico where ch.chamado.Id == idChamado select ch).ToList();
             return chamadoHistoricos;
         }
+
+        public Boolean salvarHistorico(ChamadoHistorico chamadoHistorico)
+        {
+            try
+            {
+                db.ChamadoHistorico.Add(chamadoHistorico);
+                db.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

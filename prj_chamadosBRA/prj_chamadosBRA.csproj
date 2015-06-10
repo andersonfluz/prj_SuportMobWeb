@@ -185,6 +185,7 @@
     <Compile Include="Repositories\SetorDAO.cs" />
     <Compile Include="Repositories\UsuarioObraDAO.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utils\EmailService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -245,6 +246,8 @@
     <Content Include="Views\Account\_RemoveAccountPartial.cshtml" />
     <Content Include="Views\Account\_SetPasswordPartial.cshtml" />
     <Content Include="Views\Chamado\Edit.cshtml" />
+    <Content Include="Views\Chamado\Details.cshtml" />
+    <Content Include="Views\Chamado\Encerrar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

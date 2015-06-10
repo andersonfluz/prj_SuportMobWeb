@@ -11,15 +11,22 @@ namespace prj_chamadosBRA.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            if (Session["PerfilUsuario"].ToString() == "1")
+            try
             {
-                return View();
+                if (Session["PerfilUsuario"].ToString() == "1")
+                {
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Chamado");
+                }
             }
-            else
+            catch (NullReferenceException ne)
             {
-                return RedirectToAction("Index", "Chamado");
+                return RedirectToAction("Login", "Account");
             }
-            
+
         }
 
         public ActionResult About()
