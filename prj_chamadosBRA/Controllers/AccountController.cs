@@ -40,6 +40,7 @@ namespace prj_chamadosBRA.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -51,6 +52,7 @@ namespace prj_chamadosBRA.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            AuthenticationManager.SignOut();
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindAsync(model.UserName, model.Password);
@@ -66,6 +68,10 @@ namespace prj_chamadosBRA.Controllers
                             break;
                         case "2":
                             Session["SetorVisivel"] = false;
+                            Session["ObraVisivel"] = true;
+                            break;
+                        case "5":
+                            Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = true;
                             break;
                         default:
@@ -134,27 +140,35 @@ namespace prj_chamadosBRA.Controllers
                     var result = await UserManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
+
                         if (new UsuarioObraDAO().salvarUsuarioObra(user, model.obra))
                         {
-                            Session["UserId"] = user.Id;
-                            Session["PerfilUsuario"] = user.PerfilUsuario;
-                            switch (Session["PerfilUsuario"].ToString())
+                            if (new UsuarioSetorDAO().salvarUsuarioSetor(user, model.setor))
                             {
-                                case "1":
-                                    Session["SetorVisivel"] = true;
-                                    Session["ObraVisivel"] = true;
-                                    break;
-                                case "2":
-                                    Session["SetorVisivel"] = false;
-                                    Session["ObraVisivel"] = true;
-                                    break;
-                                default:
-                                    Session["SetorVisivel"] = true;
-                                    Session["ObraVisivel"] = false;
-                                    break;
+                                Session["UserId"] = user.Id;
+                                Session["PerfilUsuario"] = user.PerfilUsuario;
+                                switch (Session["PerfilUsuario"].ToString())
+                                {
+                                    case "1":
+                                        Session["SetorVisivel"] = true;
+                                        Session["ObraVisivel"] = true;
+                                        break;
+                                    case "2":
+                                        Session["SetorVisivel"] = false;
+                                        Session["ObraVisivel"] = true;
+                                        break;
+                                    case "5":
+                                        Session["SetorVisivel"] = true;
+                                        Session["ObraVisivel"] = true;
+                                        break;
+                                    default:
+                                        Session["SetorVisivel"] = true;
+                                        Session["ObraVisivel"] = false;
+                                        break;
+                                }
+                                await SignInAsync(user, isPersistent: false);
+                                return RedirectToAction("Index", "Chamado");
                             }
-                            await SignInAsync(user, isPersistent: false);
-                            return RedirectToAction("Index", "Chamado");
                         }
                     }
                     else
@@ -176,7 +190,8 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult RetornaSetoresPorObra(string selectedValue)
         {
             List<Setor> setores = new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(selectedValue));
-            return Json(new { setoresList = setores });
+            ActionResult json = Json(new SelectList(setores, "Id", "Nome"));
+            return json;
         }
 
         //
@@ -378,6 +393,7 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
+            Session.Abandon();
             return RedirectToAction("Login", "Account");
         }
 

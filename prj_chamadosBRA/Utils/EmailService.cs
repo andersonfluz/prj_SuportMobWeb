@@ -81,7 +81,7 @@ namespace prj_chamadosBRA.Utils
             string setorDestino = chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamado.SetorDestino.Descricao;
             string responsavelAbertura = chamado.ResponsavelAberturaChamado.Nome;
             string responsavelChamado = chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamado.ResponsavelChamado.Nome;
-            string statusChamado = chamado.StatusChamado == null || false ? "Chamado Fechado" : "Chamado Aberto";
+            string statusChamado = chamado.StatusChamado == null || chamado.StatusChamado == false ? "Chamado Fechado" : "Chamado Aberto";
 
             string corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
                                    + "<tbody>"
@@ -190,7 +190,7 @@ namespace prj_chamadosBRA.Utils
 
         public String montarCorpoMensagemAlteracao(ChamadoHistorico chamadoHistorico)
         {
-            string mensagem = "Nova Solicitação N. " + chamadoHistorico.chamado.Id;
+            string mensagem = "Alteração da Solicitação N. " + chamadoHistorico.chamado.Id;
             string mensagemSetorObra = chamadoHistorico.chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamadoHistorico.chamado.ObraDestino.Descricao : chamadoHistorico.chamado.SetorDestino.Descricao + " - " + chamadoHistorico.chamado.ObraDestino.Descricao;
             string assunto = chamadoHistorico.chamado.Assunto;
             string descricao = chamadoHistorico.chamado.Descricao;

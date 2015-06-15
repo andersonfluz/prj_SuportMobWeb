@@ -16,8 +16,10 @@ namespace prj_chamadosBRA.Models
         public string Assunto { get; set; }
         [Required]
         [DataType(DataType.MultilineText)]
+        [Display(Name = "Descrição")]
         public string Descricao { get; set; }
         [DataType(DataType.MultilineText)]
+        [Display(Name = "Observação")]
         public string Observacao { get; set; }
         [Display(Name = "Setor")]
         public virtual Setor SetorDestino { get; set; }
@@ -31,7 +33,7 @@ namespace prj_chamadosBRA.Models
         public virtual Obra ObraDestino { get; set; }
         [Display(Name = "Anexo")]
         public virtual ICollection<ChamadoAnexo> Anexos { get; set; }
-        public Boolean StatusChamado { get; set; }
+        public Boolean? StatusChamado { get; set; }
         public string ObsevacaoInterna { get; set; }
         public DateTime? DataHoraBaixa { get; set; }
         [Display(Name = "Solução")]

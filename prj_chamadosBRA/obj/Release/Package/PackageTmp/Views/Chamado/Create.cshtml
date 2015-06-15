@@ -25,7 +25,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control", Style = "height:130px" } })
                 @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -33,7 +33,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Observacao, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Observacao, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Observacao, new { htmlAttributes = new { @class = "form-control", Style = "height:130px" } })
                 @Html.ValidationMessageFor(model => model.Observacao, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -41,16 +41,17 @@
         <div class="form-group">
             @Html.Label("Anexo", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" id="anexo" name="upload" />
+                <input type="file" id="anexo" name="upload" /> 
+                @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")     
             </div>
         </div>
+        
         @if ((bool)Session["ObraVisivel"])
         {
             <div class="form-group">
                 @Html.Label("Obra Destino", new { @class = "col-md-2 control-label" })
                 <div class="col-md-10">
-                    @Html.DropDownList("ObraDestino", String.Empty)
-
+                    @Html.DropDownList("ObraDestino", new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
                 </div>
             </div>
         }
@@ -59,7 +60,7 @@
             <div class="form-group">
                 @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
                 <div class="col-md-10">
-                    @Html.DropDownList("SetorDestino", String.Empty)
+                    @Html.DropDownList("SetorDestino", new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control" })
                 </div>
             </div>
         }
@@ -77,4 +78,31 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Dropdownlist Selectedchange event
+            $("#ObraDestino").change(function () {
+                $("#SetorDestino").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaSetoresPorObra", "Chamado")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#ObraDestino").val() },
+                    success: function (setores) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $.each(setores, function (i, setor) {
+                            $("#SetorDestino").append('<option value="'
+                            + setor.Value + '">'
+                            + setor.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve setores.' + ex);
+                    }
+                });
+                return false;
+            })
+        });
+    </script>
 }

@@ -6,7 +6,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>D:\publicacao\chamadosBRA</_PublishTargetUrl>
+    <_PublishTargetUrl>D:\publicacao\ChamadosBRA</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/Antlr3.Runtime.dll">
@@ -64,7 +64,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 10:15:02</publishTime>
     </File>
     <File Include="bin/prj_chamadosBRA.dll">
-      <publishTime>06/10/2015 16:35:59</publishTime>
+      <publishTime>06/12/2015 10:07:52</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
       <publishTime>05/07/2015 10:14:52</publishTime>
@@ -178,7 +178,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 16:34:52</publishTime>
     </File>
     <File Include="Views/Account/Register.cshtml">
-      <publishTime>06/02/2015 21:47:05</publishTime>
+      <publishTime>06/11/2015 16:23:55</publishTime>
     </File>
     <File Include="Views/Account/_ChangePasswordPartial.cshtml">
       <publishTime>05/07/2015 17:22:39</publishTime>
@@ -193,13 +193,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 16:43:54</publishTime>
     </File>
     <File Include="Views/Chamado/Create.cshtml">
-      <publishTime>05/29/2015 09:16:41</publishTime>
+      <publishTime>06/12/2015 09:17:19</publishTime>
     </File>
     <File Include="Views/Chamado/Details.cshtml">
       <publishTime>06/09/2015 17:08:28</publishTime>
     </File>
     <File Include="Views/Chamado/Edit.cshtml">
-      <publishTime>06/10/2015 16:29:44</publishTime>
+      <publishTime>06/11/2015 14:09:50</publishTime>
     </File>
     <File Include="Views/Chamado/Encerrar.cshtml">
       <publishTime>06/10/2015 15:52:22</publishTime>
@@ -253,7 +253,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2015 10:14:22</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>06/10/2015 16:37:23</publishTime>
+      <publishTime>06/12/2015 10:07:54</publishTime>
     </File>
   </ItemGroup>
 </Project>

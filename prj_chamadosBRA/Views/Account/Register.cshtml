@@ -46,18 +46,17 @@
     <div class="form-group">
         @Html.Label("Obra", new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.obra, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObras(), "IDO", "Descricao"), new { @class = "form-control" })
-            @*@Html.DropDownList("Obras", "---- Selecione ----")*@
+            @Html.DropDownListFor(m => m.obra, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObras(), "IDO", "Descricao"), new { @class = "form-control obra" })
             @Html.ValidationMessageFor(m => m.obra)
         </div>
     </div>
     <div class="form-group">
         @Html.Label("Setor", new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            <select id="setores" class="form-control"></select>
+            @Html.DropDownList("setores", new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control setores" })
         </div>
     </div>
-    
+
     <div class="form-group">
         @Html.LabelFor(m => m.Contato, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
@@ -75,27 +74,33 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        //Dropdownlist Selectedchange event
+        $(".obra").change(function () {
+            $("#setores").empty();            
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RetornaSetoresPorObra", "Account")',
+                dataType: 'json',
+                data: { selectedValue: $("#obra").val() },
+                success: function (setores) {
+                    // states contains the JSON formatted list
+                    // of states passed from the controller
+                    $.each(setores, function (i, setor) {
+                        $("#setores").append('<option value="'
+                        + setor.Value + '">'
+                        + setor.Text + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed to retrieve setores.' + ex);
+                }
+            });
+            return false;
+        })
+    });
+    </script>
 }
 
 
-<script type="text/javascript">
-    $("#obra").change(function () {
-        var selectedValue = $(this).val();
-        $.ajax({
-            url: '@Url.Action("RetornaSetoresPorObra", "Account")',
-            type: 'POST',
-            data: { 'selectedValue': selectedValue },
-            dataType: 'json',
-            success: function (response) {
-                var items = "";
-                $.each(response.setores, function (i, item) {
-                    items += "<option value=\"" + item.Id + "\">" + item.Nome + "</option>";
-                });
-                $("#setore").html(items);
-            },
-            error: function (error) {
-
-            }
-        });
-    });
-</script>

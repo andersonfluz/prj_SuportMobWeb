@@ -136,6 +136,18 @@
     </div>
 
     <div class="panel panel-default">
+        <div class="panel-heading">Informações de Acompanhamento</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-10">
+                    @Html.Label("Informações Adicionais:")
+                    @Html.TextArea("informacoesAcompanhamento", htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
         <div class="panel-heading">Histórico do Chamado</div>
         <div class="panel-body">
             <div class="row">
@@ -186,7 +198,7 @@
             <div class="row">
                 <div class="col-md-10">
                     @Html.Label("Obsevação Interna:")
-                    @Html.TextAreaFor(m => m.ObsevacaoInterna, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px" })
+                    @Html.TextAreaFor(m => m.ObsevacaoInterna, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
                 </div>
             </div>
         </div>

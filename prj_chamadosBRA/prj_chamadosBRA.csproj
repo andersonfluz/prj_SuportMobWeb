@@ -184,6 +184,7 @@
     <Compile Include="Repositories\PerfilUsuarioDAO.cs" />
     <Compile Include="Repositories\SetorDAO.cs" />
     <Compile Include="Repositories\UsuarioObraDAO.cs" />
+    <Compile Include="Repositories\UsuarioSetorDAO.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\EmailService.cs" />
   </ItemGroup>

@@ -77,9 +77,33 @@ namespace prj_chamadosBRA.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome");
-            ViewBag.ObraDestino = new SelectList(new prj_chamadosBRA.Repositories.ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId()), "IDO", "Descricao");
+            List<Obra> obras = new prj_chamadosBRA.Repositories.ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId());
+            ViewBag.UserId = User.Identity.GetUserId();
+            SelectList listObra = new SelectList(obras, "IDO", "Descricao");
+            ViewBag.ObraDestino = listObra;
+            if (listObra.Count() == 1)
+            {
+                ViewBag.SetorDestino = obras[0].IDO;
+            }
+            else
+            {
+                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome");
+            }
             return View();
+        }
+
+        public ActionResult RetornaSetoresPorObra(string selectedValue)
+        {
+            try
+            {
+                List<Setor> setores = new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(selectedValue));
+                ActionResult json = Json(new SelectList(setores, "Id", "Nome"));
+                return json;
+            }
+            catch
+            {
+                return Json(new SelectList(String.Empty, "Id", "Nome")); ;
+            }
         }
 
         // POST: Chamado/Create
@@ -104,6 +128,14 @@ namespace prj_chamadosBRA.Controllers
                 {
                     obra = oDAO.BuscarObraId(Int32.Parse(ObraDestino));
                     chamado.ObraDestino = obra;
+                }
+                else
+                {
+                    if (Session["PerfilUsuario"].ToString() == "3")
+                    {
+                        obra = oDAO.BuscarObrasPorUsuario(User.Identity.GetUserId())[0];                        
+                        chamado.ObraDestino = obra;
+                    }
                 }
 
                 ApplicationUser user = manager.FindById(User.Identity.GetUserId());
@@ -135,8 +167,19 @@ namespace prj_chamadosBRA.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome");
-                ViewBag.ObraDestino = new SelectList(new prj_chamadosBRA.Repositories.ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId()), "IDO", "Descricao");
+                List<Obra> obras = new prj_chamadosBRA.Repositories.ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId());
+                ViewBag.UserId = User.Identity.GetUserId();
+                SelectList listObra = new SelectList(obras, "IDO", "Descricao");
+                ViewBag.ObraDestino = listObra;
+                if (listObra.Count() == 1)
+                {
+                    ViewBag.SetorDestino = obras[0].IDO;
+                }
+                else
+                {
+                    ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome");
+                } 
+                ViewBag.UserId = User.Identity.GetUserId();
                 return View();
             }
         }
@@ -188,7 +231,7 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado)
+        public ActionResult Edit(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento)
         {
             try
             {
@@ -237,6 +280,12 @@ namespace prj_chamadosBRA.Controllers
                     chamadoOrigem.ResponsavelChamado = user;
                     cDAO.atualizarChamado(id, chamadoOrigem);
                     chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
+                    new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                }
+
+                if (informacoesAcompanhamento == null || informacoesAcompanhamento != "")
+                {
+                    chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), informacoesAcompanhamento, chamadoOrigem);
                     new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
                 }
 
