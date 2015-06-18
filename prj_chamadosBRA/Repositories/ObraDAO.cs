@@ -35,7 +35,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Obra> BuscarObrasPorUsuario(String userId)
         {
-            List<int> idObras = (from e in db.UsuarioObra where e.Usuario.Id == userId select e.idObra).ToList();
+            List<int> idObras = (from e in db.UsuarioObra where e.Usuario.Id == userId select e.Obra.IDO).ToList();
             List<Obra> obras = (from o in db.Obra where idObras.Contains(o.IDO) select o).ToList();
             return obras;
         }

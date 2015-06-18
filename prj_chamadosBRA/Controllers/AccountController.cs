@@ -65,18 +65,22 @@ namespace prj_chamadosBRA.Controllers
                         case "1":
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = true;
+                            Session["TipoChamadoVisivel"] = true;
                             break;
                         case "2":
                             Session["SetorVisivel"] = false;
                             Session["ObraVisivel"] = true;
+                            Session["TipoChamadoVisivel"] = false;
                             break;
                         case "5":
                             Session["SetorVisivel"] = true;
-                            Session["ObraVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = true;
                             break;
                         default:
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = true;
                             break;
                     }
 
@@ -105,22 +109,28 @@ namespace prj_chamadosBRA.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            List<Obra> obras = new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(User.Identity.GetUserId());
+            ViewBag.UserId = User.Identity.GetUserId();
+            SelectList listObra = new SelectList(obras, "IDO", "Descricao");
+            ViewBag.ObraDestino = listObra;
+            if (listObra.Count() == 1)
+            {
+                ViewBag.ObraDestino = obras[0].IDO;
+            }
+            else
+            {
+                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetores(), "Id", "Nome");
+            }
+
+            if (Session["PerfilUsuario"].ToString().Equals("1"))
+            {
+                ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis();
+            }
+            else if (Session["PerfilUsuario"].ToString().Equals("5"))
+            {
+                ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaGestor();
+            }
             return View();
-            //if (Session["PerfilUsuario"] != null)
-            //{
-            //    if (Session["PerfilUsuario"].ToString() == "1")
-            //    {
-            //        return View();
-            //    }
-            //    else
-            //    {
-            //        return RedirectToAction("Index", "Home");
-            //    }
-            //}
-            //else
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}
         }
 
         //
@@ -129,7 +139,7 @@ namespace prj_chamadosBRA.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model, String obra, String setor)
         {
             try
             {
@@ -140,10 +150,15 @@ namespace prj_chamadosBRA.Controllers
                     var result = await UserManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
-
-                        if (new UsuarioObraDAO().salvarUsuarioObra(user, model.obra))
+                        UsuarioObra usuarioObra = new UsuarioObra();
+                        usuarioObra.Usuario = user;
+                        usuarioObra.Obra = new ObraDAO().BuscarObraId(Convert.ToInt32(obra));
+                        if (new UsuarioObraDAO().salvarUsuarioObra(usuarioObra))
                         {
-                            if (new UsuarioSetorDAO().salvarUsuarioSetor(user, model.setor))
+                            UsuarioSetor usuarioSetor = new UsuarioSetor();
+                            usuarioSetor.Usuario = user;
+                            usuarioSetor.Setor = new SetorDAO().BuscarSetorId(Convert.ToInt32(setor));
+                            if (new UsuarioSetorDAO().salvarUsuarioSetor(usuarioSetor))
                             {
                                 Session["UserId"] = user.Id;
                                 Session["PerfilUsuario"] = user.PerfilUsuario;
@@ -152,34 +167,52 @@ namespace prj_chamadosBRA.Controllers
                                     case "1":
                                         Session["SetorVisivel"] = true;
                                         Session["ObraVisivel"] = true;
+                                        Session["TipoChamadoVisivel"] = true;
                                         break;
                                     case "2":
                                         Session["SetorVisivel"] = false;
                                         Session["ObraVisivel"] = true;
+                                        Session["TipoChamadoVisivel"] = false;
                                         break;
                                     case "5":
                                         Session["SetorVisivel"] = true;
-                                        Session["ObraVisivel"] = true;
+                                        Session["ObraVisivel"] = false;
+                                        Session["TipoChamadoVisivel"] = true;
                                         break;
                                     default:
                                         Session["SetorVisivel"] = true;
                                         Session["ObraVisivel"] = false;
+                                        Session["TipoChamadoVisivel"] = true;
                                         break;
                                 }
-                                await SignInAsync(user, isPersistent: false);
-                                return RedirectToAction("Index", "Chamado");
+                                return RedirectToAction("Index", "Home");
                             }
                         }
                     }
                     else
                     {
+                        if (Session["PerfilUsuario"].ToString().Equals("1"))
+                        {
+                            ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis();
+                        }
+                        else if (Session["PerfilUsuario"].ToString().Equals("5"))
+                        {
+                            ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaGestor();
+                        }
                         AddErrors(result);
                     }
                 }
             }
             catch
             {
-
+                if (Session["PerfilUsuario"].ToString().Equals("1"))
+                {
+                    ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis();
+                }
+                else if (Session["PerfilUsuario"].ToString().Equals("5"))
+                {
+                    ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaGestor();
+                }
             }
 
             // If we got this far, something failed, redisplay form

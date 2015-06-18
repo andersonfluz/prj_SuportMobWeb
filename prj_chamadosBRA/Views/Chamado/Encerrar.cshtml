@@ -1,7 +1,7 @@
 ﻿@model prj_chamadosBRA.Models.Chamado
 
 @{
-    Layout = null;
+    //Layout = null;
     ViewBag.Title = "Encerrar";
 }
 
@@ -19,7 +19,46 @@
             <div class="modal-body">
                 <div class="form-horizontal">
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    @Html.HiddenFor(model => model.Id)                    
+                    @Html.HiddenFor(model => model.Id)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Assunto, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Assunto, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Assunto, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ResponsavelChamado.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ResponsavelChamado.Nome, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.DataHoraAtendimento, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10 date" id=' datetimepicker2'>
+                            @Html.EditorFor(model => model.DataHoraAtendimento, new { htmlAttributes = new { @class = "form-control" } })                            
+                            @Html.ValidationMessageFor(model => model.DataHoraAtendimento, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Classificacao, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.Classificacao, new SelectList(new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoes(), "Id", "Descricao"), "-- Selecione a Classificação --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Classificacao, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.SubClassificacao, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.SubClassificacao, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione a SubClassificação --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.SubClassificacao, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.Solucao, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -37,10 +76,45 @@
                     </div>
                 </div>
             </div>
+
         }
     </div>
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">        
+        $(document).ready(function () {
+            //Dropdownlist Selectedchange event
+            $("#Classificacao").change(function () {
+                $("#SubClassificacao").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaSubClassPorClass", "Chamado")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#Classificacao").val() },
+                    success: function (subclasses) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $("#SubClassificacao").append('<option value="">-- Selecione a SubClassificação --</option>');
+                        $.each(subclasses, function (i, subclass) {
+                            $("#SubClassificacao").append('<option value="'
+                            + setor.Value + '">'
+                            + setor.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve setores.' + ex);
+                    }
+                });
+                return false;
+            })
+        });
+        $(function () {
+            $('#datetimepicker2').datetimepicker({
+                locale: 'br'
+            });
+        });
+
+    </script>
 }

@@ -41,11 +41,11 @@
         <div class="form-group">
             @Html.Label("Anexo", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" id="anexo" name="upload" /> 
-                @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")     
+                <input type="file" id="anexo" name="upload" />
+                @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
             </div>
         </div>
-        
+
         @if ((bool)Session["ObraVisivel"])
         {
             <div class="form-group">
@@ -57,12 +57,24 @@
         }
         @if ((bool)Session["SetorVisivel"])
         {
-            <div class="form-group">
-                @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
-                <div class="col-md-10">
-                    @Html.DropDownList("SetorDestino", new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control" })
+            if (Session["PerfilUsuario"].ToString() != "1")
+            {
+                <div class="form-group">
+                    @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("SetorDestino", new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetoresPorObra(ViewBag.SetorDestino), "Id", "Nome"), new { @class = "form-control" })
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("SetorDestino", new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control" })
+                    </div>
+                </div>
+            }
         }
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

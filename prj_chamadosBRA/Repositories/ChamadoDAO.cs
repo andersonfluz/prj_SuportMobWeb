@@ -42,7 +42,11 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Chamado> BuscarChamadosDeObras(List<Obra> obras)
         {
-            List<Chamado> chamados = (from e in db.Chamado where obras.Contains(e.ObraDestino) select e).ToList();
+            List<Chamado> chamados = new List<Chamado>();
+            foreach (var obra in obras)
+            {
+                chamados = (from e in db.Chamado where obra.IDO == e.ObraDestino.IDO select e).ToList();
+            }
             foreach (var chamado in chamados)
             {
                 ApplicationUser resp = chamado.ResponsavelChamado;

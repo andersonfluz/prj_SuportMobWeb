@@ -4,7 +4,7 @@
     ViewBag.Title = "Acompanhamento de Chamados";
 }
 
-<h2>Acompanhamento de Chamados</h2>
+<h2>Acompanhamento de Chamados @ViewBag.NomeObra</h2>
 
 <p>
     @Html.ActionLink("Novo Chamado", "Create")
@@ -47,7 +47,7 @@
                 @Html.DisplayName("Visualizar")
             </th>
         }
-        
+
 
     </tr>
 
@@ -85,7 +85,14 @@
             @if ((bool)Session["SetorVisivel"])
             {
                 <td>
-                    @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
+                    @if (item.SetorDestino != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
+                    }
+                    else
+                    {
+                        @Html.Label("Setor Indefinido")
+                    }
                 </td>
             }
             @if (Session["PerfilUsuario"].ToString() == "2")
@@ -94,7 +101,7 @@
                     <button class="btn btn-default details" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
                 </td>
             }
-            
+
 
         </tr>
     }
@@ -102,5 +109,5 @@
 </table>
 
 @section scripts{
-    
+
 }

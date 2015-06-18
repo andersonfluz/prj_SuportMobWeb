@@ -16,7 +16,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<ApplicationUser> retornarUsuariosSetor(Setor setor)
         {
-            List<ApplicationUser> users = (from e in db.UsuarioSetor where e.idSetor == setor.Id select e.Usuario).ToList();
+            List<ApplicationUser> users = (from e in db.UsuarioSetor where e.Setor.Id == setor.Id select e.Usuario).ToList();
             return users;
         }
 

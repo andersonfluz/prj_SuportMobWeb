@@ -32,7 +32,9 @@ namespace prj_chamadosBRA.Controllers
             {
                 ApplicationUser user = manager.FindById(User.Identity.GetUserId());
                 //Usuario Administrador
-                if (Session["PerfilUsuario"].ToString().Equals("1"))
+                if (Session["PerfilUsuario"].ToString().Equals("1") 
+                    || Session["PerfilUsuario"].ToString().Equals("3")
+                    || Session["PerfilUsuario"].ToString().Equals("5"))
                 {
                     //Usuario Vinculado a Obras
                     List<Obra> obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
@@ -46,17 +48,19 @@ namespace prj_chamadosBRA.Controllers
                     }
                     if (isMatriz)
                     {
+                        ViewBag.NomeObra = "";
                         return View(new ChamadoDAO(db).BuscarChamados());
                     }
                     else
                     {
+                        ViewBag.NomeObra = "- "+obras[0].Descricao;
                         return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras));
                     }
 
                 }
                 else
                 {
-
+                    ViewBag.NomeObra = "";
                     return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user));
                 }
             }
@@ -106,38 +110,29 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
+        public ActionResult RetornaResponsaveisPorSetor(string selectedValue)
+        {
+            try
+            {
+                List<ApplicationUser> responsaveis = new ApplicationUserDAO(db).retornarUsuariosSetor(new SetorDAO().BuscarSetorId(Convert.ToInt32(selectedValue)));
+                ActionResult json = Json(new SelectList(responsaveis, "Id", "Nome"));
+                return json;
+            }
+            catch
+            {
+                return Json(new SelectList(String.Empty, "Id", "Nome")); ;
+            }
+        }
+
+
         // POST: Chamado/Create
         [HttpPost]
         public ActionResult Create(Chamado chamado, HttpPostedFileBase upload, String SetorDestino, String ObraDestino)
         {
             try
             {
-                ChamadoDAO cDAO = new ChamadoDAO(db);
-                ObraDAO oDAO = new ObraDAO(db);
-                SetorDAO sDAO = new SetorDAO(db);
-                Setor setor;
-                Obra obra;
-
-                if (SetorDestino != null)
-                {
-                    setor = sDAO.BuscarSetorId(Int32.Parse(SetorDestino));
-                    chamado.SetorDestino = setor;
-                }
-
-                if (ObraDestino != null)
-                {
-                    obra = oDAO.BuscarObraId(Int32.Parse(ObraDestino));
-                    chamado.ObraDestino = obra;
-                }
-                else
-                {
-                    if (Session["PerfilUsuario"].ToString() == "3")
-                    {
-                        obra = oDAO.BuscarObrasPorUsuario(User.Identity.GetUserId())[0];                        
-                        chamado.ObraDestino = obra;
-                    }
-                }
-
+                this.ModelState.Remove("SetorDestino");
+                this.ModelState.Remove("ObraDestino");
                 ApplicationUser user = manager.FindById(User.Identity.GetUserId());
                 chamado.DataHoraAbertura = DateTime.Now;
 
@@ -145,25 +140,70 @@ namespace prj_chamadosBRA.Controllers
                 {
                     chamado.ResponsavelAberturaChamado = user;
                 }
-
-                if (upload != null && upload.ContentLength > 0)
+                if (ModelState.IsValid)
                 {
-                    ChamadoAnexoDAO caDAO = new ChamadoAnexoDAO(db);
-                    var anexo = new ChamadoAnexo
+                    ChamadoDAO cDAO = new ChamadoDAO(db);
+                    ObraDAO oDAO = new ObraDAO(db);
+                    SetorDAO sDAO = new SetorDAO(db);
+                    Setor setor;
+                    Obra obra;
+
+                    if (SetorDestino != null)
                     {
-                        NomeAnexo = System.IO.Path.GetFileName(upload.FileName),
-                        ContentType = upload.ContentType
-                    };
-                    using (var reader = new System.IO.BinaryReader(upload.InputStream))
-                    {
-                        anexo.arquivoAnexo = reader.ReadBytes(upload.ContentLength);
+                        setor = sDAO.BuscarSetorId(Int32.Parse(SetorDestino));
+                        chamado.SetorDestino = setor;
                     }
-                    chamado.Anexos = new List<ChamadoAnexo> { anexo };
+
+                    if (ObraDestino != null)
+                    {
+                        obra = oDAO.BuscarObraId(Int32.Parse(ObraDestino));
+                        chamado.ObraDestino = obra;
+                    }
+                    else
+                    {
+                        if (Session["PerfilUsuario"].ToString() == "3")
+                        {
+                            obra = oDAO.BuscarObrasPorUsuario(User.Identity.GetUserId())[0];
+                            chamado.ObraDestino = obra;
+                        }
+                    }                    
+
+                    if (upload != null && upload.ContentLength > 0)
+                    {
+                        ChamadoAnexoDAO caDAO = new ChamadoAnexoDAO(db);
+                        var anexo = new ChamadoAnexo
+                        {
+                            NomeAnexo = System.IO.Path.GetFileName(upload.FileName),
+                            ContentType = upload.ContentType
+                        };
+                        using (var reader = new System.IO.BinaryReader(upload.InputStream))
+                        {
+                            anexo.arquivoAnexo = reader.ReadBytes(upload.ContentLength);
+                        }
+                        chamado.Anexos = new List<ChamadoAnexo> { anexo };
+                    }
+                    cDAO.salvarChamado(chamado);
+                    EmailService email = new EmailService();
+                    email.envioEmailAberturaChamado(chamado);
+                    return RedirectToAction("Index");
                 }
-                cDAO.salvarChamado(chamado);
-                EmailService email = new EmailService();
-                email.envioEmailAberturaChamado(chamado);
-                return RedirectToAction("Index");
+                else
+                {
+                    List<Obra> obras = new prj_chamadosBRA.Repositories.ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId());
+                    ViewBag.UserId = User.Identity.GetUserId();
+                    SelectList listObra = new SelectList(obras, "IDO", "Descricao");
+                    ViewBag.ObraDestino = listObra;
+                    if (listObra.Count() == 1)
+                    {
+                        ViewBag.SetorDestino = obras[0].IDO;
+                    }
+                    else
+                    {
+                        ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome");
+                    }
+                    ViewBag.UserId = User.Identity.GetUserId();
+                    return View();
+                }
             }
             catch (Exception e)
             {
@@ -207,7 +247,7 @@ namespace prj_chamadosBRA.Controllers
             {
                 List<SelectListItem> responsavel = new List<SelectListItem>();
                 ViewBag.ddlResponsavelChamado = new SelectList(responsavel);
-                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome", "-- Selecione o Setor --");
+                ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetoresPorObra(chamado.ObraDestino.IDO), "Id", "Nome", "-- Selecione o Setor --");
             }
             return View(chamado);
         }
@@ -240,6 +280,7 @@ namespace prj_chamadosBRA.Controllers
                 Chamado chamadoOrigem = cDAO.BuscarChamadoId(id);
                 ChamadoHistorico chamadoHistorico;
                 chamadoOrigem.ObsevacaoInterna = chamado.ObsevacaoInterna;
+                chamadoOrigem.TipoChamado = chamado.TipoChamado;
                 //Atualização de Setor
                 if (chamadoOrigem.SetorDestino != null && SetorDestino != null)
                 {
@@ -343,6 +384,21 @@ namespace prj_chamadosBRA.Controllers
                 return View();
             }
         }
+
+        public ActionResult RetornaSubClassPorClass(string selectedValue)
+        {
+            try
+            {
+                List<ChamadoSubClassificacao> subClassificacoes = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacoesPorClassificacao(Convert.ToInt32(selectedValue));
+                ActionResult json = Json(new SelectList(subClassificacoes, "Id", "Nome"));
+                return json;
+            }
+            catch
+            {
+                return Json(new SelectList(String.Empty, "Id", "Nome")); ;
+            }
+        }
+        
 
     }
 }

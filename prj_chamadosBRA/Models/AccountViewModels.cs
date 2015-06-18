@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace prj_chamadosBRA.Models
 {
@@ -59,14 +60,6 @@ namespace prj_chamadosBRA.Models
         [Display(Name = "Confirmação de Senha")]
         [Compare("Password", ErrorMessage = "A senha e a confirmação da senha não batem.")]
         public string ConfirmPassword { get; set; }
-
-        [Required]
-        [Display(Name = "Obra")]
-        public int obra { get; set; }
-
-        [Required]
-        [Display(Name = "Setor")]
-        public int setor { get; set; }
 
         [Required]
         [Display(Name = "PerfilUsuario")]

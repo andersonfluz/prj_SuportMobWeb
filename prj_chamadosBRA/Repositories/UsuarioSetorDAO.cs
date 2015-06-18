@@ -8,32 +8,32 @@ namespace prj_chamadosBRA.Repositories
 {
     public class UsuarioSetorDAO
     {
+        ApplicationDbContext db;
+        public UsuarioSetorDAO(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
+
+        public UsuarioSetorDAO()
+        {
+            this.db = new ApplicationDbContext();
+        }
+
         public List<Setor> buscarSetoresDoUsuario(ApplicationUser user)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                List<Setor> setores = (from o in ctx.Setor
-                                    join us in ctx.UsuarioSetor on o.Id equals us.idSetor
-                                    where us.Usuario.Id == user.Id
-                                    select o).ToList();
-                return setores;
-            }
+            List<Setor> setores = (from o in db.Setor
+                                   join us in db.UsuarioSetor on o.Id equals us.Setor.Id
+                                   where us.Usuario.Id == user.Id
+                                   select o).ToList();
+            return setores;
         }
 
 
-        public Boolean salvarUsuarioSetor(ApplicationUser user, int idSetor)
+        public Boolean salvarUsuarioSetor(UsuarioSetor usuarioSetor)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-
-
-                UsuarioSetor usuarioSetor = new UsuarioSetor();
-                usuarioSetor.Usuario = user;
-                usuarioSetor.idSetor = idSetor;
-                ctx.UsuarioSetor.Add(usuarioSetor);
-                ctx.SaveChanges();
-                return true;
-            }
+            db.UsuarioSetor.Add(usuarioSetor);
+            db.SaveChanges();
+            return true;
         }
     }
 }

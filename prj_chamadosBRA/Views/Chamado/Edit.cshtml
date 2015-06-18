@@ -6,9 +6,7 @@
 
 <h2>Acompanhamento Chamado</h2>
 
-<div class="modal" id="modal">
 
-</div>
 
 @using (Html.BeginForm())
 {
@@ -98,6 +96,14 @@
                 <div class="col-md-10">
                     @Html.Label("Observação:")
                     @Html.DisplayFor(model => model.Observacao)
+                </div>
+            </div>
+            <div class="row">
+                @Html.Label("Tipo do Chamado:")
+                <div class="col-md-10">
+                    @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>Totvs RM</label>
+                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                    @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>Outros</label>
                 </div>
             </div>
         </div>
@@ -211,13 +217,19 @@
     </div>
 
 }
-<!-- <button class="btn btn-default encerrar" id="encerrar" data-id="@Model.Id">Encerrar</button>-->
+ <button class="btn btn-default encerrar" id="encerrar" data-id="@Model.Id">Encerrar</button>
 <p></p>
 <div>
     @Html.ActionLink("Voltar para Acompanhamento", "Index")
 </div>
 
+<div class="modal" id="modal">
+
+</div>
+
 @section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    
     <script>
         $(function () {
             $(".encerrar").click(function () {
@@ -228,5 +240,34 @@
             });
         })
     </script>
-    @Scripts.Render("~/bundles/jqueryval")
+    
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Dropdownlist Selectedchange event
+            $("#SetorDestino").change(function () {
+                $("#ddlResponsavelChamado").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaResponsaveisPorSetor", "Chamado")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#SetorDestino").val() },
+                    success: function (setores) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $("#ddlResponsavelChamado").append('<option value="-1">-- Selecione o Responsável --</option>');
+                        $.each(setores, function (i, setor) {
+                            $("#ddlResponsavelChamado").append('<option value="'
+                            + setor.Value + '">'
+                            + setor.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Falha em retornar os responsaveis.' + ex);
+                    }
+                });
+                return false;
+            })
+        });
+    </script>
 }

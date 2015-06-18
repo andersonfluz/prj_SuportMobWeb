@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Collections.Generic;
 
 namespace prj_chamadosBRA.Models
 {
@@ -26,25 +27,29 @@ namespace prj_chamadosBRA.Models
         public DbSet<ChamadoAnexo> ChamadoAnexo { get; set; }
         public DbSet<UsuarioSetor> UsuarioSetor { get; set; }
         public DbSet<ChamadoHistorico> ChamadoHistorico { get; set; }
+        public DbSet<ChamadoClassificacao> ChamadoClassificacao { get; set; }
+        public DbSet<ChamadoSubClassificacao> ChamadoSubClassificacao { get; set; }
 
         public ApplicationDbContext()
             : base("ChamadosBRAConnectionString", throwIfV1Schema: false)
         {
+
 
         }
 
         //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)
         //{
         //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-        //}
-
-        //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)
-        //{
+        //    dbModelBuilder.Entity<ApplicationUser>().HasMany<Setor>(user => user.setores)
+        //                                   .WithMany(setor => setor.usuarios).Map(c =>
+        //                                             {
+        //                                                 c.MapLeftKey("Usuario_Id");
+        //                                                    c.MapRightKey("idSetor");
+        //                                                    c.ToTable("UsuarioSetor");
+        //                                                });
+        //    base.OnModelCreating(dbModelBuilder);
         //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         //}
-        //public static ApplicationDbContext Create()
-        //{
-        //    return new ApplicationDbContext();
-        //}
+       
     }
 }

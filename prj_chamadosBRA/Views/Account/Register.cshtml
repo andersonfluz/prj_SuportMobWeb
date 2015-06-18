@@ -38,24 +38,42 @@
     <div class="form-group">
         @Html.Label("Perfil", new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.perfil, new SelectList(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao"), new { @class = "form-control" })
+            @Html.DropDownListFor(m => m.perfil, new SelectList(ViewBag.Perfis, "IdPerfil", "Descricao"), new { @class = "form-control" })
             @*@Html.DropDownList("Perfis", "---- Selecione ----")*@
             @Html.ValidationMessageFor(m => m.perfil)
         </div>
     </div>
-    <div class="form-group">
-        @Html.Label("Obra", new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(m => m.obra, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObras(), "IDO", "Descricao"), new { @class = "form-control obra" })
-            @Html.ValidationMessageFor(m => m.obra)
+    
+    if ((bool)Session["ObraVisivel"])
+    {
+        <div class="form-group">
+            @Html.Label("Obra", new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownList("obra", new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObras(), "IDO", "Descricao"), new { @class = "form-control obra" })
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        @Html.Label("Setor", new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.DropDownList("setores", new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control setores" })
-        </div>
-    </div>
+    }
+    if ((bool)Session["SetorVisivel"])
+    {
+        if (Session["PerfilUsuario"].ToString() != "1")
+        {
+            <div class="form-group">
+                @Html.Label("Setor", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownList("setor", new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetoresPorObra(ViewBag.ObraDestino), "Id", "Nome"), new { @class = "form-control" })
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.Label("Setor", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownList("setor", new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control" })
+                </div>
+            </div>
+        }
+    }
 
     <div class="form-group">
         @Html.LabelFor(m => m.Contato, new { @class = "col-md-2 control-label" })
@@ -78,7 +96,7 @@
     $(document).ready(function () {
         //Dropdownlist Selectedchange event
         $(".obra").change(function () {
-            $("#setores").empty();            
+            $("#setor").empty();
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("RetornaSetoresPorObra", "Account")',
@@ -87,8 +105,9 @@
                 success: function (setores) {
                     // states contains the JSON formatted list
                     // of states passed from the controller
+                    $("#setor").append('<option value="">-- Selecione o Setor --</option>');
                     $.each(setores, function (i, setor) {
-                        $("#setores").append('<option value="'
+                        $("#setor").append('<option value="'
                         + setor.Value + '">'
                         + setor.Text + '</option>');
                     });
