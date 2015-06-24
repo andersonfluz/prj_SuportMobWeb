@@ -1,12 +1,13 @@
 ﻿@model prj_chamadosBRA.Models.Chamado
 
 @{
-    //Layout = null;
+    Layout = null;
     ViewBag.Title = "Encerrar";
 }
 
 <div class="modal-dialog">
     <div class="modal-content">
+
         @using (Html.BeginForm())
         {
             <div class="modal-header">
@@ -20,40 +21,37 @@
                 <div class="form-horizontal">
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     @Html.HiddenFor(model => model.Id)
-
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Assunto, htmlAttributes: new { @class = "control-label col-md-2" })
+                        @Html.Label("Responsável Atendimento", htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Assunto, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Assunto, "", new { @class = "text-danger" })
+                            @Html.DisplayFor(model => model.ResponsavelChamado.Nome, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ResponsavelChamado.Nome, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.ResponsavelChamado.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.ResponsavelChamado.Nome, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.Label("Data Atendimento", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10 date" id='datetimepicker2'>
+                            @Html.Editor("Data", new { htmlAttributes = new { @class = "form-control datepicker", Style = "max-width:100px" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Hora Atendimento", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10 date" id='timepicker'>
+                            @Html.Editor("Hora", new { htmlAttributes = new { @class = "form-control timepicker", Style = "max-width:70px" } })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(m => m.DataHoraAtendimento, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10 date" id=' datetimepicker2'>
-                            @Html.EditorFor(model => model.DataHoraAtendimento, new { htmlAttributes = new { @class = "form-control" } })                            
-                            @Html.ValidationMessageFor(model => model.DataHoraAtendimento, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Classificacao, new { @class = "col-md-2 control-label" })
+                        @Html.Label("Classificação", new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(m => m.Classificacao, new SelectList(new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoes(), "Id", "Descricao"), "-- Selecione a Classificação --", new { @class = "form-control" })
+                            @Html.DropDownListFor(m => m.Classificacao, new SelectList(new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoes(), "Id", "Descricao"), "-- Selecione a Classificação --", new { @class = "form-control Classificacao" })
                             @Html.ValidationMessageFor(m => m.Classificacao, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(m => m.SubClassificacao, new { @class = "col-md-2 control-label" })
+                        @Html.Label("SubClassificação", new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
                             @Html.DropDownListFor(m => m.SubClassificacao, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione a SubClassificação --", new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.SubClassificacao, "", new { @class = "text-danger" })
@@ -79,42 +77,55 @@
 
         }
     </div>
-</div>
-
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript">        
-        $(document).ready(function () {
-            //Dropdownlist Selectedchange event
-            $("#Classificacao").change(function () {
-                $("#SubClassificacao").empty();
-                $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("RetornaSubClassPorClass", "Chamado")',
-                    dataType: 'json',
-                    data: { selectedValue: $("#Classificacao").val() },
-                    success: function (subclasses) {
-                        // states contains the JSON formatted list
-                        // of states passed from the controller
-                        $("#SubClassificacao").append('<option value="">-- Selecione a SubClassificação --</option>');
-                        $.each(subclasses, function (i, subclass) {
-                            $("#SubClassificacao").append('<option value="'
-                            + setor.Value + '">'
-                            + setor.Text + '</option>');
-                        });
-                    },
-                    error: function (ex) {
-                        alert('Failed to retrieve setores.' + ex);
-                    }
-                });
-                return false;
-            })
-        });
-        $(function () {
-            $('#datetimepicker2').datetimepicker({
-                locale: 'br'
+    <script type="text/javascript">
+        //Dropdownlist Selectedchange event
+        $(".Classificacao").change(function () {
+            $("#SubClassificacao").empty();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RetornaSubClassPorClass", "Chamado")',
+                dataType: 'json',
+                data: { selectedValue: $(".Classificacao").val() },
+                success: function (subclasses) {
+                    // states contains the JSON formatted list
+                    // of states passed from the controller
+                    $("#SubClassificacao").append('<option value="">-- Selecione a SubClassificação --</option>');
+                    $.each(subclasses, function (i, subclass) {
+                        $("#SubClassificacao").append('<option value="'
+                        + subclass.Value + '">'
+                        + subclass.Text + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed to retrieve SubClassificacoes.' + ex);
+                }
             });
+            return false;
+        });
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            language: 'pt-BR',
+            autoclose: true
+        }); //Initialise any date pickers
+
+        $('#Hora').focusin(function () {
+            $('#Hora').mask("99:99");
         });
 
     </script>
+    <script type="text/javascript">
+        $(".timepicker").datetimepicker({
+            pickDate: false
+        });
+    </script>
+
+    @*<script src="~/Scripts/mvcfoolproof.unobtrusive.min.js"></script>
+        <script src="~/Scripts/MvcFoolproofJQueryValidation.min.js"></script>
+        <script src="~/Scripts/MvcFoolproofValidation.min.js"></script>*@
+
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
 }

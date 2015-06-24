@@ -32,7 +32,7 @@ namespace prj_chamadosBRA.Controllers
             {
                 ApplicationUser user = manager.FindById(User.Identity.GetUserId());
                 //Usuario Administrador
-                if (Session["PerfilUsuario"].ToString().Equals("1") 
+                if (Session["PerfilUsuario"].ToString().Equals("1")
                     || Session["PerfilUsuario"].ToString().Equals("3")
                     || Session["PerfilUsuario"].ToString().Equals("5"))
                 {
@@ -53,7 +53,7 @@ namespace prj_chamadosBRA.Controllers
                     }
                     else
                     {
-                        ViewBag.NomeObra = "- "+obras[0].Descricao;
+                        ViewBag.NomeObra = "- " + obras[0].Descricao;
                         return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras));
                     }
 
@@ -133,9 +133,13 @@ namespace prj_chamadosBRA.Controllers
             {
                 this.ModelState.Remove("SetorDestino");
                 this.ModelState.Remove("ObraDestino");
+                this.ModelState.Remove("DataHoraAtendimento");
+                this.ModelState.Remove("Classificacao");
+                this.ModelState.Remove("SubClassificacao");
+                this.ModelState.Remove("Solucao");
                 ApplicationUser user = manager.FindById(User.Identity.GetUserId());
                 chamado.DataHoraAbertura = DateTime.Now;
-
+                chamado.StatusChamado = false;
                 if (user != null)
                 {
                     chamado.ResponsavelAberturaChamado = user;
@@ -166,7 +170,7 @@ namespace prj_chamadosBRA.Controllers
                             obra = oDAO.BuscarObrasPorUsuario(User.Identity.GetUserId())[0];
                             chamado.ObraDestino = obra;
                         }
-                    }                    
+                    }
 
                     if (upload != null && upload.ContentLength > 0)
                     {
@@ -218,7 +222,7 @@ namespace prj_chamadosBRA.Controllers
                 else
                 {
                     ViewBag.SetorDestino = new SelectList(new prj_chamadosBRA.Repositories.SetorDAO(db).BuscarSetores(), "Id", "Nome");
-                } 
+                }
                 ViewBag.UserId = User.Identity.GetUserId();
                 return View();
             }
@@ -280,7 +284,20 @@ namespace prj_chamadosBRA.Controllers
                 Chamado chamadoOrigem = cDAO.BuscarChamadoId(id);
                 ChamadoHistorico chamadoHistorico;
                 chamadoOrigem.ObsevacaoInterna = chamado.ObsevacaoInterna;
-                chamadoOrigem.TipoChamado = chamado.TipoChamado;
+                if (chamadoOrigem.TipoChamado != chamado.TipoChamado)
+                {
+                    chamadoOrigem.TipoChamado = chamado.TipoChamado;
+                    cDAO.atualizarChamado(id, chamadoOrigem);
+                    if (chamado.TipoChamado == 1)
+                    {
+                        chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Tipo de Chamado foi alterado para Totvs RM", chamadoOrigem);
+                    }
+                    else
+                    {
+                        chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Tipo de Chamado foi alterado para Outros", chamadoOrigem);
+                    }
+                }
+
                 //Atualização de Setor
                 if (chamadoOrigem.SetorDestino != null && SetorDestino != null)
                 {
@@ -334,7 +351,7 @@ namespace prj_chamadosBRA.Controllers
             }
             catch
             {
-                return View();
+                return View(new ChamadoDAO(db).BuscarChamadoId(id));
             }
         }
 
@@ -363,6 +380,7 @@ namespace prj_chamadosBRA.Controllers
         }
 
         // GET: Chamado/Encerrar/5
+        [HttpGet]
         public ActionResult Encerrar(int id)
         {
             Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
@@ -371,11 +389,20 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado/Encerrar/5
         [HttpPost]
-        public ActionResult Encerrar(int id, FormCollection collection)
+        public ActionResult Encerrar(int id, Chamado chamado, String data, String hora)
         {
             try
             {
-                // TODO: Add encerrar logic here
+
+                Chamado chamadoOriginal = new ChamadoDAO(db).BuscarChamadoId(id);
+
+                DateTime atendimento = Convert.ToDateTime(data + " " + hora);
+                chamadoOriginal.DataHoraAtendimento = atendimento;
+                chamadoOriginal.Classificacao = chamado.Classificacao;
+                chamadoOriginal.SubClassificacao = chamado.SubClassificacao;
+                chamadoOriginal.Solucao = chamado.Solucao;
+                chamadoOriginal.DataHoraBaixa = DateTime.Now;
+                new ChamadoDAO(db).encerrarChamado(id, chamadoOriginal);
 
                 return RedirectToAction("Index");
             }
@@ -390,7 +417,7 @@ namespace prj_chamadosBRA.Controllers
             try
             {
                 List<ChamadoSubClassificacao> subClassificacoes = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacoesPorClassificacao(Convert.ToInt32(selectedValue));
-                ActionResult json = Json(new SelectList(subClassificacoes, "Id", "Nome"));
+                ActionResult json = Json(new SelectList(subClassificacoes, "Id", "Descricao"));
                 return json;
             }
             catch
@@ -398,7 +425,7 @@ namespace prj_chamadosBRA.Controllers
                 return Json(new SelectList(String.Empty, "Id", "Nome")); ;
             }
         }
-        
+
 
     }
 }

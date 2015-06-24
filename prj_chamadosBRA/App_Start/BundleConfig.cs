@@ -21,10 +21,29 @@ namespace prj_chamadosBRA
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
+                      "~/Scripts/moment.js",
+                      "~/Scripts/bootstrap-datepicker.js",
+                      "~/Scripts/bootstrap-datetimepicker.js",
+                      "~/Scripts/locales/bootstrap-datepicker.pt-BR.js",
+                      "~/Scripts/jquery.maskedinput.js",
+                      "~/Scripts/jquery.validate.js",
+                      "~/Scripts/jquery.validate.unobtrusive.js",
                       "~/Scripts/respond.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/mvcfoolproof").Include(
+                    "~/Scripts/MicrosoftAjax.js",
+                    "~/Scripts/MicrosoftMvcAjax.js",
+                    "~/Scripts/MicrosoftMvcValidation.js",
+                    "~/Scripts/MvcFoolproofJQueryValidation.min.js",
+                    "~/Scripts/MvcFoolproofValidation.min.js",
+                    "~/Scripts/mvcfoolproof.unobtrusive.min.js"
+                    ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/bootstrap-datepicker3.css",
+                      "~/Content/bootstrap-datetimepicker.min.css",
+                      "~/Content/datepicker.css",
                       "~/Content/site.css"));
         }
     }

@@ -16,7 +16,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Chamado> BuscarChamados()
         {
-            List<Chamado> chamados = (from e in db.Chamado select e).ToList();
+            List<Chamado> chamados = (from e in db.Chamado where e.StatusChamado != true select e).ToList();
             foreach (var chamado in chamados)
             {
                 ApplicationUser resp = chamado.ResponsavelChamado;
@@ -29,7 +29,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Chamado> BuscarChamadosDoUsuario(ApplicationUser user)
         {
-            List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id select e).ToList();
+            List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id && e.StatusChamado != true select e).ToList();
             foreach (var chamado in chamados)
             {
                 ApplicationUser resp = chamado.ResponsavelChamado;
@@ -45,7 +45,7 @@ namespace prj_chamadosBRA.Repositories
             List<Chamado> chamados = new List<Chamado>();
             foreach (var obra in obras)
             {
-                chamados = (from e in db.Chamado where obra.IDO == e.ObraDestino.IDO select e).ToList();
+                chamados = (from e in db.Chamado where obra.IDO == e.ObraDestino.IDO && e.StatusChamado != true select e).ToList();
             }
             foreach (var chamado in chamados)
             {
@@ -100,7 +100,22 @@ namespace prj_chamadosBRA.Repositories
             Chamado chamadoUpdate = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
             chamadoUpdate.ObsevacaoInterna = chamado.ObsevacaoInterna;
             chamadoUpdate.SetorDestino = chamado.SetorDestino;
+            chamadoUpdate.ObraDestino = chamado.ObraDestino;
             chamadoUpdate.ResponsavelChamado = chamado.ResponsavelChamado;
+            chamadoUpdate.TipoChamado = chamado.TipoChamado;
+            db.SaveChanges();
+        }
+
+        public void encerrarChamado(int id, Chamado chamado)
+        {
+            Chamado chamadoUpdate = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
+            chamadoUpdate.DataHoraAtendimento = chamado.DataHoraAtendimento;
+            chamadoUpdate.Classificacao = chamado.Classificacao;
+            chamadoUpdate.SubClassificacao = chamado.SubClassificacao;
+            chamadoUpdate.DataHoraBaixa = chamado.DataHoraBaixa;
+            chamadoUpdate.ObraDestino = chamado.ObraDestino;
+            chamadoUpdate.Solucao = chamado.Solucao;
+            chamadoUpdate.StatusChamado = true;
             db.SaveChanges();
         }
 

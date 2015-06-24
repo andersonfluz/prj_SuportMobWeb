@@ -50,3 +50,7 @@ textarea {
     .navbar-inverse .navbar-nav > li > a:hover {
         color: #999999;
     }
+
+.modal-dialog {
+    width: 70%;
+}

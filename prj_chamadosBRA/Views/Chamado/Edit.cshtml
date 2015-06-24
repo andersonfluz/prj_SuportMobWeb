@@ -217,7 +217,7 @@
     </div>
 
 }
- <button class="btn btn-default encerrar" id="encerrar" data-id="@Model.Id">Encerrar</button>
+<button class="btn btn-default encerrar" id="encerrar" data-toggle="modal" data-id="@Model.Id">Encerrar</button>
 <p></p>
 <div>
     @Html.ActionLink("Voltar para Acompanhamento", "Index")
@@ -229,18 +229,20 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    
+
     <script>
-        $(function () {
-            $(".encerrar").click(function () {
-                var id = $(this).attr("data-id");
-                $("#modal").load("Encerrar?id=" + id, function () {
-                    $("#modal").modal();
-                })
-            });
-        })
+        jQuery(document).ready(function ($) {
+            $(function () {
+                $("#encerrar").click(function () {
+                    var id = $(this).attr("data-id");
+                    $("#modal").load("../Encerrar/" + id, function () {
+                        $("#modal").modal('show');
+                    })
+                });
+            })
+        });
     </script>
-    
+
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -270,4 +272,5 @@
             })
         });
     </script>
+
 }

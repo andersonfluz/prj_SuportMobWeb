@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Foolproof;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -39,18 +40,19 @@ namespace prj_chamadosBRA.Models
         public string ObsevacaoInterna { get; set; }
         public DateTime? DataHoraBaixa { get; set; }
         [Display(Name = "Solução")]
+        [RequiredIf("StatusChamado", true, ErrorMessage="Informe a solução do Chamado")]
         public string Solucao { get; set; }
         [Display(Name = "Tipo do Chamado")]
-        [Required(ErrorMessage = "Informe o Tipo do Chamado")]
+        [RequiredIf("StatusChamado", true, ErrorMessage = "Informe o Tipo do Chamado")]
         public int? TipoChamado { get; set; }
         [Display(Name = "Data/Hora de Atendimento")]
-        [Required(ErrorMessage = "Informe a Data/Hora de Atendimento")]
+        [RequiredIf("StatusChamado", true, ErrorMessage = "Informe a Data/Hora de Atendimento")]
         public DateTime? DataHoraAtendimento { get; set; }
         [Display(Name = "Classificação do Chamado")]
-        [Required(ErrorMessage = "Informe a Classificação do Chamado")]
+        [RequiredIf("StatusChamado", true, ErrorMessage = "Informe a Classificação do Chamado")]
         public int? Classificacao { get; set; }
         [Display(Name = "SubClassificação do Chamado")]
-        [Required(ErrorMessage = "Informe a SubClassificação do Chamado")]
+        [RequiredIf("StatusChamado", true, ErrorMessage = "Informe a SubClassificação do Chamado")]
         public int? SubClassificacao { get; set; }
     }
 }
