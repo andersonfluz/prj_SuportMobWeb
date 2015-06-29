@@ -22,8 +22,8 @@ namespace prj_chamadosBRA.Repositories
         public List<Setor> buscarSetoresDoUsuario(ApplicationUser user)
         {
             List<Setor> setores = (from o in db.Setor
-                                   join us in db.UsuarioSetor on o.Id equals us.Setor.Id
-                                   where us.Usuario.Id == user.Id
+                                   join us in db.UsuarioSetor on o.Id equals us.Setor
+                                   where us.Usuario == user.Id
                                    select o).ToList();
             return setores;
         }

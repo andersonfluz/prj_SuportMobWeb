@@ -23,8 +23,8 @@ namespace prj_chamadosBRA.Repositories
         {
 
             List<Obra> obras = (from o in db.Obra
-                                join uo in db.UsuarioObra on o.IDO equals uo.Obra.IDO
-                                where uo.Usuario.Id == user.Id
+                                join uo in db.UsuarioObra on o.IDO equals uo.Obra
+                                where uo.Usuario == user.Id
                                 select o).ToList();
             return obras;
         }

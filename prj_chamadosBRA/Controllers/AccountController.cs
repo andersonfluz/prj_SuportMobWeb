@@ -72,6 +72,16 @@ namespace prj_chamadosBRA.Controllers
                             Session["ObraVisivel"] = true;
                             Session["TipoChamadoVisivel"] = false;
                             break;
+                        case "3":
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = true;
+                            break;
+                        case "4":
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = false;
+                            break;
                         case "5":
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = false;
@@ -139,7 +149,7 @@ namespace prj_chamadosBRA.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> Register(RegisterViewModel model, String obra, String setor)
+        public ActionResult Register(RegisterViewModel model, String obra, String setor)
         {
             try
             {
@@ -147,44 +157,28 @@ namespace prj_chamadosBRA.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = new ApplicationUser() { UserName = model.UserName, PerfilUsuario = model.perfil, Nome = model.Nome, Contato = model.Contato };
-                    var result = await UserManager.CreateAsync(user, model.Password);
+                    var result = UserManager.Create(user, model.Password);
                     if (result.Succeeded)
                     {
                         UsuarioObra usuarioObra = new UsuarioObra();
-                        usuarioObra.Usuario = user;
-                        usuarioObra.Obra = new ObraDAO().BuscarObraId(Convert.ToInt32(obra));
-                        if (new UsuarioObraDAO().salvarUsuarioObra(usuarioObra))
+                        usuarioObra.Usuario = user.Id;
+                        usuarioObra.Obra = Convert.ToInt32(obra);
+                        if (new UsuarioObraDAO(context).salvarUsuarioObra(usuarioObra))
                         {
-                            UsuarioSetor usuarioSetor = new UsuarioSetor();
-                            usuarioSetor.Usuario = user;
-                            usuarioSetor.Setor = new SetorDAO().BuscarSetorId(Convert.ToInt32(setor));
-                            if (new UsuarioSetorDAO().salvarUsuarioSetor(usuarioSetor))
+                            if (setor != null)
                             {
-                                Session["UserId"] = user.Id;
-                                Session["PerfilUsuario"] = user.PerfilUsuario;
-                                switch (Session["PerfilUsuario"].ToString())
+                                UsuarioSetor usuarioSetor = new UsuarioSetor();
+                                usuarioSetor.Usuario = user.Id;
+                                usuarioSetor.Setor = Convert.ToInt32(setor);
+                                if (new UsuarioSetorDAO(context).salvarUsuarioSetor(usuarioSetor))
                                 {
-                                    case "1":
-                                        Session["SetorVisivel"] = true;
-                                        Session["ObraVisivel"] = true;
-                                        Session["TipoChamadoVisivel"] = true;
-                                        break;
-                                    case "2":
-                                        Session["SetorVisivel"] = false;
-                                        Session["ObraVisivel"] = true;
-                                        Session["TipoChamadoVisivel"] = false;
-                                        break;
-                                    case "5":
-                                        Session["SetorVisivel"] = true;
-                                        Session["ObraVisivel"] = false;
-                                        Session["TipoChamadoVisivel"] = true;
-                                        break;
-                                    default:
-                                        Session["SetorVisivel"] = true;
-                                        Session["ObraVisivel"] = false;
-                                        Session["TipoChamadoVisivel"] = true;
-                                        break;
+                                    TempData["notice"] = "Usuário criado com Sucesso!";
+                                    return RedirectToAction("Index", "Home");
                                 }
+                            }
+                            else
+                            {
+                                TempData["notice"] = "Usuário criado com Sucesso!";
                                 return RedirectToAction("Index", "Home");
                             }
                         }

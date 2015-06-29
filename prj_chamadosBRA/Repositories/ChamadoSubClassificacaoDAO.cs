@@ -19,6 +19,12 @@ namespace prj_chamadosBRA.Repositories
             this.db = new ApplicationDbContext();
         }
 
+        public ChamadoSubClassificacao BuscarSubClassificacao(int id)
+        {
+            ChamadoSubClassificacao subclassificacao = (from e in db.ChamadoSubClassificacao where e.Id == id select e).SingleOrDefault();
+            return subclassificacao;
+        }
+
         public List<ChamadoSubClassificacao> BuscarSubClassificacoesPorClassificacao(int idClassificacao)
         {
             List<ChamadoSubClassificacao> chamadoSubClassificacoes = (from e in db.ChamadoSubClassificacao where e.ChamadoClassificacao.Id == idClassificacao select e).ToList();

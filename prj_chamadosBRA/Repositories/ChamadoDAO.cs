@@ -27,9 +27,35 @@ namespace prj_chamadosBRA.Repositories
             return chamados;
         }
 
+        public List<Chamado> BuscarChamadosTipoChamado(int? tipoChamado)
+        {
+            List<Chamado> chamados = (from e in db.Chamado where e.StatusChamado != true && e.TipoChamado == tipoChamado select e).ToList();
+            foreach (var chamado in chamados)
+            {
+                ApplicationUser resp = chamado.ResponsavelChamado;
+                ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                chamado.ResponsavelChamado = resp;
+                chamado.ResponsavelAberturaChamado = respAb;
+            }
+            return chamados;
+        }
+
         public List<Chamado> BuscarChamadosDoUsuario(ApplicationUser user)
         {
             List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id && e.StatusChamado != true select e).ToList();
+            foreach (var chamado in chamados)
+            {
+                ApplicationUser resp = chamado.ResponsavelChamado;
+                ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                chamado.ResponsavelChamado = resp;
+                chamado.ResponsavelAberturaChamado = respAb;
+            }
+            return chamados;
+        }
+
+        public List<Chamado> BuscarChamadosDoUsuarioTipoChamado(ApplicationUser user, int? tipoChamado)
+        {
+            List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id && e.StatusChamado != true && e.TipoChamado == tipoChamado select e).ToList();
             foreach (var chamado in chamados)
             {
                 ApplicationUser resp = chamado.ResponsavelChamado;
@@ -46,6 +72,23 @@ namespace prj_chamadosBRA.Repositories
             foreach (var obra in obras)
             {
                 chamados = (from e in db.Chamado where obra.IDO == e.ObraDestino.IDO && e.StatusChamado != true select e).ToList();
+            }
+            foreach (var chamado in chamados)
+            {
+                ApplicationUser resp = chamado.ResponsavelChamado;
+                ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
+                chamado.ResponsavelChamado = resp;
+                chamado.ResponsavelAberturaChamado = respAb;
+            }
+            return chamados;
+        }
+
+        public List<Chamado> BuscarChamadosDeObrasTipoChamado(List<Obra> obras, int? tipoChamado)
+        {
+            List<Chamado> chamados = new List<Chamado>();
+            foreach (var obra in obras)
+            {
+                chamados = (from e in db.Chamado where obra.IDO == e.ObraDestino.IDO && e.StatusChamado != true && e.TipoChamado == tipoChamado select e).ToList();
             }
             foreach (var chamado in chamados)
             {
