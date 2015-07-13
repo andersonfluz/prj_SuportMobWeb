@@ -62,30 +62,35 @@ namespace prj_chamadosBRA.Controllers
                     Session["PerfilUsuario"] = user.PerfilUsuario;
                     switch (Session["PerfilUsuario"].ToString())
                     {
-                        case "1":
+                        case "1": //Administrador
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = true;
                             Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
                             break;
-                        case "2":
+                        case "2": //SuperiorBRA
                             Session["SetorVisivel"] = false;
                             Session["ObraVisivel"] = true;
                             Session["TipoChamadoVisivel"] = false;
+                            Session["SelecionarResponsavelAbertura"] = false;
                             break;
-                        case "3":
+                        case "3": //Tecnico
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = false;
                             Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
                             break;
-                        case "4":
+                        case "4": //Usuário
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = false;
                             Session["TipoChamadoVisivel"] = false;
+                            Session["SelecionarResponsavelAbertura"] = false;
                             break;
-                        case "5":
+                        case "5": //Gestor
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = false;
                             Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
                             break;
                         default:
                             Session["SetorVisivel"] = true;

@@ -28,6 +28,7 @@ namespace prj_chamadosBRA
                       "~/Scripts/jquery.maskedinput.js",
                       "~/Scripts/jquery.validate.js",
                       "~/Scripts/jquery.validate.unobtrusive.js",
+                      "~/Scripts/jquery-ui-1.11.4.min.js",
                       "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/mvcfoolproof").Include(
@@ -44,6 +45,8 @@ namespace prj_chamadosBRA
                       "~/Content/bootstrap-datepicker3.css",
                       "~/Content/bootstrap-datetimepicker.min.css",
                       "~/Content/datepicker.css",
+                      "~/Content/themes/base/accordion.css",
+                      "~/Content/themes/base/all.css",
                       "~/Content/site.css"));
         }
     }

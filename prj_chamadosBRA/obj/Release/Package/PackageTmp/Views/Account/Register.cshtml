@@ -105,6 +105,7 @@
                 success: function (setores) {
                     // states contains the JSON formatted list
                     // of states passed from the controller
+                    $("#setor").append('<option value="">-- Selecione o Setor --</option>');
                     $.each(setores, function (i, setor) {
                         $("#setor").append('<option value="'
                         + setor.Value + '">'

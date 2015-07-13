@@ -52,6 +52,7 @@
 
             </div>
         }
+
         @if ((bool)Session["ObraVisivel"])
         {
             <div class="form-group">
@@ -85,6 +86,42 @@
                 </div>
             }
         }
+
+        @if ((bool)Session["SelecionarResponsavelAbertura"])
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#pnlResponsavelAbertura">Abrir chamado em nome de outro usuário?</a>
+                    </h4>
+                </div>
+                <div id="pnlResponsavelAbertura" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "4")
+                        {
+                            <div class="form-group">
+                                @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO().retornarUsuariosObra(ViewBag.SetorDestino), "Id", "Nome"), "-- Selecione o usuário --", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione a obra primeiro --", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        <p></p>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" id="salvar" value="Salvar" class="btn btn-default" />
@@ -121,6 +158,20 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
+        $(function () {
+            $("#accordion").accordion({
+                collapsible: true,
+                autoHeight: false,
+                active: false
+            });
+        });
+        $(document).ready(function () {
+            $(".hide-btn").click(function () {
+                $("#pnlResponsavelAbertura").collapse('hide');
+            });
+        });
+    </script>
+    <script type="text/javascript">
         $(window).load(function () {
             if ($('#notice').val() != "") {
                 //alert($('#notice').val());
@@ -131,6 +182,7 @@
             //Dropdownlist Selectedchange event
             $("#ObraDestino").change(function () {
                 $("#SetorDestino").empty();
+                $("#ResponsavelAberturaChamado").empty();
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("RetornaSetoresPorObra", "Chamado")',
@@ -147,12 +199,28 @@
                         });
                     },
                     error: function (ex) {
-                        alert('Failed to retrieve setores.' + ex);
+                    }
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaUsuariosPorObra", "Chamado")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#ObraDestino").val() },
+                    success: function (usaurios) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $("#ResponsavelAberturaChamado").append('<option value="">-- Selecione o usuário --</option>');
+                        $.each(usaurios, function (i, usuario) {
+                            $("#ResponsavelAberturaChamado").append('<option value="'
+                            + usuario.Value + '">'
+                            + usuario.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
                     }
                 });
                 return false;
             })
         });
-
     </script>
 }

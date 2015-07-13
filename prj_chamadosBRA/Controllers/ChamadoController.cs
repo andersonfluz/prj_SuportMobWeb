@@ -74,7 +74,7 @@ namespace prj_chamadosBRA.Controllers
                             isMatriz = true;
                         }
                     }
-                    if (isMatriz)
+                    if (isMatriz && Session["PerfilUsuario"].ToString().Equals("1"))
                     {
                         ViewBag.NomeObra = "";
                         int pageSize = 7;
@@ -168,6 +168,20 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
+        public ActionResult RetornaUsuariosPorObra(string selectedValue)
+        {
+            try
+            {
+                List<ApplicationUser> usuarios = new ApplicationUserDAO(db).retornarUsuariosObra(Convert.ToInt32(selectedValue));
+                ActionResult json = Json(new SelectList(usuarios, "Id", "Nome"));
+                return json;
+            }
+            catch
+            {
+                return Json(new SelectList(String.Empty, "Id", "Nome")); ;
+            }
+        }
+
         public ActionResult RetornaResponsaveisPorSetor(string selectedValue)
         {
             try
@@ -185,7 +199,7 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado/Create
         [HttpPost]
-        public async Task<ActionResult> Create(Chamado chamado, HttpPostedFileBase upload, String SetorDestino, String ObraDestino)
+        public async Task<ActionResult> Create(Chamado chamado, HttpPostedFileBase upload, String SetorDestino, String ObraDestino, String ResponsavelAberturaChamado)
         {
             try
             {
@@ -195,6 +209,7 @@ namespace prj_chamadosBRA.Controllers
                 this.ModelState.Remove("Classificacao");
                 this.ModelState.Remove("SubClassificacao");
                 this.ModelState.Remove("Solucao");
+                this.ModelState.Remove("ResponsavelAberturaChamado");
                 ApplicationUser user = manager.FindById(User.Identity.GetUserId());
                 chamado.DataHoraAbertura = DateTime.Now;
                 chamado.StatusChamado = false;
@@ -204,7 +219,23 @@ namespace prj_chamadosBRA.Controllers
                 }
                 if (user != null)
                 {
-                    chamado.ResponsavelAberturaChamado = user;
+                    chamado.ResponsavelCriacaoChamado = user;
+                    if (ResponsavelAberturaChamado != null)
+                    {
+                        if (ResponsavelAberturaChamado != "")
+                        {
+                            chamado.ResponsavelAberturaChamado = manager.FindById(ResponsavelAberturaChamado);
+                        }
+                        else
+                        {
+                            chamado.ResponsavelAberturaChamado = user;
+                        }
+                    }
+                    else
+                    {
+                        chamado.ResponsavelAberturaChamado = user;
+                    }
+
                 }
                 if (ModelState.IsValid)
                 {
@@ -246,8 +277,7 @@ namespace prj_chamadosBRA.Controllers
                         chamado.Anexos = new List<ChamadoAnexo> { anexo };
                     }
                     cDAO.salvarChamado(chamado);
-                    EmailService email = new EmailService();
-                    await email.envioEmailAberturaChamado(chamado);
+                    await EmailService.envioEmailAberturaChamado(chamado);
                     TempData["notice"] = "Chamado Criado com Sucesso!";
                     return RedirectToAction("Index");
                 }
@@ -370,7 +400,7 @@ namespace prj_chamadosBRA.Controllers
                         chamadoOrigem.ResponsavelChamado = null;
                         cDAO.atualizarChamado(id, chamadoOrigem);
                         chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
-                        await new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                        await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
                     }
                 }
                 else if (chamadoOrigem.SetorDestino == null && SetorDestino != null)
@@ -379,7 +409,7 @@ namespace prj_chamadosBRA.Controllers
                     chamadoOrigem.SetorDestino = setor;
                     cDAO.atualizarChamado(id, chamadoOrigem);
                     chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
-                    await new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                    await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
                 }
 
                 //Atualização de Responsavel pelo Chamado
@@ -398,7 +428,7 @@ namespace prj_chamadosBRA.Controllers
                             chamadoOrigem.ResponsavelChamado = user;
                             cDAO.atualizarChamado(id, chamadoOrigem);
                             chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
-                            await new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                            await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
 
                         }
                     }
@@ -409,13 +439,13 @@ namespace prj_chamadosBRA.Controllers
                     chamadoOrigem.ResponsavelChamado = user;
                     cDAO.atualizarChamado(id, chamadoOrigem);
                     chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
-                    await new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                    await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
                 }
 
                 if (informacoesAcompanhamento == null || informacoesAcompanhamento != "")
                 {
                     chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), informacoesAcompanhamento, chamadoOrigem);
-                    await new EmailService().envioEmailDirecionamentoChamado(chamadoHistorico);
+                    await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
                 }
                 TempData["notice"] = "Chamado Atualizado Com Sucesso!";
                 return RedirectToAction("Index");
@@ -460,7 +490,7 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado/Encerrar/5
         [HttpPost]
-        public ActionResult Encerrar(int id, Chamado chamado, String data, String hora)
+        public async Task<ActionResult> Encerrar(int id, Chamado chamado, String data, String hora)
         {
             try
             {
@@ -474,9 +504,7 @@ namespace prj_chamadosBRA.Controllers
                 chamadoOriginal.Solucao = chamado.Solucao;
                 chamadoOriginal.DataHoraBaixa = DateTime.Now;
                 new ChamadoDAO(db).encerrarChamado(id, chamadoOriginal);
-                new EmailService().envioEmailEncerramentoChamado(chamadoOriginal);
-                //string js = @"<script>alert('Chamado Encerrado com Sucesso!');window.location = '..\\Chamado\\Index';</script>";
-                //return JavaScript(js);
+                await EmailService.envioEmailEncerramentoChamado(chamadoOriginal);
                 TempData["notice"] = "Chamado Encerrado com Sucesso!";
                 return RedirectToAction("Index");
             }

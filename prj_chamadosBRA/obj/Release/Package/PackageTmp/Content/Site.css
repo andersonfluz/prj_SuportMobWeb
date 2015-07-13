@@ -23,30 +23,45 @@ textarea {
     max-width: 280px;
 }
 
-.navbar-inverse{
+.navbar-inverse {
     border-color: #0a9ec7;
     background-color: #B7181D;
 }
 
-.btn-default{
+.btn-default {
     color: #FFFFFF;
     background-color: #B7181D;
 }
 
-.btn-lg{
-    background-color: #B7181D;    
-    border-color:#B75A5D;
+.btn-lg {
+    background-color: #B7181D;
+    border-color: #B75A5D;
 }
 
-.btn:hover{
-    background-color: #ADADAD;    
-    border-color:#ADADAD;
+.btn:hover {
+    background-color: #ADADAD;
+    border-color: #ADADAD;
 }
 
 .navbar-inverse .navbar-nav > li > a {
-  color: #FFFFFF;
+    color: #FFFFFF;
 }
 
-.navbar-inverse .navbar-nav > li > a:hover {
-  color: #999999;
+    .navbar-inverse .navbar-nav > li > a:hover {
+        color: #999999;
+    }
+
+.modal-dialog {
+    width: 70%;
+}
+
+.tab-pane{
+  height:150px;
+  overflow-y:scroll;
+  width:100%;
+}
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    background-color: #B7181D;
+    border-color: #B7181D;
 }

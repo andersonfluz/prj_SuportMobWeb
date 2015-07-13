@@ -54,5 +54,6 @@ namespace prj_chamadosBRA.Models
         [Display(Name = "SubClassificação do Chamado")]
         [RequiredIf("StatusChamado", true, ErrorMessage = "Informe a SubClassificação do Chamado")]
         public int? SubClassificacao { get; set; }
+        public virtual ApplicationUser ResponsavelCriacaoChamado { get; set; }
     }
 }

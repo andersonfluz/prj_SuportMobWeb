@@ -9,27 +9,39 @@ using System.Web.Helpers;
 
 namespace prj_chamadosBRA.Utils
 {
-    public class EmailService
+    public static class EmailService
     {
-        public EmailService()
-        {
-            WebMail.SmtpServer = "smtp.office365.com";
-            WebMail.SmtpPort = 587;
-            WebMail.EnableSsl = true;
-            WebMail.UserName = "notify@cav-ba.com.br";
-            WebMail.From = "notify@cav-ba.com.br";
-            WebMail.Password = "Notificacoes2013";
-        }
 
-        public async Task<bool> envioEmailAberturaChamado(Chamado chamado)
+
+        public static async Task<bool> envioEmailAberturaChamado(Chamado chamado)
         {
             try
             {
+                WebMail.SmtpServer = "smtp.office365.com";
+                WebMail.SmtpPort = 587;
+                WebMail.EnableSsl = true;
+                WebMail.UserName = "notify@cav-ba.com.br";
+                WebMail.From = "notify@cav-ba.com.br";
+                WebMail.Password = "Notificacoes2013";
+
                 //string para = chamado.ResponsavelAberturaChamado.UserName;
-                string para = "andersonfluz@outlook.com";
+                string para = chamado.ResponsavelAberturaChamado.UserName;
+                string copia = "";
+                if (chamado.SetorDestino == null)
+                {
+                    List<Setor> setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
+                    foreach (var setor in setores)
+                    {
+                        copia = copia + setor.EmailSetor + ";";
+                    }
+                }
+                else
+                {
+                    copia = chamado.SetorDestino.EmailSetor;
+                }
                 string assunto = "ChamadosBRA - Notificação Abertura Chamado N. " + chamado.Id;
                 string corpoMensagem = montarCorpoMensagemAbertura(chamado);
-                WebMail.Send(para, assunto, corpoMensagem);
+                WebMail.Send(para, assunto, corpoMensagem, null, copia);
                 return true;
             }
             catch
@@ -38,15 +50,39 @@ namespace prj_chamadosBRA.Utils
             }
         }
 
-        public async Task<bool> envioEmailDirecionamentoChamado(ChamadoHistorico chamadoHistorico)
+        public static async Task<bool> envioEmailDirecionamentoChamado(ChamadoHistorico chamadoHistorico)
         {
             try
             {
+                WebMail.SmtpServer = "smtp.office365.com";
+                WebMail.SmtpPort = 587;
+                WebMail.EnableSsl = true;
+                WebMail.UserName = "notify@cav-ba.com.br";
+                WebMail.From = "notify@cav-ba.com.br";
+                WebMail.Password = "Notificacoes2013";
+
                 //string para = chamado.ResponsavelAberturaChamado.UserName;
-                string para = "andersonfluz@outlook.com";
+                string para = chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName;
+                string copia = "";
+                if (chamadoHistorico.chamado.ResponsavelChamado != null)
+                {
+                    copia = chamadoHistorico.chamado.ResponsavelChamado.UserName;
+                }
+                else if (chamadoHistorico.chamado.SetorDestino == null)
+                {
+                    List<Setor> setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
+                    foreach (var setor in setores)
+                    {
+                        copia = copia + setor.EmailSetor + ";";
+                    }
+                }
+                else
+                {
+                    copia = chamadoHistorico.chamado.SetorDestino.EmailSetor;
+                }
                 string assunto = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
                 string corpoMensagem = montarCorpoMensagemAlteracao(chamadoHistorico);
-                WebMail.Send(para, assunto, corpoMensagem);
+                WebMail.Send(para, assunto, corpoMensagem, null, copia);
                 return true;
             }
             catch
@@ -55,15 +91,39 @@ namespace prj_chamadosBRA.Utils
             }
         }
 
-        public async Task<bool> envioEmailAtualizacaoChamado(ChamadoHistorico chamadoHistorico)
+        public static async Task<bool> envioEmailAtualizacaoChamado(ChamadoHistorico chamadoHistorico)
         {
             try
             {
+                WebMail.SmtpServer = "smtp.office365.com";
+                WebMail.SmtpPort = 587;
+                WebMail.EnableSsl = true;
+                WebMail.UserName = "notify@cav-ba.com.br";
+                WebMail.From = "notify@cav-ba.com.br";
+                WebMail.Password = "Notificacoes2013";
+
                 //string para = chamado.ResponsavelAberturaChamado.UserName;
                 string para = "andersonfluz@outlook.com";
+                string copia = "";
+                if (chamadoHistorico.chamado.ResponsavelChamado != null)
+                {
+                    copia = chamadoHistorico.chamado.ResponsavelChamado.UserName;
+                }
+                else if (chamadoHistorico.chamado.SetorDestino == null)
+                {
+                    List<Setor> setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
+                    foreach (var setor in setores)
+                    {
+                        copia = copia + setor.EmailSetor + ";";
+                    }
+                }
+                else
+                {
+                    copia = chamadoHistorico.chamado.SetorDestino.EmailSetor;
+                }
                 string assunto = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
                 string corpoMensagem = montarCorpoMensagemAlteracao(chamadoHistorico);
-                WebMail.Send(para, assunto, corpoMensagem);
+                WebMail.Send(para, assunto, corpoMensagem, null, copia);
                 return true;
             }
             catch
@@ -72,15 +132,27 @@ namespace prj_chamadosBRA.Utils
             }
         }
 
-        public async Task<bool> envioEmailEncerramentoChamado(Chamado chamado)
+        public static async Task<bool> envioEmailEncerramentoChamado(Chamado chamado)
         {
             try
             {
+                WebMail.SmtpServer = "smtp.office365.com";
+                WebMail.SmtpPort = 587;
+                WebMail.EnableSsl = true;
+                WebMail.UserName = "notify@cav-ba.com.br";
+                WebMail.From = "notify@cav-ba.com.br";
+                WebMail.Password = "Notificacoes2013";
+
                 //string para = chamado.ResponsavelAberturaChamado.UserName;
                 string para = "andersonfluz@outlook.com";
+                string copia = null;
+                if (chamado.ResponsavelChamado != null)
+                {
+                    copia = chamado.ResponsavelChamado.UserName;
+                }
                 string assunto = "ChamadosBRA - Notificação Encerramento do Chamado N. " + chamado.Id;
                 string corpoMensagem = montarCorpoMensagemEncerramento(chamado);
-                WebMail.Send(para, assunto, corpoMensagem);
+                WebMail.Send(para, assunto, corpoMensagem, null, copia);
                 return true;
             }
             catch
@@ -89,7 +161,7 @@ namespace prj_chamadosBRA.Utils
             }
         }
 
-        public String montarCorpoMensagemAbertura(Chamado chamado)
+        public static String montarCorpoMensagemAbertura(Chamado chamado)
         {
             string mensagem = "Nova Solicitação N. " + chamado.Id;
             string mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
@@ -101,7 +173,7 @@ namespace prj_chamadosBRA.Utils
             string responsavelAbertura = chamado.ResponsavelAberturaChamado.Nome;
             string responsavelChamado = chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamado.ResponsavelChamado.Nome;
             string statusChamado = chamado.StatusChamado == null || chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
-            
+
 
             string corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
                                    + "<tbody>"
@@ -200,14 +272,14 @@ namespace prj_chamadosBRA.Utils
                                    + statusChamado + "</td>"
                                    + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
                                    + "&nbsp;</td>"
-                                   + "</tr>"                                   
+                                   + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
                                    + "</div>";
             return corpoMensagem;
         }
 
-        public String montarCorpoMensagemEncerramento(Chamado chamado)
+        public static String montarCorpoMensagemEncerramento(Chamado chamado)
         {
             string mensagem = "Encerramento Solicitação N. " + chamado.Id;
             string mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
@@ -359,7 +431,7 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        public String montarCorpoMensagemAlteracao(ChamadoHistorico chamadoHistorico)
+        public static String montarCorpoMensagemAlteracao(ChamadoHistorico chamadoHistorico)
         {
             string mensagem = "Alteração da Solicitação N. " + chamadoHistorico.chamado.Id;
             string mensagemSetorObra = chamadoHistorico.chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamadoHistorico.chamado.ObraDestino.Descricao : chamadoHistorico.chamado.SetorDestino.Descricao + " - " + chamadoHistorico.chamado.ObraDestino.Descricao;
@@ -370,7 +442,7 @@ namespace prj_chamadosBRA.Utils
             string setorDestino = chamadoHistorico.chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamadoHistorico.chamado.SetorDestino.Descricao;
             string responsavelAbertura = chamadoHistorico.chamado.ResponsavelAberturaChamado.Nome;
             string responsavelChamado = chamadoHistorico.chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamadoHistorico.chamado.ResponsavelChamado.Nome;
-            string statusChamado = chamadoHistorico.chamado.StatusChamado == null || false ? "Chamado Aberto" : "Chamado Fechado";
+            string statusChamado = chamadoHistorico.chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
             string observacoesInterna = chamadoHistorico.chamado.ObsevacaoInterna == null ? "" : chamadoHistorico.chamado.ObsevacaoInterna;
             string historico = chamadoHistorico.Historico;
 

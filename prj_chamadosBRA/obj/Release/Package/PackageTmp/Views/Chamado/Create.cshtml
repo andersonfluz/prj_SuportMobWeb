@@ -1,13 +1,10 @@
 ﻿@model prj_chamadosBRA.Models.Chamado
-
 @{
     ViewBag.Title = "Novo Chamado";
 }
-
 <h2>Novo Chamado</h2>
 
-
-@using (Html.BeginForm("Create", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Create", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "create" }))
 {
     @Html.AntiForgeryToken()
 
@@ -21,7 +18,6 @@
                 @Html.ValidationMessageFor(model => model.Assunto, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -29,7 +25,6 @@
                 @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.Observacao, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -37,7 +32,6 @@
                 @Html.ValidationMessageFor(model => model.Observacao, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.Label("Anexo", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -45,13 +39,27 @@
                 @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
             </div>
         </div>
+        @if ((bool)Session["TipoChamadoVisivel"])
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.TipoChamado, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>&nbsp;Totvs RM</label>
+                    <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                    @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>&nbsp;Outros</label>
+                    <p>@Html.ValidationMessageFor(model => model.TipoChamado, "", new { @class = "text-danger" })</p>
+                </div>
+
+            </div>
+        }
 
         @if ((bool)Session["ObraVisivel"])
         {
             <div class="form-group">
                 @Html.Label("Obra Destino", new { @class = "col-md-2 control-label" })
                 <div class="col-md-10">
-                    @Html.DropDownList("ObraDestino", new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.ObraDestino, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.ObraDestino, "", new { @class = "text-danger" })
                 </div>
             </div>
         }
@@ -62,7 +70,8 @@
                 <div class="form-group">
                     @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        @Html.DropDownList("SetorDestino", new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetoresPorObra(ViewBag.SetorDestino), "Id", "Nome"), new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.SetorDestino, new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetoresPorObra(ViewBag.SetorDestino), "Id", "Nome"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.SetorDestino, "", new { @class = "text-danger validacaoSetor" })
                     </div>
                 </div>
             }
@@ -71,30 +80,109 @@
                 <div class="form-group">
                     @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        @Html.DropDownList("SetorDestino", new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.SetorDestino, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.SetorDestino, "", new { @class = "text-danger" })
                     </div>
                 </div>
             }
         }
+
+        @if ((bool)Session["SelecionarResponsavelAbertura"])
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#pnlResponsavelAbertura">Abrir chamado em nome de outro usuário?</a>
+                    </h4>
+                </div>
+                <div id="pnlResponsavelAbertura" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "4")
+                        {
+                            <div class="form-group">
+                                @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO().retornarUsuariosObra(ViewBag.SetorDestino), "Id", "Nome"), "-- Selecione o usuário --", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione a obra primeiro --", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        <p></p>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Salvar" class="btn btn-default" />
+                <input type="submit" id="salvar" value="Salvar" class="btn btn-default" />
             </div>
         </div>
     </div>
 }
-
 <div>
     @Html.ActionLink("Voltar para Acompanhamento", "Index")
 </div>
+@if (TempData["notice"] != null)
+{
+    <div id="modalNotice" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Atenção</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger"><strong>@TempData["notice"]</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
+        $(function () {
+            $("#accordion").accordion({
+                collapsible: true,
+                autoHeight: false,
+                active: false
+            });
+        });
+        $(document).ready(function () {
+            $(".hide-btn").click(function () {
+                $("#pnlResponsavelAbertura").collapse('hide');
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(window).load(function () {
+            if ($('#notice').val() != "") {
+                //alert($('#notice').val());
+                $('#modalNotice').modal('show');
+            }
+        });
         $(document).ready(function () {
             //Dropdownlist Selectedchange event
             $("#ObraDestino").change(function () {
                 $("#SetorDestino").empty();
+                $("#ResponsavelAberturaChamado").empty();
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("RetornaSetoresPorObra", "Chamado")',
@@ -103,6 +191,7 @@
                     success: function (setores) {
                         // states contains the JSON formatted list
                         // of states passed from the controller
+                        $("#SetorDestino").append('<option value="">-- Selecione o Setor --</option>');
                         $.each(setores, function (i, setor) {
                             $("#SetorDestino").append('<option value="'
                             + setor.Value + '">'
@@ -110,7 +199,24 @@
                         });
                     },
                     error: function (ex) {
-                        alert('Failed to retrieve setores.' + ex);
+                    }
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaUsuariosPorObra", "Chamado")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#ObraDestino").val() },
+                    success: function (usaurios) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $("#ResponsavelAberturaChamado").append('<option value="">-- Selecione o usuário --</option>');
+                        $.each(usaurios, function (i, usuario) {
+                            $("#ResponsavelAberturaChamado").append('<option value="'
+                            + usuario.Value + '">'
+                            + usuario.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
                     }
                 });
                 return false;
