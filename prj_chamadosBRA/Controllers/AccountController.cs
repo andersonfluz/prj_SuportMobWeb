@@ -12,6 +12,8 @@ using prj_chamadosBRA.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using prj_chamadosBRA.Repositories;
 using System.Collections.Generic;
+using prj_chamadosBRA.Utils;
+using prj_chamadosBRA.GN;
 
 namespace prj_chamadosBRA.Controllers
 {
@@ -43,6 +45,17 @@ namespace prj_chamadosBRA.Controllers
 
             ViewBag.ReturnUrl = returnUrl;
             return View();
+        }
+
+        //
+        // GET: /Account/Index
+        [AllowAnonymous]
+        public ActionResult Index()
+        {
+            ApplicationDbContext context = new ApplicationDbContext();
+            int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
+            List<ApplicationUser> users = new ApplicationUserGN(context).usuariosPorPerfil(perfil, User.Identity.GetUserId());
+            return View(users);
         }
 
         //
@@ -154,7 +167,7 @@ namespace prj_chamadosBRA.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Register(RegisterViewModel model, String obra, String setor)
+        public async Task<ActionResult> Register(RegisterViewModel model, String obra, String setor)
         {
             try
             {
@@ -177,6 +190,7 @@ namespace prj_chamadosBRA.Controllers
                                 usuarioSetor.Setor = Convert.ToInt32(setor);
                                 if (new UsuarioSetorDAO(context).salvarUsuarioSetor(usuarioSetor))
                                 {
+                                    await EmailService.envioEmailCriacaoUsuario(user);
                                     TempData["notice"] = "Usuário criado com Sucesso!";
                                     return RedirectToAction("Index", "Home");
                                 }

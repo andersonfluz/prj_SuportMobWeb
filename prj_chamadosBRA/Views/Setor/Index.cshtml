@@ -1,0 +1,57 @@
+﻿@model IEnumerable<prj_chamadosBRA.Models.Setor>
+
+@{
+    ViewBag.Title = "Setores";
+}
+
+<h2>Setores</h2>
+
+<p>
+    @*@Html.ActionLink("Cadastrar Setor", "Create", null, new { @class = "btn btn-default" })*@
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Descricao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Responsavel)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EmailResponsavel)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EmailSetor)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nome)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descricao)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Responsavel)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EmailResponsavel)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EmailSetor)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

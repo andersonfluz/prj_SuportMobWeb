@@ -24,7 +24,6 @@ namespace prj_chamadosBRA.Utils
                 WebMail.From = "notify@cav-ba.com.br";
                 WebMail.Password = "Notificacoes2013";
 
-                //string para = chamado.ResponsavelAberturaChamado.UserName;
                 string para = chamado.ResponsavelAberturaChamado.UserName;
                 string copia = "";
                 if (chamado.SetorDestino == null)
@@ -61,7 +60,6 @@ namespace prj_chamadosBRA.Utils
                 WebMail.From = "notify@cav-ba.com.br";
                 WebMail.Password = "Notificacoes2013";
 
-                //string para = chamado.ResponsavelAberturaChamado.UserName;
                 string para = chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName;
                 string copia = "";
                 if (chamadoHistorico.chamado.ResponsavelChamado != null)
@@ -102,8 +100,7 @@ namespace prj_chamadosBRA.Utils
                 WebMail.From = "notify@cav-ba.com.br";
                 WebMail.Password = "Notificacoes2013";
 
-                //string para = chamado.ResponsavelAberturaChamado.UserName;
-                string para = "andersonfluz@outlook.com";
+                string para = chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName;
                 string copia = "";
                 if (chamadoHistorico.chamado.ResponsavelChamado != null)
                 {
@@ -143,8 +140,7 @@ namespace prj_chamadosBRA.Utils
                 WebMail.From = "notify@cav-ba.com.br";
                 WebMail.Password = "Notificacoes2013";
 
-                //string para = chamado.ResponsavelAberturaChamado.UserName;
-                string para = "andersonfluz@outlook.com";
+                string para = chamado.ResponsavelAberturaChamado.UserName;
                 string copia = null;
                 if (chamado.ResponsavelChamado != null)
                 {
@@ -161,7 +157,30 @@ namespace prj_chamadosBRA.Utils
             }
         }
 
-        public static String montarCorpoMensagemAbertura(Chamado chamado)
+        public static async Task<bool> envioEmailCriacaoUsuario(ApplicationUser user)
+        {
+            try
+            {
+                WebMail.SmtpServer = "smtp.office365.com";
+                WebMail.SmtpPort = 587;
+                WebMail.EnableSsl = true;
+                WebMail.UserName = "notify@cav-ba.com.br";
+                WebMail.From = "notify@cav-ba.com.br";
+                WebMail.Password = "Notificacoes2013";
+
+                string para = user.UserName;
+                string assunto = "ChamadosBRA - Criação de novo usuario na plataforma";
+                string corpoMensagem = montarCorpoMensagemCriacaoUsuario(user);
+                WebMail.Send(para, assunto, corpoMensagem, null);
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static String montarCorpoMensagemAbertura(Chamado chamado)
         {
             string mensagem = "Nova Solicitação N. " + chamado.Id;
             string mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
@@ -279,7 +298,7 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        public static String montarCorpoMensagemEncerramento(Chamado chamado)
+        private static String montarCorpoMensagemEncerramento(Chamado chamado)
         {
             string mensagem = "Encerramento Solicitação N. " + chamado.Id;
             string mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
@@ -431,7 +450,7 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        public static String montarCorpoMensagemAlteracao(ChamadoHistorico chamadoHistorico)
+        private static String montarCorpoMensagemAlteracao(ChamadoHistorico chamadoHistorico)
         {
             string mensagem = "Alteração da Solicitação N. " + chamadoHistorico.chamado.Id;
             string mensagemSetorObra = chamadoHistorico.chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamadoHistorico.chamado.ObraDestino.Descricao : chamadoHistorico.chamado.SetorDestino.Descricao + " - " + chamadoHistorico.chamado.ObraDestino.Descricao;
@@ -563,6 +582,55 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "</div>";
+            return corpoMensagem;
+        }
+
+        private static String montarCorpoMensagemCriacaoUsuario(ApplicationUser user)
+        {
+            string corpoMensagem = "<div>"
+                                + "<table cellspacing='0' cellpadding='0' style='width: 100%'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td style='color: rgb(0,0,0); font-family: verdana; font-size: 16pt'>"
+                                + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td style='padding-right: 2px; padding-left: 2px'>"
+                                + "ChamadosBRA - "
+                                + "Criação de Usuario"
+                                + "</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "<table cellspacing='0' cellpadding='0' style='width: 100%; margin-top: 6px; border-bottom-color: rgb(156,163,173); border-bottom-width: 1px; border-bottom-style: solid'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td colspan='3'>"
+                                + "Parabens "+user.Nome+" ! <br />"
+                                + "<br />"
+                                + "Seu acesso a ferramenta de chamados já está liberado. Para acessa-la siga as "
+                                + "instruções abaixo: <br />"
+                                + "<br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. Abra seu navegador de internet e digite o endereço: "
+                                + "<a href='http://portal.colegioantoniovieira.com.br/ChamadosBRA/'>http://portal.colegioantoniovieira.com.br/ChamadosBRA/</a>"
+                                + "<br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. No campo usuário digite seu email: "+ user.UserName +"  <br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. E para o primeiro acesso, utilize a senha: 123456 <br />"
+                                + "<br />"
+                                + "Pronto! Já poderá utilizar a ferramenta. Sugerimos que altere imediatamente sua "
+                                + "senha."
+                                + "<br />"
+                                + "<br />"
+                                + "Equipe de suporte CAS.<br />"
+                                + "&nbsp;</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "</div>";
             return corpoMensagem;
         }
     }

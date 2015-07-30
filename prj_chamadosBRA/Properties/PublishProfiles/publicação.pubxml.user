@@ -82,7 +82,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/25/2015 15:26:35</publishTime>
     </File>
     <File Include="bin/prj_chamadosBRA.dll">
-      <publishTime>07/13/2015 09:30:46</publishTime>
+      <publishTime>07/21/2015 17:46:32</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
       <publishTime>06/18/2015 12:42:42</publishTime>

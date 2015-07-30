@@ -7,6 +7,7 @@ using System.Web;
 
 namespace prj_chamadosBRA.Models
 {
+    [Table("CentroAdministrativo")]
     public class CentroAdministrativo
     {
         [Key]

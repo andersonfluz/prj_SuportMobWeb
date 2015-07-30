@@ -69,7 +69,7 @@ namespace prj_chamadosBRA.Controllers
                     Boolean isMatriz = false;
                     foreach (var obra in obras)
                     {
-                        if (obra.Matriz.Value)
+                        if (obra.Matriz)
                         {
                             isMatriz = true;
                         }

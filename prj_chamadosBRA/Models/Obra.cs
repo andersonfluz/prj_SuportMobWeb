@@ -13,7 +13,7 @@ namespace prj_chamadosBRA.Models
         [Key]
         public Int32 IDO { get; set; }
         public string Descricao { get; set; }
-        public Boolean? Matriz { get; set; }
-        public int idCentroAdministrativo { get; set; }
+        public Boolean Matriz { get; set; }
+        public virtual CentroAdministrativo CentroAdministrativo { get; set; }
     }
 }

@@ -163,7 +163,7 @@
             $(window).load(function () {
                 if ($('#notice').val() != "") {
                     //alert($('#notice').val());
-                    $('#modalNotice').modal('show');
+                    $('#modalNotice').modal({ show: true });
                 }
             });
 
@@ -177,7 +177,7 @@
                     $(".details").click(function () {
                         var id = $(this).attr("data-id");
                         $("#modal").load("../Chamado/Details/" + id, function () {
-                            $("#modal").modal('show');
+                            $("#modal").modal({ show: true });
                         })
                     });
                 })
