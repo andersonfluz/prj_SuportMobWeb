@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using prj_chamadosBRA.GN;
 using prj_chamadosBRA.Models;
 using prj_chamadosBRA.Repositories;
 using System;
@@ -11,57 +10,44 @@ using System.Web.Mvc;
 
 namespace prj_chamadosBRA.Controllers
 {
-    public class SetorController : Controller
+    public class ClassificacaoController : Controller
     {
         private UserManager<ApplicationUser> manager;
         private ApplicationDbContext db = new ApplicationDbContext();
-        public SetorController()
+        public ClassificacaoController()
         {
             manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
         }
-
-
-        // GET: Setor
+        // GET: Classificacao
         public ActionResult Index()
-        {         
-            int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
-            List<Setor> setores = new SetorGN(db).setoresPorPerfil(perfil, User.Identity.GetUserId());
-            if (setores == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                return View(setores);
-            }
-            
+        {
+            List<ChamadoClassificacao> classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoes();
+            return View(classificacoes);
         }
 
-        // GET: Setor/Details/5
+        // GET: Classificacao/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: Setor/Create
+        // GET: Classificacao/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Setor/Create
+        // POST: Classificacao/Create
         [HttpPost]
-        public ActionResult Create(Setor setor, String obra)
+        public ActionResult Create(ChamadoClassificacao ChamadoClassificacao)
         {
             try
             {
-                this.ModelState.Remove("obra");
                 if (ModelState.IsValid)
                 {
-                    setor.obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(obra));
-                    if (new SetorDAO(db).salvarSetor(setor))
+                    if (new ChamadoClassificacaoDAO(db).salvarClassificacao(ChamadoClassificacao))
                     {
-                        TempData["notice"] = "Setor criado com Sucesso!";
+                        TempData["notice"] = "Classificação criado com Sucesso!";
                         return RedirectToAction("Index");
                     }
                     else
@@ -85,13 +71,13 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
-        // GET: Setor/Edit/5
+        // GET: Classificacao/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Setor/Edit/5
+        // POST: Classificacao/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -107,13 +93,13 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
-        // GET: Setor/Delete/5
+        // GET: Classificacao/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Setor/Delete/5
+        // POST: Classificacao/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {

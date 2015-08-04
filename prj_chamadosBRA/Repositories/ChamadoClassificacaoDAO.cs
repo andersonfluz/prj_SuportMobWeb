@@ -30,5 +30,12 @@ namespace prj_chamadosBRA.Repositories
             List<ChamadoClassificacao> classificacoes = (from e in db.ChamadoClassificacao select e).ToList();
             return classificacoes;
         }
+
+        public Boolean salvarClassificacao(ChamadoClassificacao classificacao)
+        {
+            db.ChamadoClassificacao.Add(classificacao);
+            db.SaveChanges();
+            return true;
+        }
     }
 }

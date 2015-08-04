@@ -210,12 +210,13 @@ namespace prj_chamadosBRA.Controllers
                 this.ModelState.Remove("SubClassificacao");
                 this.ModelState.Remove("Solucao");
                 this.ModelState.Remove("ResponsavelAberturaChamado");
+                this.ModelState.Remove("TipoChamado");
                 ApplicationUser user = manager.FindById(User.Identity.GetUserId());
                 chamado.DataHoraAbertura = DateTime.Now;
                 chamado.StatusChamado = false;
                 if (chamado.TipoChamado == null)
                 {
-                    chamado.TipoChamado = -1;
+                    chamado.TipoChamado = 2;
                 }
                 if (user != null)
                 {
@@ -384,7 +385,7 @@ namespace prj_chamadosBRA.Controllers
                     {
                         chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Tipo de Chamado foi alterado para Totvs RM", chamadoOrigem);
                     }
-                    else
+                    else if (chamado.TipoChamado == 2)
                     {
                         chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), "O Tipo de Chamado foi alterado para Outros", chamadoOrigem);
                     }
@@ -515,7 +516,15 @@ namespace prj_chamadosBRA.Controllers
             }
             catch (DbEntityValidationException ve)
             {
-                TempData["notice"] = "Erro no Encerramento. Verifique o preenchimento dos campos do encerramento.";
+                string erro = "";
+                foreach (var eve in ve.EntityValidationErrors)
+                {                    
+                    foreach (var ev in eve.ValidationErrors)
+                    {
+                        erro = erro + "O campo: " + ev.PropertyName + " deu erro: " + ev.ErrorMessage;
+                    }
+                }
+                TempData["notice"] = "Erro no Encerramento: " + erro;
                 return Redirect("..\\Edit\\" + id);
             }
             catch (Exception e)

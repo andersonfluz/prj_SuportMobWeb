@@ -1,0 +1,45 @@
+﻿@model IEnumerable<prj_chamadosBRA.Models.Obra>
+
+@{
+    ViewBag.Title = "Obras";
+}
+
+<h2>Obras</h2>
+
+<p>
+    @Html.ActionLink("Nova Obra", "Create", null, new { @class = "btn btn-default" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Descricao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Matriz)
+        </th>
+        <th>
+            @Html.DisplayName("Centro Administrativo")
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descricao)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Matriz)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CentroAdministrativo.Nome)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.IDO }) |
+            @Html.ActionLink("Details", "Details", new { id=item.IDO }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.IDO })
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using prj_chamadosBRA.GN;
 using prj_chamadosBRA.Models;
 using prj_chamadosBRA.Repositories;
 using System;
@@ -11,57 +10,46 @@ using System.Web.Mvc;
 
 namespace prj_chamadosBRA.Controllers
 {
-    public class SetorController : Controller
+    public class SubClassificacaoController : Controller
     {
-        private UserManager<ApplicationUser> manager;
+         private UserManager<ApplicationUser> manager;
         private ApplicationDbContext db = new ApplicationDbContext();
-        public SetorController()
+        public SubClassificacaoController()
         {
             manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
         }
-
-
-        // GET: Setor
+        // GET: SubClassificacao
         public ActionResult Index()
-        {         
-            int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
-            List<Setor> setores = new SetorGN(db).setoresPorPerfil(perfil, User.Identity.GetUserId());
-            if (setores == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                return View(setores);
-            }
-            
+        {
+            List<ChamadoSubClassificacao> subclassificacoes = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacoes();
+            return View(subclassificacoes);
         }
 
-        // GET: Setor/Details/5
+        // GET: SubClassificacao/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: Setor/Create
+        // GET: SubClassificacao/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Setor/Create
+        // POST: SubClassificacao/Create
         [HttpPost]
-        public ActionResult Create(Setor setor, String obra)
+        public ActionResult Create(ChamadoSubClassificacao ChamadoSubClassificacao, String ChamadoClassificacao)
         {
             try
             {
-                this.ModelState.Remove("obra");
+                ModelState.Remove("ChamadoClassificacao");
                 if (ModelState.IsValid)
                 {
-                    setor.obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(obra));
-                    if (new SetorDAO(db).salvarSetor(setor))
+                    ChamadoSubClassificacao.ChamadoClassificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(Convert.ToInt32(ChamadoClassificacao));
+                    if (new ChamadoSubClassificacaoDAO(db).salvarSubClassificacao(ChamadoSubClassificacao))
                     {
-                        TempData["notice"] = "Setor criado com Sucesso!";
+                        TempData["notice"] = "SubClassificação criado com Sucesso!";
                         return RedirectToAction("Index");
                     }
                     else
@@ -75,8 +63,6 @@ namespace prj_chamadosBRA.Controllers
                     TempData["notice"] = "Algo errado Aconteceu, tente novamente.";
                     return View();
                 }
-
-                
             }
             catch
             {
@@ -85,13 +71,13 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
-        // GET: Setor/Edit/5
+        // GET: SubClassificacao/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Setor/Edit/5
+        // POST: SubClassificacao/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -107,13 +93,13 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
-        // GET: Setor/Delete/5
+        // GET: SubClassificacao/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Setor/Delete/5
+        // POST: SubClassificacao/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {

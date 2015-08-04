@@ -98,7 +98,7 @@
                     @Html.DisplayFor(model => model.Observacao)
                 </div>
             </div>
-            <div class="row">                
+            <div class="row">
                 <div class="col-md-10">
                     @Html.Label("Tipo do Chamado:") &nbsp;
                     @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>Totvs RM</label>
@@ -223,9 +223,7 @@
     @Html.ActionLink("Voltar para Acompanhamento", "Index")
 </div>
 
-<div class="modal" id="modal">
 
-</div>
 @if (TempData["notice"] != null)
 {
     <div id="modalNotice" class="modal fade" role="dialog">
@@ -256,7 +254,7 @@
         $(window).load(function () {
             if ($('#notice').val() != "") {
                 //alert($('#notice').val());
-                $('#modalNotice').modal('show');
+                $('#modalNotice').modal({ show: true });
             }
         });
     </script>
@@ -266,7 +264,7 @@
                 $("#encerrar").click(function () {
                     var id = $(this).attr("data-id");
                     $("#modal").load("../Encerrar/" + id, function () {
-                        $("#modal").modal('show');
+                        $('#modal').modal({ show: true });
                     })
                 });
             })
@@ -302,5 +300,7 @@
             })
         });
     </script>
+    <div class="modal" id="modal">
 
+    </div>
 }

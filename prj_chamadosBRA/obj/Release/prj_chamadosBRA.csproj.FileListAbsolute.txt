@@ -108,7 +108,6 @@ D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\Microsoft
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Release\prj_chamadosBRA.csprojResolveAssemblyReference.cache
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Release\prj_chamadosBRA.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Release\prj_chamadosBRA.pdb
-D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\log4net.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MVC Foolproof Validation.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MvcExtensions.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MvcExtensions.Foolproof.dll

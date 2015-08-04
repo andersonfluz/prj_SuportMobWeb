@@ -19,6 +19,12 @@ namespace prj_chamadosBRA.Repositories
             this.db = new ApplicationDbContext();
         }
 
+        public List<ChamadoSubClassificacao> BuscarSubClassificacoes()
+        {
+            List<ChamadoSubClassificacao> subclassificacoes = (from e in db.ChamadoSubClassificacao select e).ToList();
+            return subclassificacoes;
+        }
+
         public ChamadoSubClassificacao BuscarSubClassificacao(int id)
         {
             ChamadoSubClassificacao subclassificacao = (from e in db.ChamadoSubClassificacao where e.Id == id select e).SingleOrDefault();
@@ -29,6 +35,13 @@ namespace prj_chamadosBRA.Repositories
         {
             List<ChamadoSubClassificacao> chamadoSubClassificacoes = (from e in db.ChamadoSubClassificacao where e.ChamadoClassificacao.Id == idClassificacao select e).ToList();
             return chamadoSubClassificacoes;
+        }
+
+        public Boolean salvarSubClassificacao(ChamadoSubClassificacao subclassificacao)
+        {
+            db.ChamadoSubClassificacao.Add(subclassificacao);
+            db.SaveChanges();
+            return true;
         }
     }
 }

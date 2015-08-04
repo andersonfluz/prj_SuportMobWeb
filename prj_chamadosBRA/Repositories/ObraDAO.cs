@@ -39,5 +39,12 @@ namespace prj_chamadosBRA.Repositories
             List<Obra> obras = (from o in db.Obra where idObras.Contains(o.IDO) select o).ToList();
             return obras;
         }
+
+        public Boolean salvarObra(Obra obra)
+        {
+            db.Obra.Add(obra);
+            db.SaveChanges();
+            return true;
+        }
     }
 }

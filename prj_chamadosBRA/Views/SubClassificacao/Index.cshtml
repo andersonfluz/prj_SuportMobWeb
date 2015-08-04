@@ -1,42 +1,43 @@
-﻿@model IEnumerable<prj_chamadosBRA.Models.Obra>
+﻿@model IEnumerable<prj_chamadosBRA.Models.ChamadoSubClassificacao>
 
 @{
-    ViewBag.Title = "Cadastro de Obras";
+    ViewBag.Title = "Cadastro de SubClassificações";
 }
 
-<h2>Cadastro de Obras</h2>
+<h2>Cadastro de SubClassificações</h2>
 
 <p>
-    @Html.ActionLink("Nova Obra", "Create", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Cadastrar SubClassificação", "Create", null, new { @class = "btn btn-default" })
 </p>
 <table class="table">
     <tr>
         <th>
+            @Html.DisplayName("Código")
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Descricao)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Matriz)
+            @Html.DisplayName("Classificação")
         </th>
-        <th>
-            @Html.DisplayName("Centro Administrativo")
-        </th>
+        <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
         <td>
+            @Html.DisplayFor(modelItem => item.Id)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.Descricao)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Matriz)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CentroAdministrativo.Nome)
+            @Html.DisplayFor(modelItem => item.ChamadoClassificacao.Descricao)
         </td>
     </tr>
 }
-</table>
 
+</table>
 @Html.Hidden("notice", @TempData["notice"])
 @if (TempData["notice"] != null)
 {

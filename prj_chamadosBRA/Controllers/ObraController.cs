@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using prj_chamadosBRA.GN;
 using prj_chamadosBRA.Models;
+using prj_chamadosBRA.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,17 +43,51 @@ namespace prj_chamadosBRA.Controllers
         // GET: Obra/Create
         public ActionResult Create()
         {
+
             return View();
         }
 
         // POST: Obra/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Obra obra, String CentroAdministrativo)
         {
             try
             {
-                // TODO: Add insert logic here
-                return RedirectToAction("Index");
+                this.ModelState.Remove("CentroAdministrativo");
+                if (ModelState.IsValid)
+                {
+                    if (obra.Matriz)
+                    {
+                        CentroAdministrativo centroAdm = new CentroAdministrativo();
+                        centroAdm.Nome = obra.Descricao;
+                        if (new CentroAdministrativoDAO(db).salvarCentroAdministrativo(centroAdm))
+                        {
+                            obra.CentroAdministrativo = centroAdm;                            
+                        }
+                    }
+                    else
+                    {
+                        CentroAdministrativo centroAdm = new CentroAdministrativoDAO(db).BuscarCentroAdministrativo(Convert.ToInt32(CentroAdministrativo));
+                        obra.CentroAdministrativo = centroAdm;                        
+                    }
+                    
+                    if (new ObraDAO(db).salvarObra(obra))
+                    {
+                        TempData["notice"] = "Obra criada com Sucesso!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["notice"] = "Algo errado Aconteceu, tente novamente.";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    TempData["notice"] = "Algo errado Aconteceu, tente novamente.";
+                    return RedirectToAction("Index");
+                }
+
             }
             catch
             {

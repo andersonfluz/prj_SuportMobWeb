@@ -12,6 +12,8 @@ namespace prj_chamadosBRA.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
+        [Display(Name = "Descrição")]
         public string Descricao { get; set; }
 
     }

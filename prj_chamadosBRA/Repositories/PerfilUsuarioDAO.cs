@@ -17,6 +17,15 @@ namespace prj_chamadosBRA.Repositories
             }
         }
 
+        public PerfilUsuario BuscarPerfil(Int32 idPerfil)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                PerfilUsuario perfil = (from e in ctx.PerfilUsuario where e.IdPerfil == idPerfil select e).SingleOrDefault();
+                return perfil;
+            }
+        }
+
         public List<PerfilUsuario> BuscarPerfisParaGestor()
         {
             using (var ctx = new ApplicationDbContext())

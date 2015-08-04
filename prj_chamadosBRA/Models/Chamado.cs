@@ -43,7 +43,8 @@ namespace prj_chamadosBRA.Models
         [RequiredIf("StatusChamado", true, ErrorMessage="Informe a solução do Chamado")]
         public string Solucao { get; set; }
         [Display(Name = "Tipo do Chamado")]
-        [RequiredIf("StatusChamado", true, ErrorMessage = "Informe o Tipo do Chamado")]
+        //[RequiredIf("StatusChamado", true, ErrorMessage = "Informe o Tipo do Chamado")]
+        [Required(ErrorMessage = "Informe o Tipo do Chamado")]
         public int? TipoChamado { get; set; }
         [Display(Name = "Data/Hora de Atendimento")]
         [RequiredIf("StatusChamado", true, ErrorMessage = "Informe a Data/Hora de Atendimento")]
