@@ -15,6 +15,7 @@ namespace prj_chamadosBRA.Models
         [Required]
         [Display(Name = "Descrição")]
         public string Descricao { get; set; }
+        public virtual Obra Obra { get; set; }
 
     }
 }

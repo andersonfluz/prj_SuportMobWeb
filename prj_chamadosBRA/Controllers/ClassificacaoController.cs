@@ -21,7 +21,16 @@ namespace prj_chamadosBRA.Controllers
         // GET: Classificacao
         public ActionResult Index()
         {
-            List<ChamadoClassificacao> classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoes();
+            List<ChamadoClassificacao> classificacoes;
+            if (Session["PerfilUsuario"].ToString() == "1")
+            {
+                classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoes();
+            }
+            else
+            {
+                List<Obra> obras = new UsuarioObraDAO(db).buscarObrasDoUsuario(manager.FindById(User.Identity.GetUserId()));
+                classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorObras(obras);
+            }
             return View(classificacoes);
         }
 
@@ -39,12 +48,20 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Classificacao/Create
         [HttpPost]
-        public ActionResult Create(ChamadoClassificacao ChamadoClassificacao)
+        public ActionResult Create(ChamadoClassificacao ChamadoClassificacao, String Obra)
         {
             try
             {
+                if (Obra.Equals(""))
+                {
+                    TempData["notice"] = "Selecione a Obra.";
+                    return View();
+                }
+                ModelState.Remove("Obra");
                 if (ModelState.IsValid)
                 {
+                    Obra obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(Obra));
+                    ChamadoClassificacao.Obra = obra;
                     if (new ChamadoClassificacaoDAO(db).salvarClassificacao(ChamadoClassificacao))
                     {
                         TempData["notice"] = "Classificação criado com Sucesso!";
@@ -62,7 +79,7 @@ namespace prj_chamadosBRA.Controllers
                     return View();
                 }
 
-                
+
             }
             catch
             {

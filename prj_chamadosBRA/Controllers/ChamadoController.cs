@@ -376,7 +376,8 @@ namespace prj_chamadosBRA.Controllers
                 SetorDAO sDAO = new SetorDAO(db);
                 Chamado chamadoOrigem = cDAO.BuscarChamadoId(id);
                 ChamadoHistorico chamadoHistorico;
-                chamadoOrigem.ObsevacaoInterna = chamado.ObsevacaoInterna;
+                
+                
                 if (chamadoOrigem.TipoChamado != chamado.TipoChamado)
                 {
                     chamadoOrigem.TipoChamado = chamado.TipoChamado;
@@ -447,6 +448,11 @@ namespace prj_chamadosBRA.Controllers
                 {
                     chamadoHistorico = cDAO.registrarHistorico(DateTime.Now, manager.FindById(User.Identity.GetUserId()), informacoesAcompanhamento, chamadoOrigem);
                     await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
+                }
+                if (chamadoOrigem.ObsevacaoInterna != chamado.ObsevacaoInterna)
+                {
+                    chamadoOrigem.ObsevacaoInterna = chamado.ObsevacaoInterna;
+                    cDAO.atualizarChamado(id, chamadoOrigem);
                 }
                 TempData["notice"] = "Chamado Atualizado Com Sucesso!";
                 return RedirectToAction("Index");

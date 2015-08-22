@@ -12,7 +12,7 @@ namespace prj_chamadosBRA.Controllers
 {
     public class SubClassificacaoController : Controller
     {
-         private UserManager<ApplicationUser> manager;
+        private UserManager<ApplicationUser> manager;
         private ApplicationDbContext db = new ApplicationDbContext();
         public SubClassificacaoController()
         {
@@ -34,19 +34,27 @@ namespace prj_chamadosBRA.Controllers
         // GET: SubClassificacao/Create
         public ActionResult Create()
         {
+            if (Session["PerfilUsuario"].ToString() == "1")
+            {
+                ViewBag.Classificacoes = new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoes();
+            }
+            else
+            {
+                ViewBag.Classificacoes = new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoesPorObras(new UsuarioObraDAO(db).buscarObrasDoUsuario(manager.FindById(User.Identity.GetUserId())));
+            }            
             return View();
         }
 
         // POST: SubClassificacao/Create
         [HttpPost]
-        public ActionResult Create(ChamadoSubClassificacao ChamadoSubClassificacao, String ChamadoClassificacao)
+        public ActionResult Create(ChamadoSubClassificacao ChamadoSubClassificacao, String Classificacao)
         {
             try
             {
                 ModelState.Remove("ChamadoClassificacao");
                 if (ModelState.IsValid)
                 {
-                    ChamadoSubClassificacao.ChamadoClassificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(Convert.ToInt32(ChamadoClassificacao));
+                    ChamadoSubClassificacao.ChamadoClassificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(Convert.ToInt32(Classificacao));
                     if (new ChamadoSubClassificacaoDAO(db).salvarSubClassificacao(ChamadoSubClassificacao))
                     {
                         TempData["notice"] = "SubClassificação criado com Sucesso!";

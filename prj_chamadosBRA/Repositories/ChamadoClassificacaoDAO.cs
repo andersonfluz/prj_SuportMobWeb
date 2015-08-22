@@ -31,6 +31,19 @@ namespace prj_chamadosBRA.Repositories
             return classificacoes;
         }
 
+        public List<ChamadoClassificacao> BuscarClassificacoesPorObra(Obra obra)
+        {
+            List<ChamadoClassificacao> classificacoes = (from e in db.ChamadoClassificacao where e.Obra.IDO == obra.IDO select e).ToList();
+            return classificacoes;
+        }
+
+        public List<ChamadoClassificacao> BuscarClassificacoesPorObras(List<Obra> obras)
+        {
+            List<int> idObras = (from e in obras select e.IDO).ToList();
+            List<ChamadoClassificacao> classificacoes = (from e in db.ChamadoClassificacao where idObras.Contains(e.Obra.IDO) select e).ToList();
+            return classificacoes;
+        }
+
         public Boolean salvarClassificacao(ChamadoClassificacao classificacao)
         {
             db.ChamadoClassificacao.Add(classificacao);

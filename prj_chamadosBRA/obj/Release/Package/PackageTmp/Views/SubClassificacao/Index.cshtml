@@ -1,27 +1,24 @@
-﻿@model IEnumerable<prj_chamadosBRA.Models.ApplicationUser>
+﻿@model IEnumerable<prj_chamadosBRA.Models.ChamadoSubClassificacao>
 
 @{
-    ViewBag.Title = "Cadastro de Usuários";
+    ViewBag.Title = "Cadastro de SubClassificações";
 }
 
-<h2>Cadastro de Usuários</h2>
+<h2>Cadastro de SubClassificações</h2>
 
 <p>
-    @Html.ActionLink("Novo Usuário", "Register", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Cadastrar SubClassificação", "Create", null, new { @class = "btn btn-default" })
 </p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayName("Usuário")
-        </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.PerfilUsuario)
-        </th>*@
-        <th>
-            @Html.DisplayNameFor(model => model.Nome)
+            @Html.DisplayName("Código")
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Contato)
+            @Html.DisplayNameFor(model => model.Descricao)
+        </th>
+        <th>
+            @Html.DisplayName("Classificação")
         </th>
         <th></th>
     </tr>
@@ -29,20 +26,14 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.UserName)
-        </td>
-        @*<td>
-            @Html.Display(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfil(item.PerfilUsuario).Descricao)
-        </td>*@
-        <td>
-            @Html.DisplayFor(modelItem => item.Nome)
+            @Html.DisplayFor(modelItem => item.Id)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Contato)
+            @Html.DisplayFor(modelItem => item.Descricao)
         </td>
-        <th>
-            @Html.ActionLink("Editar", "Edit", "Account", new { id = item.Id }, new { @class = "btn btn-default" })
-        </th>
+        <td>
+            @Html.DisplayFor(modelItem => item.ChamadoClassificacao.Descricao)
+        </td>
     </tr>
 }
 

@@ -35,5 +35,14 @@ namespace prj_chamadosBRA.Repositories
             }
         }
 
+        public List<PerfilUsuario> BuscarPerfisParaAdmObra()
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                List<PerfilUsuario> perfis = (from e in ctx.PerfilUsuario where e.IdPerfil == 3 || e.IdPerfil == 4 || e.IdPerfil == 5 select e).ToList();
+                return perfis;
+            }
+        }
+
     }
 }

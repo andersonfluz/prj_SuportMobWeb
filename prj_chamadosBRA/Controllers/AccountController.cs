@@ -42,7 +42,6 @@ namespace prj_chamadosBRA.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -52,10 +51,60 @@ namespace prj_chamadosBRA.Controllers
         [AllowAnonymous]
         public ActionResult Index()
         {
-            ApplicationDbContext context = new ApplicationDbContext();
-            int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
-            List<ApplicationUser> users = new ApplicationUserGN(context).usuariosPorPerfil(perfil, User.Identity.GetUserId());
-            return View(users);
+            try
+            {
+                ApplicationDbContext context = new ApplicationDbContext();
+                int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
+                List<ApplicationUser> users = new ApplicationUserGN(context).usuariosPorPerfil(perfil, User.Identity.GetUserId());
+                return View(users);
+            }
+            catch (NullReferenceException)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
+        // GET: /Account/Edit/5
+        [Authorize]
+        public ActionResult Edit(string id)
+        {
+            ApplicationUser user = new ApplicationUserDAO().retornarUsuario(id);
+            if (Session["PerfilUsuario"].ToString().Equals("1"))
+            {
+                SelectList list = new SelectList(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao", user.PerfilUsuario);
+                ViewBag.PerfilUsuario = list;
+            }
+            else if (Session["PerfilUsuario"].ToString().Equals("5"))
+            {
+                SelectList list = new SelectList(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaGestor(), "IdPerfil", "Descricao", user.PerfilUsuario);
+                ViewBag.PerfilUsuario = list;
+            }
+            return View(user);
+        }
+
+        // POST: /Account/Edit/5
+        [Authorize]
+        [HttpPost]
+        public ActionResult Edit(ApplicationUser user)
+        {
+            ApplicationUserDAO appDAO = new ApplicationUserDAO();
+            ApplicationUser userOrigem = appDAO.retornarUsuario(user.Id);
+            userOrigem.Nome = user.Nome;
+            userOrigem.UserName = user.UserName;
+            userOrigem.PerfilUsuario = user.PerfilUsuario;
+            userOrigem.Contato = user.Contato;
+            appDAO.atualizarApplicationUser(user.Id, userOrigem);
+            TempData["notice"] = "Dados alterados com sucesso!";
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        public ActionResult ReiniciarSenha(string id)
+        {
+            String newPassword = "123456";
+            UserManager.RemovePassword(id);
+            UserManager.AddPassword(id, newPassword);
+            return RedirectToAction("Index");
         }
 
         //
@@ -105,6 +154,12 @@ namespace prj_chamadosBRA.Controllers
                             Session["TipoChamadoVisivel"] = true;
                             Session["SelecionarResponsavelAbertura"] = true;
                             break;
+                        case "6": //Administrador da Obra
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
+                            break;
                         default:
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = false;
@@ -113,7 +168,7 @@ namespace prj_chamadosBRA.Controllers
                     }
 
                     await SignInAsync(user, model.RememberMe);
-                    if (user.PerfilUsuario == 1)
+                    if (user.PerfilUsuario == 1 || user.PerfilUsuario == 6)
                     {
                         return RedirectToAction("Index", "Home");
                     }
@@ -157,6 +212,10 @@ namespace prj_chamadosBRA.Controllers
             else if (Session["PerfilUsuario"].ToString().Equals("5"))
             {
                 ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaGestor();
+            }
+            else if (Session["PerfilUsuario"].ToString().Equals("6"))
+            {
+                ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaAdmObra();
             }
             return View();
         }

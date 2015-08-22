@@ -486,6 +486,7 @@
     <Content Include="Views\Classificacao\Create.cshtml" />
     <Content Include="Views\SubClassificacao\Create.cshtml" />
     <Content Include="Views\SubClassificacao\Index.cshtml" />
+    <Content Include="Views\Account\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

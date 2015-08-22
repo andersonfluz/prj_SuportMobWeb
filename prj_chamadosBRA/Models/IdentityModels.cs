@@ -37,6 +37,8 @@ namespace prj_chamadosBRA.Models
 
         }
 
+        //public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ApplicationUser> ApplicationUsers { get; set; }
+
         //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)
         //{
         //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();

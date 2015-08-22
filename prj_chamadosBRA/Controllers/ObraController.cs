@@ -20,6 +20,7 @@ namespace prj_chamadosBRA.Controllers
             manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
         }
         // GET: Obra
+        [Authorize]
         public ActionResult Index()
         {
             int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());

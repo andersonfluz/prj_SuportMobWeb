@@ -1,13 +1,13 @@
 ﻿@model prj_chamadosBRA.Models.Obra
 
 @{
-    ViewBag.Title = "Nova Obra";
+    ViewBag.Title = "Edit";
 }
 
-<h2>Nova</h2>
+<h2>Edit</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
@@ -15,6 +15,8 @@
         <h4>Obra</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.IDO)
+
         <div class="form-group">
             @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -33,16 +35,9 @@
             </div>
         </div>
 
-        <div id="centroAdm" class="form-group">
-            @Html.LabelFor(model => model.CentroAdministrativo, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.CentroAdministrativo, new SelectList(new prj_chamadosBRA.Repositories.CentroAdministrativoDAO().BuscarCentrosAdministrativos(), "idCA", "Nome"), "-- Selecione o Centro Adminsitrativo --", new { @class = "form-control" })
-            </div>
-        </div>
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Salvar" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
     </div>
@@ -54,16 +49,4 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#Matriz").change(function () {
-                if ($("#Matriz").is(":checked")) {
-                    $("#centroAdm").hide('fast');
-                } else {
-                    $("#centroAdm").show('fast');
-                }
-            });
-        });
-    </script>
-}/
+}

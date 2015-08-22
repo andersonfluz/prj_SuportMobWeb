@@ -113,7 +113,6 @@ D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MvcExtens
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MvcExtensions.Foolproof.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\PagedList.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\PagedList.Mvc.dll
-D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\log4net.xml
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MVC Foolproof Validation.pdb
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MvcExtensions.pdb
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MvcExtensions.xml

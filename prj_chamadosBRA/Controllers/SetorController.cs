@@ -23,7 +23,7 @@ namespace prj_chamadosBRA.Controllers
 
         // GET: Setor
         public ActionResult Index()
-        {         
+        {
             int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
             List<Setor> setores = new SetorGN(db).setoresPorPerfil(perfil, User.Identity.GetUserId());
             if (setores == null)
@@ -34,7 +34,7 @@ namespace prj_chamadosBRA.Controllers
             {
                 return View(setores);
             }
-            
+
         }
 
         // GET: Setor/Details/5
@@ -46,7 +46,15 @@ namespace prj_chamadosBRA.Controllers
         // GET: Setor/Create
         public ActionResult Create()
         {
-            return View();
+            if (Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "1")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
         }
 
         // POST: Setor/Create
@@ -58,7 +66,16 @@ namespace prj_chamadosBRA.Controllers
                 this.ModelState.Remove("obra");
                 if (ModelState.IsValid)
                 {
-                    setor.obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(obra));
+                    if (Session["PerfilUsuario"].ToString() == "6")
+                    {
+                        ApplicationUser user = new ApplicationUserDAO(db).retornarUsuario(User.Identity.GetUserId());
+                        setor.obra = new UsuarioObraDAO(db).buscarObrasDoUsuario(user)[0];
+                    }
+                    else
+                    {
+                        setor.obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(obra));
+                    }
+
                     if (new SetorDAO(db).salvarSetor(setor))
                     {
                         TempData["notice"] = "Setor criado com Sucesso!";
@@ -76,7 +93,7 @@ namespace prj_chamadosBRA.Controllers
                     return View();
                 }
 
-                
+
             }
             catch
             {

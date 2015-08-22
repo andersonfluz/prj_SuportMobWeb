@@ -82,7 +82,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/25/2015 15:26:35</publishTime>
     </File>
     <File Include="bin/prj_chamadosBRA.dll">
-      <publishTime>07/30/2015 16:45:55</publishTime>
+      <publishTime>08/21/2015 17:05:47</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -703,28 +703,28 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/19/2015 11:38:59</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.sv.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.sw.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.th.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.tr.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.uk.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.vi.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.zh-CN.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.zh-TW.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/modernizr-2.6.2.js">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -762,6 +762,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Account/ChangePassword.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
+    <File Include="Views/Account/Edit.cshtml">
+      <publishTime>08/17/2015 13:56:50</publishTime>
+    </File>
     <File Include="Views/Account/ExternalLoginConfirmation.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
@@ -769,7 +772,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Views/Account/Index.cshtml">
-      <publishTime>07/24/2015 16:18:21</publishTime>
+      <publishTime>08/14/2015 14:48:54</publishTime>
     </File>
     <File Include="Views/Account/Login.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -802,10 +805,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/28/2015 20:38:11</publishTime>
     </File>
     <File Include="Views/Chamado/Encerrar.cshtml">
-      <publishTime>06/25/2015 09:52:10</publishTime>
+      <publishTime>08/20/2015 10:21:00</publishTime>
     </File>
     <File Include="Views/Chamado/Index.cshtml">
-      <publishTime>07/28/2015 20:38:50</publishTime>
+      <publishTime>08/21/2015 13:29:01</publishTime>
+    </File>
+    <File Include="Views/Classificacao/Create.cshtml">
+      <publishTime>08/20/2015 11:07:48</publishTime>
+    </File>
+    <File Include="Views/Classificacao/Index.cshtml">
+      <publishTime>08/20/2015 10:29:26</publishTime>
     </File>
     <File Include="Views/Home/About.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -814,7 +823,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>07/24/2015 10:35:41</publishTime>
+      <publishTime>08/21/2015 15:04:48</publishTime>
     </File>
     <File Include="Views/Manage/AddPhoneNumber.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -835,13 +844,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Views/Obra/Create.cshtml">
-      <publishTime>07/29/2015 10:31:08</publishTime>
+      <publishTime>08/03/2015 15:56:33</publishTime>
+    </File>
+    <File Include="Views/Obra/Edit.cshtml">
+      <publishTime>08/03/2015 11:04:12</publishTime>
     </File>
     <File Include="Views/Obra/Index.cshtml">
-      <publishTime>07/28/2015 21:00:23</publishTime>
+      <publishTime>08/03/2015 14:57:18</publishTime>
+    </File>
+    <File Include="Views/Setor/Create.cshtml">
+      <publishTime>08/21/2015 14:52:37</publishTime>
     </File>
     <File Include="Views/Setor/Index.cshtml">
-      <publishTime>07/24/2015 16:17:53</publishTime>
+      <publishTime>08/03/2015 15:00:27</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -850,10 +865,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>07/30/2015 16:24:42</publishTime>
+      <publishTime>08/21/2015 15:01:44</publishTime>
     </File>
     <File Include="Views/Shared/_LoginPartial.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
+    </File>
+    <File Include="Views/SubClassificacao/Create.cshtml">
+      <publishTime>08/20/2015 13:43:26</publishTime>
+    </File>
+    <File Include="Views/SubClassificacao/Index.cshtml">
+      <publishTime>08/04/2015 10:10:04</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -862,7 +883,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>07/30/2015 16:45:56</publishTime>
+      <publishTime>08/17/2015 13:58:47</publishTime>
     </File>
   </ItemGroup>
 </Project>

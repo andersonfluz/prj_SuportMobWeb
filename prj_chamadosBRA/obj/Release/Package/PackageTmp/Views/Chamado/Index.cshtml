@@ -168,8 +168,12 @@
             });
 
             $('#TipoChamado').change(function () {
-                window.location.href = '/Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-            });
+                var url = window.location.href;
+		if(url.indexOf("page") > -1){
+		    window.location.href = '../../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+		}else{
+		    window.location.href = '../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+		}            });
         </script>
         <script>
             jQuery(document).ready(function ($) {
