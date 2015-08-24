@@ -24,6 +24,11 @@ namespace prj_chamadosBRA.GN
                 case 1: //Administrador
                     listUsers = new ApplicationUserDAO(db).retornarUsuarios();
                     break;
+                case 5: //Gestor
+                    ApplicationUser user = new ApplicationUserDAO(db).retornarUsuario(idUser);
+                    List<Setor> setores = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                    listUsers = new ApplicationUserDAO(db).retornarUsuariosSetor(setores[0]);
+                    break;
                 case 6: //Administrador Obra
                     List<Obra> obras = new ObraDAO(db).BuscarObrasPorUsuario(idUser);
                     listUsers = new ApplicationUserDAO(db).retornarUsuariosObra(obras[0].IDO);

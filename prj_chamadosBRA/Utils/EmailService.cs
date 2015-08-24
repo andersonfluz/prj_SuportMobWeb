@@ -180,6 +180,29 @@ namespace prj_chamadosBRA.Utils
             }
         }
 
+        public static async Task<bool> envioEmailRedefinicaoSenhaUsuario(ApplicationUser user)
+        {
+            try
+            {
+                WebMail.SmtpServer = "smtp.office365.com";
+                WebMail.SmtpPort = 587;
+                WebMail.EnableSsl = true;
+                WebMail.UserName = "notify@cav-ba.com.br";
+                WebMail.From = "notify@cav-ba.com.br";
+                WebMail.Password = "Notificacoes2013";
+
+                string para = user.UserName;
+                string assunto = "ChamadosBRA - Redefinição de senha do usuario na plataforma";
+                string corpoMensagem = montarCorpoMensagemReiniciarSenhaUsuario(user);
+                WebMail.Send(para, assunto, corpoMensagem, null);
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         private static String montarCorpoMensagemAbertura(Chamado chamado)
         {
             string mensagem = "Nova Solicitação N. " + chamado.Id;
@@ -622,6 +645,55 @@ namespace prj_chamadosBRA.Utils
                                 + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. E para o primeiro acesso, utilize a senha: 123456 <br />"
                                 + "<br />"
                                 + "Pronto! Já poderá utilizar a ferramenta. Sugerimos que altere imediatamente sua "
+                                + "senha."
+                                + "<br />"
+                                + "<br />"
+                                + "Equipe de suporte CAS.<br />"
+                                + "&nbsp;</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "</div>";
+            return corpoMensagem;
+        }
+
+        private static String montarCorpoMensagemReiniciarSenhaUsuario(ApplicationUser user)
+        {
+            string corpoMensagem = "<div>"
+                                + "<table cellspacing='0' cellpadding='0' style='width: 100%'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td style='color: rgb(0,0,0); font-family: verdana; font-size: 16pt'>"
+                                + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td style='padding-right: 2px; padding-left: 2px'>"
+                                + "ChamadosBRA - "
+                                + "Criação de Usuario"
+                                + "</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "<table cellspacing='0' cellpadding='0' style='width: 100%; margin-top: 6px; border-bottom-color: rgb(156,163,173); border-bottom-width: 1px; border-bottom-style: solid'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td colspan='3'>"
+                                + "Prezado " + user.Nome + " ! <br />"
+                                + "<br />"
+                                + "Sua senha foi redefinida com sucesso: "
+                                + "instruções abaixo: <br />"
+                                + "<br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. Abra seu navegador de internet e digite o endereço: "
+                                + "<a href='http://portal.colegioantoniovieira.com.br/ChamadosBRA/'>http://portal.colegioantoniovieira.com.br/ChamadosBRA/</a>"
+                                + "<br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. No campo usuário digite seu email: " + user.UserName + "  <br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. E utilize a senha: 123456 <br />"
+                                + "<br />"
+                                + "Pronto! Já poderá voltar a utilizar a ferramenta. Sugerimos que altere imediatamente sua "
                                 + "senha."
                                 + "<br />"
                                 + "<br />"

@@ -79,6 +79,11 @@ namespace prj_chamadosBRA.Controllers
                 SelectList list = new SelectList(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaGestor(), "IdPerfil", "Descricao", user.PerfilUsuario);
                 ViewBag.PerfilUsuario = list;
             }
+            else if (Session["PerfilUsuario"].ToString().Equals("6"))
+            {
+                SelectList list = new SelectList(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaAdmObra(), "IdPerfil", "Descricao", user.PerfilUsuario);
+                ViewBag.PerfilUsuario = list;
+            }
             return View(user);
         }
 
@@ -99,12 +104,23 @@ namespace prj_chamadosBRA.Controllers
         }
 
         [Authorize]
-        public ActionResult ReiniciarSenha(string id)
+        public async Task<ActionResult> ReiniciarSenha(string id)
         {
-            String newPassword = "123456";
-            UserManager.RemovePassword(id);
-            UserManager.AddPassword(id, newPassword);
-            return RedirectToAction("Index");
+            try
+            {
+                String newPassword = "123456";
+                UserManager.RemovePassword(id);
+                UserManager.AddPassword(id, newPassword);
+                ApplicationDbContext context = new ApplicationDbContext();
+                await EmailService.envioEmailRedefinicaoSenhaUsuario(new ApplicationUserDAO(context).retornarUsuario(id));
+                TempData["notice"] = "Senha do usuário redefinida com Sucesso!";
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                TempData["notice"] = "Problemas ao reiniciar senha do usuario";
+                return RedirectToAction("Index");
+            }
         }
 
         //
@@ -237,6 +253,10 @@ namespace prj_chamadosBRA.Controllers
                     var result = UserManager.Create(user, model.Password);
                     if (result.Succeeded)
                     {
+                        if (obra == null && (Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6")))
+                        {
+                            obra = new UsuarioObraDAO(context).buscarObrasDoUsuario(new ApplicationUserDAO(context).retornarUsuario(User.Identity.GetUserId()))[0].IDO.ToString();
+                        }
                         UsuarioObra usuarioObra = new UsuarioObra();
                         usuarioObra.Usuario = user.Id;
                         usuarioObra.Obra = Convert.ToInt32(obra);
@@ -251,13 +271,13 @@ namespace prj_chamadosBRA.Controllers
                                 {
                                     await EmailService.envioEmailCriacaoUsuario(user);
                                     TempData["notice"] = "Usuário criado com Sucesso!";
-                                    return RedirectToAction("Index", "Home");
+                                    return RedirectToAction("Index");
                                 }
                             }
                             else
                             {
                                 TempData["notice"] = "Usuário criado com Sucesso!";
-                                return RedirectToAction("Index", "Home");
+                                return RedirectToAction("Index");
                             }
                         }
                     }

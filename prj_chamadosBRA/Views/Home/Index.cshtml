@@ -7,15 +7,15 @@
     <!--<p><a href=".\Chamado\Create" class="btn btn-primary btn-lg">Novo Chamado &raquo;</a></p>-->
 </div>
 <div class="row">
-    @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6")
+    @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5")
     {
-    <div class="col-md-4">
-        <h2>Cadastro de Usuários</h2>
-        <p>
-            Cadastro de usuários para acessar o sistema.
-        </p>
-        <p><a class="btn btn-default" href="../Account/Index">Cadastro Usuários</a></p>
-    </div>
+        <div class="col-md-4">
+            <h2>Cadastro de Usuários</h2>
+            <p>
+                Cadastro de usuários para acessar o sistema.
+            </p>
+            <p><a class="btn btn-default" href="../Account/Index">Cadastro Usuários</a></p>
+        </div>
     }
     @if (Session["PerfilUsuario"].ToString() == "1")
     {
@@ -25,11 +25,14 @@
             <p><a class="btn btn-default" href="../Obra/Index">Cadastros Obras</a></p>
         </div>
     }
-    <div class="col-md-4">
-        <h2>Cadastro de Setores</h2>
-        <p>Cadastro de Setores das obras da Rede Jesuita</p>
-        <p><a class="btn btn-default" href="../Setor/Index">Cadastros Setores</a></p>
-    </div>
+    @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6")
+    {
+        <div class="col-md-4">
+            <h2>Cadastro de Setores</h2>
+            <p>Cadastro de Setores das obras da Rede Jesuita</p>
+            <p><a class="btn btn-default" href="../Setor/Index">Cadastros Setores</a></p>
+        </div>
+    }
 </div>
 <div class="row">
     <div class="col-md-4">

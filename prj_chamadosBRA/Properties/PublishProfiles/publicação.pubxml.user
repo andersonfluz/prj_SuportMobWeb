@@ -82,7 +82,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/25/2015 15:26:35</publishTime>
     </File>
     <File Include="bin/prj_chamadosBRA.dll">
-      <publishTime>08/21/2015 17:05:47</publishTime>
+      <publishTime>08/24/2015 11:13:55</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -763,7 +763,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Views/Account/Edit.cshtml">
-      <publishTime>08/17/2015 13:56:50</publishTime>
+      <publishTime>08/24/2015 11:09:21</publishTime>
     </File>
     <File Include="Views/Account/ExternalLoginConfirmation.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -823,7 +823,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>08/21/2015 15:04:48</publishTime>
+      <publishTime>08/24/2015 10:38:28</publishTime>
     </File>
     <File Include="Views/Manage/AddPhoneNumber.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
