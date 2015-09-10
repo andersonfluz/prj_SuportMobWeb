@@ -188,6 +188,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="GN\ApplicationUserGN.cs" />
+    <Compile Include="GN\ChamadoGN.cs" />
     <Compile Include="GN\ObraGN.cs" />
     <Compile Include="GN\SetorGN.cs" />
     <Compile Include="Models\AccountViewModels.cs" />

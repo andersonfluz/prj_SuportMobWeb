@@ -13,7 +13,7 @@ namespace prj_chamadosBRA.Utils
     {
 
 
-        public static async Task<bool> envioEmailAberturaChamado(Chamado chamado)
+        public static async Task envioEmailAberturaChamado(Chamado chamado)
         {
             try
             {
@@ -41,11 +41,9 @@ namespace prj_chamadosBRA.Utils
                 string assunto = "ChamadosBRA - Notificação Abertura Chamado N. " + chamado.Id;
                 string corpoMensagem = montarCorpoMensagemAbertura(chamado);
                 WebMail.Send(para, assunto, corpoMensagem, null, copia);
-                return true;
             }
             catch
             {
-                throw;
             }
         }
 
