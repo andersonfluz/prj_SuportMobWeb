@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -174,6 +175,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -218,7 +220,7 @@
     <Compile Include="Repositories\UsuarioObraDAO.cs" />
     <Compile Include="Repositories\UsuarioSetorDAO.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utils\EmailService.cs" />
+    <Compile Include="Utils\EmailServiceUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
@@ -488,6 +490,10 @@
     <Content Include="Views\SubClassificacao\Create.cshtml" />
     <Content Include="Views\SubClassificacao\Index.cshtml" />
     <Content Include="Views\Account\Edit.cshtml" />
+    <Content Include="Views\Chamado\_ChamadoOutroResponsavelPartial.cshtml" />
+    <Content Include="Views\Chamado\_ChamadoTipoChamadoPartial.cshtml" />
+    <Content Include="Views\Chamado\_ChamadoObraPartial.cshtml" />
+    <Content Include="Views\Chamado\_ChamadoSetorPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

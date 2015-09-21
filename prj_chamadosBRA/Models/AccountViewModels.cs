@@ -34,6 +34,10 @@ namespace prj_chamadosBRA.Models
         [Required]
         [Display(Name = "Usuario")]
         public string UserName { get; set; }
+        
+        [Display(Name = "Email")]
+        [EmailAddress]
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

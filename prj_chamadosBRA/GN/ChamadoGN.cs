@@ -93,7 +93,7 @@ namespace prj_chamadosBRA.GN
                 }
                 cDAO.salvarChamado(chamado);
                 //await Task.Run(() => EmailService.envioEmailAberturaChamado(chamado));
-                await EmailService.envioEmailAberturaChamado(chamado);
+                await EmailServiceUtil.envioEmailAberturaChamado(chamado);
                 return true;
             }
             catch
@@ -155,7 +155,7 @@ namespace prj_chamadosBRA.GN
                     chamadoOrigem.ResponsavelChamado = null;
                     cDAO.atualizarChamado(id, chamadoOrigem);
                     chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
-                    await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
+                    await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
                 }
             }
             else if (chamadoOrigem.SetorDestino == null && SetorDestino != null)
@@ -164,7 +164,7 @@ namespace prj_chamadosBRA.GN
                 chamadoOrigem.SetorDestino = setor;
                 cDAO.atualizarChamado(id, chamadoOrigem);
                 chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
-                await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
+                await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
             }
 
             //Atualização de Responsavel pelo Chamado
@@ -183,7 +183,7 @@ namespace prj_chamadosBRA.GN
                         chamadoOrigem.ResponsavelChamado = user;
                         cDAO.atualizarChamado(id, chamadoOrigem);
                         chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
-                        await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
+                        await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
 
                     }
                 }
@@ -194,13 +194,13 @@ namespace prj_chamadosBRA.GN
                 chamadoOrigem.ResponsavelChamado = user;
                 cDAO.atualizarChamado(id, chamadoOrigem);
                 chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
-                await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
+                await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
             }
 
             if (informacoesAcompanhamento == null || informacoesAcompanhamento != "")
             {
                 chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, informacoesAcompanhamento, chamadoOrigem);
-                await EmailService.envioEmailDirecionamentoChamado(chamadoHistorico);
+                await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
             }
             if (chamadoOrigem.ObsevacaoInterna != chamado.ObsevacaoInterna)
             {

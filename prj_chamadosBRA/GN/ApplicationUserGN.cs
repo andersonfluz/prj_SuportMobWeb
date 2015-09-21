@@ -16,22 +16,22 @@ namespace prj_chamadosBRA.GN
             this.db = db;
         }
 
-        public List<ApplicationUser> usuariosPorPerfil(int perfil, string idUser)
+        public List<ApplicationUser> usuariosPorPerfil(int perfil, string idUser, string filtro)
         {
             List<ApplicationUser> listUsers = new List<ApplicationUser>();
             switch (perfil)
             {
                 case 1: //Administrador
-                    listUsers = new ApplicationUserDAO(db).retornarUsuarios();
+                    listUsers = new ApplicationUserDAO(db).retornarUsuarios(filtro);
                     break;
                 case 5: //Gestor
                     ApplicationUser user = new ApplicationUserDAO(db).retornarUsuario(idUser);
                     List<Setor> setores = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
-                    listUsers = new ApplicationUserDAO(db).retornarUsuariosSetor(setores[0]);
+                    listUsers = new ApplicationUserDAO(db).retornarUsuariosSetor(setores[0], filtro);
                     break;
                 case 6: //Administrador Obra
                     List<Obra> obras = new ObraDAO(db).BuscarObrasPorUsuario(idUser);
-                    listUsers = new ApplicationUserDAO(db).retornarUsuariosObra(obras[0].IDO);
+                    listUsers = new ApplicationUserDAO(db).retornarUsuariosObra(obras[0].IDO, filtro);
                     break;
                 default:
                     listUsers = null;

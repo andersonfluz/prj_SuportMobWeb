@@ -28,7 +28,7 @@ namespace prj_chamadosBRA.Controllers
 
         // GET: Chamado
         [Authorize]
-        public ActionResult Index(int? page, string tipoChamado)
+        public ActionResult Index(int? page, string tipoChamado, string filtro)
         {
             try
             {
@@ -81,11 +81,11 @@ namespace prj_chamadosBRA.Controllers
                         int pageNumber = (page ?? 1);
                         if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
                         {
-                            return View(new ChamadoDAO(db).BuscarChamados().ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamados(filtro).ToPagedList(pageNumber, pageSize));
                         }
                         else
                         {
-                            return View(new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(Session["tipoChamado"].ToString())).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(Session["tipoChamado"].ToString()), filtro).ToPagedList(pageNumber, pageSize));
                         }
 
                     }
@@ -96,11 +96,11 @@ namespace prj_chamadosBRA.Controllers
                         int pageNumber = (page ?? 1);
                         if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
                         {
-                            return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro).ToPagedList(pageNumber, pageSize));
                         }
                         else
                         {
-                            return View(new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(Session["tipoChamado"].ToString())).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro).ToPagedList(pageNumber, pageSize));
                         }
                     }
 
@@ -112,11 +112,11 @@ namespace prj_chamadosBRA.Controllers
                     int pageNumber = (page ?? 1);
                     if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
                     {
-                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user).ToPagedList(pageNumber, pageSize));
+                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro).ToPagedList(pageNumber, pageSize));
                     }
                     else
                     {
-                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(Session["tipoChamado"].ToString())).ToPagedList(pageNumber, pageSize));
+                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro).ToPagedList(pageNumber, pageSize));
                     }
 
                 }
@@ -170,7 +170,7 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
-                List<ApplicationUser> usuarios = new ApplicationUserDAO(db).retornarUsuariosObra(Convert.ToInt32(selectedValue));
+                List<ApplicationUser> usuarios = new ApplicationUserDAO(db).retornarUsuariosObra(Convert.ToInt32(selectedValue), null);
                 ActionResult json = Json(new SelectList(usuarios, "Id", "Nome"));
                 return json;
             }
@@ -184,7 +184,7 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
-                List<ApplicationUser> responsaveis = new ApplicationUserDAO(db).retornarUsuariosSetor(new SetorDAO().BuscarSetorId(Convert.ToInt32(selectedValue)));
+                List<ApplicationUser> responsaveis = new ApplicationUserDAO(db).retornarUsuariosSetor(new SetorDAO().BuscarSetorId(Convert.ToInt32(selectedValue)), null);
                 ActionResult json = Json(new SelectList(responsaveis, "Id", "Nome"));
                 return json;
             }
@@ -287,11 +287,11 @@ namespace prj_chamadosBRA.Controllers
                 ViewBag.SetorDestino = new SelectList(new SetorDAO(db).BuscarSetoresPorObra(chamado.ObraDestino.IDO), "Id", "Nome", chamado.SetorDestino.Id);
                 if (chamado.ResponsavelChamado != null)
                 {
-                    ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino), "Id", "Nome", chamado.ResponsavelChamado.Id);
+                    ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino, null), "Id", "Nome", chamado.ResponsavelChamado.Id);
                 }
                 else
                 {
-                    ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino), "Id", "Nome");
+                    ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino, null), "Id", "Nome");
                 }
             }
             else
@@ -393,7 +393,7 @@ namespace prj_chamadosBRA.Controllers
                 chamadoOriginal.Solucao = chamado.Solucao;
                 chamadoOriginal.DataHoraBaixa = DateTime.Now;
                 new ChamadoDAO(db).encerrarChamado(id, chamadoOriginal);
-                await EmailService.envioEmailEncerramentoChamado(chamadoOriginal);
+                await EmailServiceUtil.envioEmailEncerramentoChamado(chamadoOriginal);
                 TempData["notice"] = "Chamado Encerrado com Sucesso!";
                 return RedirectToAction("Index");
             }

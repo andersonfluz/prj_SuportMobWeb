@@ -9,14 +9,22 @@
 <p>
     @Html.ActionLink("Novo Usuário", "Register", null, new { @class = "btn btn-default" })
 </p>
+@using (Html.BeginForm("Index", "Account", FormMethod.Post, new { @class = "form-inline" }))
+{
+    @Html.Label("Consultar:", new { @class = "control-label" })
+    <label>&nbsp;</label>
+    @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "usuario, nome...", Style = "max-width:600px" })
+    <input type="submit" value="Consultar" class="btn btn-default" />
+}
+<p></p>
 <table class="table">
     <tr>
         <th>
             @Html.DisplayName("Usuário")
         </th>
         @*<th>
-            @Html.DisplayNameFor(model => model.PerfilUsuario)
-        </th>*@
+                @Html.DisplayNameFor(model => model.PerfilUsuario)
+            </th>*@
         <th>
             @Html.DisplayNameFor(model => model.Nome)
         </th>
@@ -26,25 +34,26 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.UserName)
-        </td>
-        @*<td>
-            @Html.Display(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfil(item.PerfilUsuario).Descricao)
-        </td>*@
-        <td>
-            @Html.DisplayFor(modelItem => item.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Contato)
-        </td>
-        <th>
-            @Html.ActionLink("Editar", "Edit", "Account", new { id = item.Id }, new { @class = "btn btn-default" })
-        </th>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            @*<td>
+                    @Html.Display(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfil(item.PerfilUsuario).Descricao)
+                </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Contato)
+            </td>
+            <th>
+                @Html.ActionLink("Editar", "Edit", "Account", new { id = item.Id }, new { @class = "btn btn-default" })
+            </th>
+        </tr>
+    }
 
 </table>
 @Html.Hidden("notice", @TempData["notice"])

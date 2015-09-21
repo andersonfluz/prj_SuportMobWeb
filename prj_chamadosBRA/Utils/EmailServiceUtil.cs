@@ -9,7 +9,7 @@ using System.Web.Helpers;
 
 namespace prj_chamadosBRA.Utils
 {
-    public static class EmailService
+    public static class EmailServiceUtil
     {
 
 

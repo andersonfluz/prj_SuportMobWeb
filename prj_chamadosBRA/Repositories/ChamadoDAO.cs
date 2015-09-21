@@ -15,82 +15,83 @@ namespace prj_chamadosBRA.Repositories
             this.db = db;
         }
 
-        public List<Chamado> BuscarChamados()
+        public List<Chamado> BuscarChamados(string filtro)
         {
             List<Chamado> chamados = (from e in db.Chamado where e.StatusChamado != true select e).ToList();
+            if(filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                           || s.Assunto.Contains(filtro)
+                                                           || s.Descricao.Contains(filtro)).ToList();
+            }
             return chamados;
         }
 
-        public List<Chamado> BuscarChamadosTipoChamado(int? tipoChamado)
+        public List<Chamado> BuscarChamadosTipoChamado(int? tipoChamado, string filtro)
         {
             List<Chamado> chamados = (from e in db.Chamado where e.StatusChamado != true && e.TipoChamado == tipoChamado select e).ToList();
-            //foreach (var chamado in chamados)
-            //{
-            //    ApplicationUser resp = chamado.ResponsavelChamado;
-            //    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
-            //    chamado.ResponsavelChamado = resp;
-            //    chamado.ResponsavelAberturaChamado = respAb;
-            //}
+            if (filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                           || s.Assunto.Contains(filtro)
+                                                           || s.Descricao.Contains(filtro)).ToList();
+            }
             return chamados;
         }
 
-        public List<Chamado> BuscarChamadosDoUsuario(ApplicationUser user)
+        public List<Chamado> BuscarChamadosDoUsuario(ApplicationUser user, string filtro)
         {
             List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id && e.StatusChamado != true select e).ToList();
-            //foreach (var chamado in chamados)
-            //{
-            //    ApplicationUser resp = chamado.ResponsavelChamado;
-            //    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
-            //    chamado.ResponsavelChamado = resp;
-            //    chamado.ResponsavelAberturaChamado = respAb;
-            //}
+            if (filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                           || s.Assunto.Contains(filtro)
+                                                           || s.Descricao.Contains(filtro)).ToList();
+            }
             return chamados;
         }
 
-        public List<Chamado> BuscarChamadosDoUsuarioTipoChamado(ApplicationUser user, int? tipoChamado)
+        public List<Chamado> BuscarChamadosDoUsuarioTipoChamado(ApplicationUser user, int? tipoChamado, string filtro)
         {
             List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id && e.StatusChamado != true && e.TipoChamado == tipoChamado select e).ToList();
-            //foreach (var chamado in chamados)
-            //{
-            //    ApplicationUser resp = chamado.ResponsavelChamado;
-            //    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
-            //    chamado.ResponsavelChamado = resp;
-            //    chamado.ResponsavelAberturaChamado = respAb;
-            //}
+            if (filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                           || s.Assunto.Contains(filtro)
+                                                           || s.Descricao.Contains(filtro)).ToList();
+            }
             return chamados;
         }
 
-        public List<Chamado> BuscarChamadosDeObras(List<Obra> obras)
+        public List<Chamado> BuscarChamadosDeObras(List<Obra> obras, string filtro)
         {
             List<Chamado> chamados = new List<Chamado>();
             foreach (var obra in obras)
             {
                 chamados = (from e in db.Chamado where obra.IDO == e.ObraDestino.IDO && e.StatusChamado != true select e).ToList();
             }
-            //foreach (var chamado in chamados)
-            //{
-            //    ApplicationUser resp = chamado.ResponsavelChamado;
-            //    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
-            //    chamado.ResponsavelChamado = resp;
-            //    chamado.ResponsavelAberturaChamado = respAb;
-            //}
+            if (filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
+                                                           || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.Descricao.ToLower().Contains(filtro.ToLower())).ToList();
+            }
             return chamados;
         }
 
-        public List<Chamado> BuscarChamadosDeObrasTipoChamado(List<Obra> obras, int? tipoChamado)
+        public List<Chamado> BuscarChamadosDeObrasTipoChamado(List<Obra> obras, int? tipoChamado, string filtro)
         {
             List<Chamado> chamados = new List<Chamado>();
             foreach (var obra in obras)
             {
                 chamados = (from e in db.Chamado where obra.IDO == e.ObraDestino.IDO && e.StatusChamado != true && e.TipoChamado == tipoChamado select e).ToList();
             }
-            //foreach (var chamado in chamados)
-            //{
-            //    ApplicationUser resp = chamado.ResponsavelChamado;
-            //    ApplicationUser respAb = chamado.ResponsavelAberturaChamado;
-            //    chamado.ResponsavelChamado = resp;
-            //    chamado.ResponsavelAberturaChamado = respAb;
-            //}
+            if (filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
+                                                           || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.Descricao.ToLower().Contains(filtro.ToLower())).ToList();
+            }
             return chamados;
         }
 

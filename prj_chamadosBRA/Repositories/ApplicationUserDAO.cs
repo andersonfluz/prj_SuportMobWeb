@@ -35,23 +35,38 @@ namespace prj_chamadosBRA.Repositories
             return user;
         }
 
-        public List<ApplicationUser> retornarUsuarios()
+        public List<ApplicationUser> retornarUsuarios(string filtro)
         {            
             List<ApplicationUser> users = (from e in db.Users select e).ToList();
+            if (users != null && filtro != null)
+            {
+                users = users.Where(s => s.UserName.ToLower().Contains(filtro.ToLower())
+                                              || s.Nome.ToLower().Contains(filtro.ToLower())).ToList();
+            }
             return users;
         }
 
-        public List<ApplicationUser> retornarUsuariosSetor(Setor setor)
+        public List<ApplicationUser> retornarUsuariosSetor(Setor setor, string filtro)
         {
             List<String> userIds = (from e in db.UsuarioSetor where e.Setor == setor.Id select e.Usuario).ToList();
-            List<ApplicationUser> users = (from e in db.Users where userIds.Contains(e.Id) select e).ToList(); 
+            List<ApplicationUser> users = (from e in db.Users where userIds.Contains(e.Id) select e).ToList();
+            if (users != null && filtro != null)
+            {
+                users = users.Where(s => s.UserName.ToLower().Contains(filtro.ToLower())
+                                              || s.Nome.ToLower().Contains(filtro.ToLower())).ToList();
+            }
             return users;
         }
 
-        public List<ApplicationUser> retornarUsuariosObra(int idObra)
+        public List<ApplicationUser> retornarUsuariosObra(int idObra, string filtro)
         {
             List<String> userIds = (from e in db.UsuarioObra where e.Obra == idObra select e.Usuario).ToList();
             List<ApplicationUser> users = (from e in db.Users where userIds.Contains(e.Id) select e).ToList();
+            if (users != null && filtro != null)
+            {
+                users = users.Where(s => s.UserName.ToLower().Contains(filtro.ToLower())
+                                              || s.Nome.ToLower().Contains(filtro.ToLower())).ToList();
+            }
             return users;
         }
 

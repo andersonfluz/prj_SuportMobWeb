@@ -7,7 +7,7 @@
 @using (Html.BeginForm("Create", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "create" }))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -39,88 +39,18 @@
                 @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
             </div>
         </div>
-        @if ((bool)Session["TipoChamadoVisivel"])
-        {
-            <div class="form-group">
-                @Html.LabelFor(model => model.TipoChamado, new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>&nbsp;Totvs RM</label>
-                    <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
-                    @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>&nbsp;Outros</label>
-                    <p>@Html.ValidationMessageFor(model => model.TipoChamado, "", new { @class = "text-danger" })</p>
-                </div>
-
-            </div>
+        @if ((bool)Session["TipoChamadoVisivel"]){@Html.Partial("_ChamadoTipoChamadoPartial", Model);
         }
 
-        @if ((bool)Session["ObraVisivel"])
-        {
-            <div class="form-group">
-                @Html.Label("Obra Destino", new { @class = "col-md-2 control-label" })
-                <div class="col-md-10">
-                    @Html.DropDownListFor(m => m.ObraDestino, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.ObraDestino, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        }
-        @if ((bool)Session["SetorVisivel"])
-        {
-            if (Session["PerfilUsuario"].ToString() != "1")
-            {
-                <div class="form-group">
-                    @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.DropDownListFor(m => m.SetorDestino, new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetoresPorObra(ViewBag.SetorDestino), "Id", "Nome"), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.SetorDestino, "", new { @class = "text-danger validacaoSetor" })
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="form-group">
-                    @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.DropDownListFor(m => m.SetorDestino, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.SetorDestino, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            }
+        @if ((bool)Session["ObraVisivel"]){@Html.Partial("_ChamadoObraPartial", Model);
         }
 
-        @if ((bool)Session["SelecionarResponsavelAbertura"])
-        {
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#pnlResponsavelAbertura">Abrir chamado em nome de outro usuário?</a>
-                    </h4>
-                </div>
-                <div id="pnlResponsavelAbertura" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "4")
-                        {
-                            <div class="form-group">
-                                @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
-                                <div class="col-md-10">
-                                    @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO().retornarUsuariosObra(ViewBag.SetorDestino), "Id", "Nome"), "-- Selecione o usuário --", new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="form-group">
-                                @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
-                                <div class="col-md-10">
-                                    @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione a obra primeiro --", new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
+        @if ((bool)Session["SetorVisivel"]){@Html.Partial("_ChamadoSetorPartial", Model);
         }
+
+        @if ((bool)Session["SelecionarResponsavelAbertura"]){@Html.Partial("_ChamadoOutroResponsavelPartial", Model);
+        }
+        
         <p></p>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -128,7 +58,7 @@
             </div>
         </div>
     </div>
-}
+                }
 <div>
     @Html.ActionLink("Voltar para Acompanhamento", "Index")
 </div>
@@ -221,7 +151,7 @@
                 });
                 return false;
             })
-            
+
         });
     </script>
 }

@@ -1,0 +1,11 @@
+﻿@model prj_chamadosBRA.Models.Chamado
+<div class="form-group">
+    @Html.LabelFor(model => model.TipoChamado, new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>&nbsp;Totvs RM</label>
+        <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+        @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>&nbsp;Outros</label>
+        <p>@Html.ValidationMessageFor(model => model.TipoChamado, "", new { @class = "text-danger" })</p>
+    </div>
+
+</div>
