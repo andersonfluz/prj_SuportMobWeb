@@ -1,0 +1,154 @@
+﻿@model PagedList.IPagedList<prj_chamadosBRA.Models.Chamado>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.Title = "ChamadosEncerrados";
+}
+
+<h2>Chamados Encerrados @ViewBag.NomeObra</h2>
+@if (Session["PerfilUsuario"].ToString() != "2" || Session["PerfilUsuario"].ToString() != "4")
+{
+    using (Html.BeginForm("ChamadosEncerrados", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
+    {
+
+        @Html.Label("Tipo Chamado:", new { @class = "control-label" })
+        <label>&nbsp;</label>
+        @Html.DropDownList("TipoChamado", null, new { @class = "form-control" })
+        <label>&nbsp;</label>
+        @Html.Label("Consultar:", new { @class = "control-label" })
+        <label>&nbsp;</label>
+        @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
+        <input type="submit" value="Consultar" class="btn btn-default" />
+    }
+}
+else
+{
+    using (Html.BeginForm("ChamadosEncerrados", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
+    {
+        @Html.Label("Consultar:", new { @class = "control-label" })
+        <label>&nbsp;</label>
+        @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
+        <input type="submit" value="Consultar" class="btn btn-default" />
+    }
+}
+@Html.Hidden("pageAtual", Model.PageNumber)
+<p>
+</p>
+<table class="table" data-row-style="rowStyle">
+    <tr>
+        <th>
+            @Html.DisplayName("Chamado N°")
+        </th>
+        <th>
+            @Html.DisplayName("Data Abertura")
+        </th>
+        <th>
+            @Html.DisplayName("Data Encerramento")
+        </th>
+        <th>
+            @Html.DisplayName("Solicitante")
+        </th>
+        <th>
+            @Html.DisplayName("Assunto")
+        </th>
+        <th>
+            @Html.DisplayName("Responsavel")
+        </th>
+        @if ((bool)Session["ObraVisivel"])
+        {
+            <th>
+                @Html.DisplayName("Obra")
+            </th>
+        }
+        @if ((bool)Session["SetorVisivel"])
+        {
+            <th>
+                @Html.DisplayName("Setor")
+            </th>
+        }
+        <th>
+            @Html.DisplayName("Tipo Chamado")
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            @*<td>
+                    @Html.ActionLink(item.Id.ToString(), "Edit", new { id = item.Id })
+                </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraAbertura)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraBaixa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ResponsavelAberturaChamado.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assunto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ResponsavelChamado.Nome)
+            </td>
+            @if ((bool)Session["ObraVisivel"])
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.ObraDestino.Descricao)
+                </td>
+            }
+            @if ((bool)Session["SetorVisivel"])
+            {
+                <td>
+                    @if (item.SetorDestino != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
+                    }
+                    else
+                    {
+                        @Html.Label("Setor Indefinido")
+                    }
+                </td>
+            }
+            <td>
+                @if (item.TipoChamado == 1)
+                {
+                    <p>Totvs RM</p>
+                }
+                else if (item.TipoChamado == 2)
+                {
+                    <p>Outros</p>
+                }
+                else
+                {
+                    <p>Indefinido</p>
+                }
+            </td>
+
+        </tr>
+    }
+
+</table>
+    Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("ChamadosEncerrados",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    @section scripts{
+        <script>
+            $(document).ready(function () {
+                $('#TipoChamado').change(function () {
+                    var url = window.location.href;
+                    if (url.indexOf("page") > -1) {
+                        window.location.href = '../../Chamado/ChamadosEncerrados/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+                    } else {
+                        window.location.href = '../Chamado/ChamadosEncerrados/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+                    }
+                });
+            });
+        </script>
+    }

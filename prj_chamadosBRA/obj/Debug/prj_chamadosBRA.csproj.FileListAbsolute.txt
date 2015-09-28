@@ -119,3 +119,4 @@ D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\PagedList
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\PagedList.Mvc.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\PagedList.xml
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\PagedList.Mvc.xml
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Debug\prj_chamadosBRA.csprojResolveAssemblyReference.cache

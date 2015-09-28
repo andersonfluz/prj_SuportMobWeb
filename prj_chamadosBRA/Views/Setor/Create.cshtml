@@ -63,6 +63,15 @@
                 </div>
             </div>
         }
+        @if (Session["PerfilUsuario"].ToString() == "6")
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.obra, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.obra, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
+                </div>
+            </div>
+        }
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

@@ -177,32 +177,29 @@ else
     }
     @section scripts{
         <script>
+            jQuery(document).ready(function ($) {
+                $(function () {
+                    $(".details").click(function () {
+                        var id = $(this).attr("data-id");
+                        $("#modal").load("../Chamado/ChamadoInfo/" + id, function () {
+                            $("#modal").modal({ show: true });
+                        })
+                    });
+                });
+                $('#TipoChamado').change(function () {
+                    var url = window.location.href;
+                    if (url.indexOf("page") > -1) {
+                        window.location.href = '../../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+                    } else {
+                        window.location.href = '../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+                    }
+                });
+            });
             $(window).load(function () {
                 if ($('#notice').val() != "") {
                     //alert($('#notice').val());
                     $('#modalNotice').modal({ show: true });
                 }
-            });
-
-            $('#TipoChamado').change(function () {
-                var url = window.location.href;
-                if (url.indexOf("page") > -1) {
-                    window.location.href = '../../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-                } else {
-                    window.location.href = '../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-                }
-            });
-        </script>
-        <script>
-            jQuery(document).ready(function ($) {
-                $(function () {
-                    $(".details").click(function () {
-                        var id = $(this).attr("data-id");
-                        $("#modal").load("../Chamado/Details/" + id, function () {
-                            $("#modal").modal({ show: true });
-                        })
-                    });
-                })
             });
         </script>
     }

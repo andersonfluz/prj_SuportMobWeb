@@ -1,4 +1,4 @@
-﻿@model prj_chamadosBRA.Models.Chamado
+﻿@model prj_chamadosBRA.Models.NovoChamadoViewModel
 
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -8,7 +8,7 @@
     </div>
     <div id="pnlResponsavelAbertura" class="panel-collapse collapse">
         <div class="panel-body">
-            @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "4")
+            @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "4" && Session["PerfilUsuario"].ToString() != "6")
             {
                 <div class="form-group">
                     @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })

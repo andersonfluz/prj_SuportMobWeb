@@ -10,7 +10,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Obra</h4>
         <hr />
@@ -35,6 +35,13 @@
             </div>
         </div>
 
+        <div id="centroAdm" class="form-group">
+            @Html.LabelFor(model => model.CentroAdministrativo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("ddlCentroAdministrativo")
+            </div>
+        </div>
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
@@ -49,4 +56,15 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#Matriz").change(function () {
+                if ($("#Matriz").is(":checked")) {
+                    $("#centroAdm").hide('fast');
+                } else {
+                    $("#centroAdm").show('fast');
+                }
+            });
+        });
+    </script>
 }

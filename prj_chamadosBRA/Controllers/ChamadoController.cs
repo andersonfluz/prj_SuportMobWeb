@@ -13,9 +13,11 @@ using System.Web;
 using System.Web.Mvc;
 using PagedList;
 using prj_chamadosBRA.GN;
+using System.Net;
 
 namespace prj_chamadosBRA.Controllers
 {
+    [Authorize]
     public class ChamadoController : Controller
     {
         private UserManager<ApplicationUser> manager;
@@ -62,7 +64,8 @@ namespace prj_chamadosBRA.Controllers
                 //Usuario Administrador
                 if (Session["PerfilUsuario"].ToString().Equals("1")
                     || Session["PerfilUsuario"].ToString().Equals("3")
-                    || Session["PerfilUsuario"].ToString().Equals("5"))
+                    || Session["PerfilUsuario"].ToString().Equals("5")
+                    || Session["PerfilUsuario"].ToString().Equals("6"))
                 {
                     //Usuario Vinculado a Obras
                     List<Obra> obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
@@ -81,11 +84,11 @@ namespace prj_chamadosBRA.Controllers
                         int pageNumber = (page ?? 1);
                         if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
                         {
-                            return View(new ChamadoDAO(db).BuscarChamados(filtro).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamados(filtro, false).ToPagedList(pageNumber, pageSize));
                         }
                         else
                         {
-                            return View(new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(Session["tipoChamado"].ToString()), filtro).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, false).ToPagedList(pageNumber, pageSize));
                         }
 
                     }
@@ -96,27 +99,27 @@ namespace prj_chamadosBRA.Controllers
                         int pageNumber = (page ?? 1);
                         if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
                         {
-                            return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, false).ToPagedList(pageNumber, pageSize));
                         }
                         else
                         {
-                            return View(new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, false).ToPagedList(pageNumber, pageSize));
                         }
                     }
 
                 }
                 else
                 {
-                    ViewBag.NomeObra = "";
+                    ViewBag.NomeObra = " - " + new UsuarioObraDAO(db).buscarObrasDoUsuario(user)[0].Descricao;
                     int pageSize = 7;
                     int pageNumber = (page ?? 1);
                     if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
                     {
-                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro).ToPagedList(pageNumber, pageSize));
+                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, false).ToPagedList(pageNumber, pageSize));
                     }
                     else
                     {
-                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro).ToPagedList(pageNumber, pageSize));
+                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, false).ToPagedList(pageNumber, pageSize));
                     }
 
                 }
@@ -135,16 +138,50 @@ namespace prj_chamadosBRA.Controllers
             return View(chamado);
         }
 
+        // GET: Chamado/Details/5
+        public ActionResult ChamadoInfo(int id)
+        {
+            ViewBag.listaChamadoHistorico = new ChamadoHistoricoDAO(db).buscarHistoricosPorIdChamado(id);
+            Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            return View(chamado);
+        }
+
+        // POST: Chamado/Edit/5
+        [HttpPost]
+        public async Task<ActionResult> ChamadoInfo(int id, string informacoesAcompanhamento)
+        {
+            try
+            {
+                ChamadoGN cGN = new ChamadoGN(db);
+                if (await cGN.atualizarChamadoHistorico(id, informacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
+                {
+                    TempData["notice"] = "Chamado Atualizado Com Sucesso!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["notice"] = "Desculpe, estamos com problemas ao atualizar o chamado.";
+                    return RedirectToAction("Edit", id);
+                }
+            }
+            catch (Exception e)
+            {
+                TempData["notice"] = "Desculpe, estamos com problemas ao atualizar o chamado.";
+                return RedirectToAction("Edit", id);
+            }
+        }
+
         // GET: Chamado/Create
         [Authorize]
         public ActionResult Create()
         {
-            List<Obra> obras = new prj_chamadosBRA.Repositories.ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId());
+            List<Obra> obras = new ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId());
             ViewBag.UserId = User.Identity.GetUserId();
             SelectList listObra = new SelectList(obras, "IDO", "Descricao");
             ViewBag.ObraDestino = listObra;
             if (listObra.Count() == 1)
             {
+                ViewBag.ObraUsuario = obras[0].IDO;
                 ViewBag.SetorDestino = obras[0].IDO;
             }
             else
@@ -197,22 +234,30 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado/Create
         [HttpPost]
-        public async Task<ActionResult> Create(Chamado chamado, HttpPostedFileBase upload, String SetorDestino, String ObraDestino, String ResponsavelAberturaChamado)
+        public async Task<ActionResult> Create(NovoChamadoViewModel chamadoVM, HttpPostedFileBase upload, String SetorDestino, String ObraDestino, String ResponsavelAberturaChamado)
         {
             try
             {
                 this.ModelState.Remove("SetorDestino");
                 this.ModelState.Remove("ObraDestino");
-                this.ModelState.Remove("DataHoraAtendimento");
-                this.ModelState.Remove("Classificacao");
-                this.ModelState.Remove("SubClassificacao");
-                this.ModelState.Remove("Solucao");
-                this.ModelState.Remove("ResponsavelAberturaChamado");
                 this.ModelState.Remove("TipoChamado");
+                //this.ModelState.Remove("DataHoraAtendimento");
+                //this.ModelState.Remove("Classificacao");
+                //this.ModelState.Remove("SubClassificacao");
+                //this.ModelState.Remove("Solucao");
+                //this.ModelState.Remove("ResponsavelAberturaChamado");                
                 if (ModelState.IsValid)
                 {
                     ChamadoGN cGN = new ChamadoGN(db);
-                    if(await cGN.registrarChamado(chamado, upload, SetorDestino, ObraDestino, ResponsavelAberturaChamado, manager.FindById(User.Identity.GetUserId())))
+                    Chamado chamado = new Chamado()
+                    {
+                        Assunto = chamadoVM.Assunto,
+                        Descricao = chamadoVM.Descricao,
+                        Observacao = chamadoVM.Observacao,
+                        TipoChamado = chamadoVM.TipoChamado
+                    };
+
+                    if (await cGN.registrarChamado(chamado, upload, SetorDestino, ObraDestino, ResponsavelAberturaChamado, manager.FindById(User.Identity.GetUserId())))
                     {
                         TempData["notice"] = "Chamado Criado com Sucesso!";
                         return RedirectToAction("Index");
@@ -244,6 +289,7 @@ namespace prj_chamadosBRA.Controllers
                     ViewBag.ObraDestino = listObra;
                     if (listObra.Count() == 1)
                     {
+                        ViewBag.ObraUsuario = obras[0].IDO;
                         ViewBag.SetorDestino = obras[0].IDO;
                     }
                     else
@@ -322,19 +368,27 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado/Edit/5
         [HttpPost]
-        public async Task<ActionResult> Edit(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento)
+        public async Task<ActionResult> Edit(int id, Chamado chamado, string SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento)
         {
             try
             {
-                ChamadoGN cGN = new ChamadoGN(db);
-                if (await cGN.atualizarChamado(id, chamado, SetorDestino, ddlResponsavelChamado, informacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
+                if (ddlResponsavelChamado != null)
                 {
-                    TempData["notice"] = "Chamado Atualizado Com Sucesso!";
-                    return RedirectToAction("Index");
+                    ChamadoGN cGN = new ChamadoGN(db);
+                    if (await cGN.atualizarChamado(id, chamado, SetorDestino, ddlResponsavelChamado, informacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
+                    {
+                        TempData["notice"] = "Chamado Atualizado Com Sucesso!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["notice"] = "Desculpe, estamos com problemas ao atualizar o chamado.";
+                        return RedirectToAction("Edit", id);
+                    }
                 }
                 else
                 {
-                    TempData["notice"] = "Desculpe, estamos com problemas ao atualizar o chamado.";
+                    TempData["notice"] = "Por favor informe o Técnico Responsavel pelo Atendimento.";
                     return RedirectToAction("Edit", id);
                 }
             }
@@ -374,16 +428,26 @@ namespace prj_chamadosBRA.Controllers
         {
             Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
             chamado.StatusChamado = true;
-            return View(chamado);
+            var model = new EncerramentoChamadoViewModel()
+            {
+                Id = chamado.Id,
+                StatusChamado = chamado.StatusChamado,
+                Solucao = chamado.Solucao,
+                DataHoraAtendimento = chamado.DataHoraAtendimento,
+                Classificacao = chamado.Classificacao,
+                SubClassificacao = chamado.SubClassificacao,
+                ResponsavelChamado = chamado.ResponsavelChamado,
+                ObraDestino = chamado.ObraDestino
+            };
+            return View(model);
         }
 
         // POST: Chamado/Encerrar/5
         [HttpPost]
-        public async Task<ActionResult> Encerrar(int id, Chamado chamado, String data, String hora)
+        public async Task<ActionResult> Encerrar(int id, EncerramentoChamadoViewModel chamado, String data, String hora)
         {
             try
             {
-
                 Chamado chamadoOriginal = new ChamadoDAO(db).BuscarChamadoId(id);
 
                 DateTime atendimento = Convert.ToDateTime(data + " " + hora);
@@ -438,6 +502,145 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
+        // GET: Chamado
+        [Authorize]
+        public ActionResult ChamadosEncerrados(int? page, string tipoChamado, string filtro)
+        {
+            try
+            {
+                if (tipoChamado != null)
+                {
+                    Session["tipoChamado"] = tipoChamado;
+                }
+                else
+                {
+                    if (Session["tipoChamado"] != null)
+                    {
+                        if (tipoChamado != null)
+                        {
+                            Session["tipoChamado"] = tipoChamado;
+                        }
+                    }
+                    else
+                    {
+                        Session["tipoChamado"] = "-2";
+                    }
+                }
+                List<SelectListItem> dropdownItems = new List<SelectListItem>();
+                dropdownItems.AddRange(new[]{
+                                                new SelectListItem() { Text = "Todos", Value = "-2" },
+                                                new SelectListItem() { Text = "Totvs RM", Value = "1" },
+                                                new SelectListItem() { Text = "Outros", Value = "2" }
+                                            });
+                ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", Session["tipoChamado"].ToString());
 
+                ApplicationUser user = manager.FindById(User.Identity.GetUserId());
+                //Usuario Administrador
+                if (Session["PerfilUsuario"].ToString().Equals("1")
+                    || Session["PerfilUsuario"].ToString().Equals("3")
+                    || Session["PerfilUsuario"].ToString().Equals("5")
+                    || Session["PerfilUsuario"].ToString().Equals("6"))
+                {
+                    //Usuario Vinculado a Obras
+                    List<Obra> obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
+                    Boolean isMatriz = false;
+                    foreach (var obra in obras)
+                    {
+                        if (obra.Matriz)
+                        {
+                            isMatriz = true;
+                        }
+                    }
+                    if (isMatriz && Session["PerfilUsuario"].ToString().Equals("1"))
+                    {
+                        ViewBag.NomeObra = "";
+                        int pageSize = 7;
+                        int pageNumber = (page ?? 1);
+                        if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamados(filtro, true).ToPagedList(pageNumber, pageSize));
+                        }
+                        else
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, true).ToPagedList(pageNumber, pageSize));
+                        }
+
+                    }
+                    else
+                    {
+                        ViewBag.NomeObra = "- " + obras[0].Descricao;
+                        int pageSize = 7;
+                        int pageNumber = (page ?? 1);
+                        if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, true).ToPagedList(pageNumber, pageSize));
+                        }
+                        else
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, true).ToPagedList(pageNumber, pageSize));
+                        }
+                    }
+
+                }
+                else
+                {
+                    ViewBag.NomeObra = " - " + new UsuarioObraDAO(db).buscarObrasDoUsuario(user)[0].Descricao;
+                    int pageSize = 7;
+                    int pageNumber = (page ?? 1);
+                    if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, true).ToPagedList(pageNumber, pageSize));
+                    }
+                    else
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, true).ToPagedList(pageNumber, pageSize));
+                    }
+
+                }
+            }
+            catch (NullReferenceException ne)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
+        // GET: Chamado
+        [Authorize]
+        public ActionResult ReaberturaChamado(string id)
+        //public ActionResult ReaberturaChamado(int id)
+        {
+            Criptografia objCript = new Criptografia(WebUtility.UrlDecode(id));
+            int idChamado = Convert.ToInt32(objCript["id"].ToString());
+            Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(idChamado);
+            //Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            if (chamado.StatusChamado.Value)
+            {
+                ReaberturaChamadoViewModel model = new ReaberturaChamadoViewModel()
+                {
+                    Id = chamado.Id,
+                    StatusChamado = chamado.StatusChamado,
+                    ResponsavelChamado = chamado.ResponsavelChamado,
+                    DataHoraAtendimento = chamado.DataHoraAtendimento,
+                    Assunto = chamado.Assunto,
+                    Solucao = chamado.Solucao
+                };
+                return View(model);
+            }
+            else
+            {
+                TempData["notice"] = "Chamado não pode ser reaberto, pois ele não foi encerrado.";
+                return RedirectToAction("Index", "Chamado");
+            }
+        }
+
+        // POST: Chamado
+        [HttpPost]
+        public async Task<ActionResult> ReaberturaChamado(int id, ReaberturaChamadoViewModel chamado)
+        {
+            ChamadoGN cGN = new ChamadoGN(db);
+            await cGN.reaberturaChamado(id, chamado.JustificativaReabertura, manager.FindById(User.Identity.GetUserId()));
+            TempData["notice"] = "Chamado Reaberto com Sucesso!";
+            return RedirectToAction("Index");
+        }
     }
 }

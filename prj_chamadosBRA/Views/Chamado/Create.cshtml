@@ -1,8 +1,8 @@
-﻿@model prj_chamadosBRA.Models.Chamado
+﻿@model prj_chamadosBRA.Models.NovoChamadoViewModel
 @{
     ViewBag.Title = "Novo Chamado";
 }
-<h2>Novo Chamado</h2>
+<h2>Novo Chamado @ViewBag.NomeObra</h2>
 
 @using (Html.BeginForm("Create", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "create" }))
 {

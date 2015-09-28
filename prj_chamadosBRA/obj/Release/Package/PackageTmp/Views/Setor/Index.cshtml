@@ -21,13 +21,13 @@
             @Html.DisplayNameFor(model => model.Responsavel)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.EmailResponsavel)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.EmailSetor)
         </th>
         <th>
             @Html.DisplayName("Obra")
+        </th>
+        <th>
+            @Html.DisplayName("Editar")
         </th>
     </tr>
 
@@ -44,13 +44,13 @@
                 @Html.DisplayFor(modelItem => item.Responsavel)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EmailResponsavel)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.EmailSetor)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.obra.Descricao)
+            </td>
+            <td>
+                <button class="btn btn-default edit" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
             </td>
         </tr>
     }
@@ -88,6 +88,16 @@
                 //alert($('#notice').val());
                 $('#modalNotice').modal({ show: true });
             }
+        });
+    </script>
+    <script>
+        jQuery(document).ready(function ($) {
+            $(function () {
+                $(".edit").click(function () {
+                    var id = $(this).attr("data-id");
+                    window.location.href = '../../Setor/Edit/' + id;
+                });
+            })
         });
     </script>
 }

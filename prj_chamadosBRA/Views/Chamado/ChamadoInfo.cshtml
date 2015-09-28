@@ -1,0 +1,121 @@
+﻿@model prj_chamadosBRA.Models.Chamado
+@{
+    Layout = null;
+    ViewBag.Title = "Consulta Chamado";
+}
+
+<div class="modal-dialog" id="modalDetails">
+    <div class="modal-content">
+        @using (Html.BeginForm("ChamadoInfo", "Chamado", null, FormMethod.Post))
+        {
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Consulta do Chamado N. @Model.Id</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Dados do Chamado</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Assunto:")
+                                @Html.DisplayFor(model => model.Assunto)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Abertura em:")
+                                @Html.DisplayFor(model => model.DataHoraAbertura)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Descrição:")
+                                @Html.DisplayFor(model => model.Descricao)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Observação:")
+                                @Html.DisplayFor(model => model.Observacao)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Tipo do Chamado:") &nbsp;
+                                @Html.RadioButtonFor(model => model.TipoChamado, "1", new { disabled = "disabled" })<label>Totvs RM</label>
+                                <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                                @Html.RadioButtonFor(model => model.TipoChamado, "2", new { disabled = "disabled" })<label>Outros</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Andamento do Chamado</div>
+                    <div class="panel-body tab-pane">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table" data-row-style="rowStyle">
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayName("Data")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Hora")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Responsável")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Histórico")
+                                        </th>
+                                    </tr>
+
+                                    @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoHistorico>)ViewBag.listaChamadoHistorico))
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.Data.ToString("dd/MM/yyyy")
+                                            </td>
+                                            <td>
+                                                @item.Hora.ToString("HH:mm")
+                                            </td>
+                                            <td>
+                                                @item.Responsavel.Nome
+                                            </td>
+                                            <td>
+                                                @item.Historico
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Informações de Acompanhamento</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Informações Adicionais:")
+                                @Html.TextArea("informacoesAcompanhamento", htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" value="Atualizar" class="btn btn-default" />
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    #modalDetails .modal-content {
+        overflow: auto;
+    }
+</style>

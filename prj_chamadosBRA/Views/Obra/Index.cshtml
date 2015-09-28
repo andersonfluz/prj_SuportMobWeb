@@ -20,21 +20,28 @@
         <th>
             @Html.DisplayName("Centro Administrativo")
         </th>
+        <th>
+            @Html.DisplayName("Editar")
+        </th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Descricao)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Matriz)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CentroAdministrativo.Nome)
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descricao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Matriz)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CentroAdministrativo.Nome)
+            </td>
+            <td>
+                <button class="btn btn-default edit" data-id="@item.IDO"><i class="glyphicon glyphicon-file"></i></button>
+            </td>
+        </tr>
+    }
 </table>
 
 @Html.Hidden("notice", @TempData["notice"])
@@ -68,6 +75,16 @@
                 //alert($('#notice').val());
                 $('#modalNotice').modal({ show: true });
             }
+        });
+    </script>
+    <script>
+        jQuery(document).ready(function ($) {
+            $(function () {
+                $(".edit").click(function () {
+                    var id = $(this).attr("data-id");
+                    window.location.href = '../../Obra/Edit/' + id;
+                });
+            })
         });
     </script>
 }

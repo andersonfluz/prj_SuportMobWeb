@@ -21,59 +21,59 @@ namespace prj_chamadosBRA.Controllers
     public class AccountController : Controller
     {
         #region Construtor Antigo
-        //public AccountController()
-        //    : this(new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext())))
-        //{
-        //}
-
-        //public AccountController(UserManager<ApplicationUser> userManager)
-        //{
-        //    UserManager = userManager;
-        //    UserManager.UserValidator = new UserValidator<ApplicationUser>(UserManager)
-        //    {
-        //        AllowOnlyAlphanumericUserNames = false
-        //    };
-        //}
-
-        //public UserManager<ApplicationUser> UserManager { get; private set; }
-        #endregion
-
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
-
         public AccountController()
+            : this(new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext())))
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager)
         {
             UserManager = userManager;
-            SignInManager = signInManager;
+            UserManager.UserValidator = new UserValidator<ApplicationUser>(UserManager)
+            {
+                AllowOnlyAlphanumericUserNames = false
+            };
         }
 
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
-        }
+        public UserManager<ApplicationUser> UserManager { get; private set; }
+        #endregion
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
+        //private ApplicationSignInManager _signInManager;
+        //private ApplicationUserManager _userManager;
+
+        //public AccountController()
+        //{
+        //}
+
+        //public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        //{
+        //    UserManager = userManager;
+        //    SignInManager = signInManager;
+        //}
+
+        //public ApplicationSignInManager SignInManager
+        //{
+        //    get
+        //    {
+        //        return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+        //    }
+        //    private set
+        //    {
+        //        _signInManager = value;
+        //    }
+        //}
+
+        //public ApplicationUserManager UserManager
+        //{
+        //    get
+        //    {
+        //        return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        //    }
+        //    private set
+        //    {
+        //        _userManager = value;
+        //    }
+        //}
 
         //
         // GET: /Account/Login
@@ -150,7 +150,7 @@ namespace prj_chamadosBRA.Controllers
                 UserManager.RemovePassword(id);
                 UserManager.AddPassword(id, newPassword);
                 ApplicationDbContext context = new ApplicationDbContext();
-                await EmailServiceUtil.envioEmailRedefinicaoSenhaUsuario(new ApplicationUserDAO(context).retornarUsuario(id));
+                //await EmailServiceUtil.envioEmailRedefinicaoSenhaUsuario(new ApplicationUserDAO(context).retornarUsuario(id));
                 TempData["notice"] = "Senha do usuário redefinida com Sucesso!";
                 return RedirectToAction("Index");
             }
@@ -161,92 +161,6 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
-        //
-        // POST: /Account/Login
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            model.Email = model.UserName;
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    var user = await UserManager.FindAsync(model.UserName, model.Password);
-                    Session["UserId"] = user.Id;
-                    Session["PerfilUsuario"] = user.PerfilUsuario;
-                    switch (Session["PerfilUsuario"].ToString())
-                    {
-                        case "1": //Administrador
-                            Session["SetorVisivel"] = true;
-                            Session["ObraVisivel"] = true;
-                            Session["TipoChamadoVisivel"] = true;
-                            Session["SelecionarResponsavelAbertura"] = true;
-                            break;
-                        case "2": //SuperiorBRA
-                            Session["SetorVisivel"] = false;
-                            Session["ObraVisivel"] = true;
-                            Session["TipoChamadoVisivel"] = false;
-                            Session["SelecionarResponsavelAbertura"] = false;
-                            break;
-                        case "3": //Tecnico
-                            Session["SetorVisivel"] = true;
-                            Session["ObraVisivel"] = false;
-                            Session["TipoChamadoVisivel"] = true;
-                            Session["SelecionarResponsavelAbertura"] = true;
-                            break;
-                        case "4": //Usuário
-                            Session["SetorVisivel"] = true;
-                            Session["ObraVisivel"] = false;
-                            Session["TipoChamadoVisivel"] = false;
-                            Session["SelecionarResponsavelAbertura"] = false;
-                            break;
-                        case "5": //Gestor
-                            Session["SetorVisivel"] = true;
-                            Session["ObraVisivel"] = false;
-                            Session["TipoChamadoVisivel"] = true;
-                            Session["SelecionarResponsavelAbertura"] = true;
-                            break;
-                        case "6": //Administrador da Obra
-                            Session["SetorVisivel"] = true;
-                            Session["ObraVisivel"] = false;
-                            Session["TipoChamadoVisivel"] = true;
-                            Session["SelecionarResponsavelAbertura"] = true;
-                            break;
-                        default:
-                            Session["SetorVisivel"] = true;
-                            Session["ObraVisivel"] = false;
-                            Session["TipoChamadoVisivel"] = true;
-                            break;
-                    }                    
-                    if (user.PerfilUsuario == 1 || user.PerfilUsuario == 6)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Chamado");
-                    }
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
-            }
-        }
-
-        #region Login Antigo
         ////
         //// POST: /Account/Login
         //[HttpPost]
@@ -254,12 +168,19 @@ namespace prj_chamadosBRA.Controllers
         //[ValidateAntiForgeryToken]
         //public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         //{
-        //    AuthenticationManager.SignOut();
-        //    if (ModelState.IsValid)
+        //    if (!ModelState.IsValid)
         //    {
-        //        var user = await UserManager.FindAsync(model.UserName, model.Password);
-        //        if (user != null)
-        //        {
+        //        return View(model);
+        //    }
+
+        //    // This doesn't count login failures towards account lockout
+        //    // To enable password failures to trigger account lockout, change to shouldLockout: true
+        //    model.Email = model.UserName;
+        //    var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+        //    switch (result)
+        //    {
+        //        case SignInStatus.Success:
+        //            var user = await UserManager.FindAsync(model.UserName, model.Password);
         //            Session["UserId"] = user.Id;
         //            Session["PerfilUsuario"] = user.PerfilUsuario;
         //            switch (Session["PerfilUsuario"].ToString())
@@ -305,9 +226,7 @@ namespace prj_chamadosBRA.Controllers
         //                    Session["ObraVisivel"] = false;
         //                    Session["TipoChamadoVisivel"] = true;
         //                    break;
-        //            }
-
-        //            await SignInAsync(user, model.RememberMe);
+        //            }                    
         //            if (user.PerfilUsuario == 1 || user.PerfilUsuario == 6)
         //            {
         //                return RedirectToAction("Index", "Home");
@@ -316,16 +235,105 @@ namespace prj_chamadosBRA.Controllers
         //            {
         //                return RedirectToAction("Index", "Chamado");
         //            }
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError("", "Invalid username or password.");
-        //        }
+        //        case SignInStatus.LockedOut:
+        //            return View("Lockout");
+        //        case SignInStatus.RequiresVerification:
+        //            return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+        //        case SignInStatus.Failure:
+        //        default:
+        //            ModelState.AddModelError("", "Invalid login attempt.");
+        //            return View(model);
         //    }
-
-        //    // If we got this far, something failed, redisplay form
-        //    return View(model);
         //}
+
+        #region Login Antigo
+        //
+        // POST: /Account/Login
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        {
+            AuthenticationManager.SignOut();
+            if (ModelState.IsValid)
+            {
+                var user = await UserManager.FindAsync(model.UserName, model.Password);
+                if (user != null)
+                {
+                    Session["UserId"] = user.Id;
+                    Session["PerfilUsuario"] = user.PerfilUsuario;
+                    switch (Session["PerfilUsuario"].ToString())
+                    {
+                        case "1": //Administrador
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = true;
+                            Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
+                            break;
+                        case "2": //SuperiorBRA
+                            Session["SetorVisivel"] = false;
+                            Session["ObraVisivel"] = true;
+                            Session["TipoChamadoVisivel"] = false;
+                            Session["SelecionarResponsavelAbertura"] = false;
+                            break;
+                        case "3": //Tecnico
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
+                            break;
+                        case "4": //Usuário
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = false;
+                            Session["SelecionarResponsavelAbertura"] = false;
+                            break;
+                        case "5": //Gestor
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
+                            break;
+                        case "6": //Administrador da Obra
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = true;
+                            Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
+                            break;
+                        default:
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = true;
+                            break;
+                    }
+
+                    await SignInAsync(user, model.RememberMe);
+                    if (returnUrl == null)
+                    {
+                        if (user.PerfilUsuario == 1 || user.PerfilUsuario == 6)
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Chamado");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToLocal(returnUrl);
+                    }
+                
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid username or password.");
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
         #endregion
 
         //
@@ -356,6 +364,7 @@ namespace prj_chamadosBRA.Controllers
             }
             else if (Session["PerfilUsuario"].ToString().Equals("6"))
             {
+                ViewBag.UserId = User.Identity.GetUserId(); 
                 ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfisParaAdmObra();
             }
             return View();

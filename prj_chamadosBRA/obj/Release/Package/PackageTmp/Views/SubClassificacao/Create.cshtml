@@ -7,10 +7,10 @@
 <h2>Create</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>ChamadoSubClassificacao</h4>
         <hr />
@@ -22,13 +22,33 @@
                 @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ChamadoClassificacao, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Classificacao", new SelectList(ViewBag.Classificacoes, "Id", "Descricao"), new { @class = "form-control Classificacao" })                
+        @if ((bool)Session["ObraVisivel"])
+        {
+            <div class="form-group">
+                @Html.Label("Obra", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownList("Obra", new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
+                </div>
             </div>
-        </div>
+        }
+        @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "6")
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.ChamadoClassificacao, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("Classificacao", new SelectList(ViewBag.Classificacoes, "Id", "Descricao"), new { @class = "form-control Classificacao" })
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.ChamadoClassificacao, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("Classificacao", new SelectList(string.Empty, "Id", "Descricao"), "-- Aguardando Selecionar a Obra --", new { @class = "form-control" })
+                </div>
+            </div>
+        }
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -73,6 +93,32 @@
                 //alert($('#notice').val());
                 $('#modalNotice').modal({ show: true });
             }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            //Dropdownlist Selectedchange event
+            $("#Obra").change(function () {
+                $("#Classificacao").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaClassificacaoPorObra", "SubClassificacao")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#Obra").val() },
+                    success: function (classificacoes) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $("#Classificacao").append('<option value="">-- Selecione a Classificacao --</option>');
+                        $.each(classificacoes, function (i, classificacao) {
+                            $("#Classificacao").append('<option value="'
+                            + classificacao.Value + '">'
+                            + classificacao.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                    }
+                });
+            });
         });
     </script>
 }

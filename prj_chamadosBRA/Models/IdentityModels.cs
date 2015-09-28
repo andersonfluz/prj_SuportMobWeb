@@ -48,6 +48,8 @@ namespace prj_chamadosBRA.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ReaberturaChamadoViewModel> ReaberturaChamadoViewModels { get; set; }
         //public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ApplicationUser> ApplicationUsers { get; set; }
 
         //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)

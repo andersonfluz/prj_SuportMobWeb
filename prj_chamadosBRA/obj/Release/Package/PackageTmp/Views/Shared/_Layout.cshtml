@@ -6,7 +6,14 @@
     <title>@ViewBag.Title - Chamados BRA</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script>
+        $(document).ready(function () {
+            $('.dropdown-toggle').dropdown();
+        });
+    </script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -17,24 +24,52 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="../Home/Index"><img src="~/Images/logo_Web.png" width="50" height="50" /></a>
+                <a href="../../Home/Index"><img src="~/Images/logo_Web.png" width="50" height="50" /></a>
             </div>
-            <div class="navbar-collapse collapse">
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 @if (Session["PerfilUsuario"] != null)
                 {
                     <ul class="nav navbar-nav">
                         <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("Novo Chamado", "Create", "Chamado")</li>
-                        <li>@Html.ActionLink("Acompanhar Chamados", "Index", "Chamado")</li>
-                        @if (Session["PerfilUsuario"].ToString().Equals("1"))
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Chamados <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Novo Chamado", "Create", "Chamado")</li>
+                                <li role="separator" class="divider"></li>
+                                <li>@Html.ActionLink("Acompanhar Chamados", "Index", "Chamado")</li>
+                                @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6"))
+                                {
+                                    <li role="separator" class="divider"></li>
+                                    <li>@Html.ActionLink("Chamados Encerrados", "ChamadosEncerrados", "Chamado")</li>
+                                }
+                            </ul>
+                        </li>
+                        @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5")
                         {
-                            <li>@Html.ActionLink("Obras", "Index", "Obra")</li>                            
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cadastros <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5")
+                                    {
+                                        <li>@Html.ActionLink("Usuários", "Index", "Account")</li>
+                                        
+                                    }
+                                    @if (Session["PerfilUsuario"].ToString().Equals("1"))
+                                    {
+                                        <li role="separator" class="divider"></li>
+                                        <li>@Html.ActionLink("Obras", "Index", "Obra")</li>
+                                    }
+                                    @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("6"))
+                                    {
+                                        <li>@Html.ActionLink("Setores", "Index", "Setor")</li>
+                                        <li role="separator" class="divider"></li>
+                                        <li>@Html.ActionLink("Classificações", "Index", "Classificacao")</li>
+                                        <li>@Html.ActionLink("SubClassificações", "Index", "SubClassificacao")</li>
+
+                                    }
+                                </ul>
+                            </li>
                         }
-                        @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("6"))
-                        {
-                            <li>@Html.ActionLink("Setores", "Index", "Setor")</li>
-                        }
-                        <!--<li>@Html.ActionLink("Contact", "Contact", "Home")</li>-->
                     </ul>
                 }
                 @Html.Partial("_LoginPartial")
@@ -48,8 +83,6 @@
             <p>&copy; @DateTime.Now.Year - Chamados BRA</p>
         </footer>
     </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+
 </body>
 </html>

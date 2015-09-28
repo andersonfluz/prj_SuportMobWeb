@@ -47,18 +47,22 @@ textarea {
     color: #FFFFFF;
 }
 
-    .navbar-inverse .navbar-nav > li > a:hover {
-        color: #999999;
-    }
+.navbar-inverse .navbar-nav > li > a:hover {
+    color: #999999;
+}
+
+.navbar-inverse .navbar-nav > .open > a:focus {
+    background-color: #ADADAD;
+}
 
 .modal-dialog {
     width: 70%;
 }
 
-.tab-pane{
-  height:150px;
-  overflow-y:scroll;
-  width:100%;
+.tab-pane {
+    height: 150px;
+    overflow-y: scroll;
+    width: 100%;
 }
 
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {

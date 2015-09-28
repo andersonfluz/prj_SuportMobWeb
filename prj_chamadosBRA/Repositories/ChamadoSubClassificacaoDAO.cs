@@ -43,5 +43,12 @@ namespace prj_chamadosBRA.Repositories
             db.SaveChanges();
             return true;
         }
+
+        public void atualizarSubClassificacao(int id, ChamadoSubClassificacao subClassificacao)
+        {
+            ChamadoSubClassificacao subClassificacaoUpdate = (from e in db.ChamadoSubClassificacao where e.Id == id select e).SingleOrDefault();
+            subClassificacaoUpdate.Descricao = subClassificacao.Descricao;
+            db.SaveChanges();
+        }
     }
 }

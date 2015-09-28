@@ -50,5 +50,19 @@ namespace prj_chamadosBRA.Repositories
             db.SaveChanges();
             return true;
         }
+
+        public void atualizarClassificacao(int id, ChamadoClassificacao classificacao)
+        {
+            try
+            {
+                ChamadoClassificacao classificacaoUpdate = (from e in db.ChamadoClassificacao where e.Id == id select e).SingleOrDefault();
+                classificacaoUpdate.Descricao = classificacao.Descricao;
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
     }
 }

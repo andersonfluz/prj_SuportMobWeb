@@ -43,19 +43,31 @@
             @Html.ValidationMessageFor(m => m.perfil)
         </div>
     </div>
-    
+
     if ((bool)Session["ObraVisivel"])
     {
+        if (Session["PerfilUsuario"].ToString() == "1")
+        {
         <div class="form-group">
             @Html.Label("Obra", new { @class = "col-md-2 control-label" })
             <div class="col-md-10">
                 @Html.DropDownList("obra", new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObras(), "IDO", "Descricao"), new { @class = "form-control obra" })
             </div>
         </div>
+        }
+        if (Session["PerfilUsuario"].ToString() == "6")
+        {
+            <div class="form-group">
+                @Html.Label("Obra", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownList("obra", new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), new { @class = "form-control obra" })
+                </div>
+            </div>
+        }
     }
     if ((bool)Session["SetorVisivel"])
     {
-        if (Session["PerfilUsuario"].ToString() != "1")
+        if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "6")
         {
             <div class="form-group">
                 @Html.Label("Setor", new { @class = "col-md-2 control-label" })

@@ -59,11 +59,11 @@ namespace prj_chamadosBRA.Repositories
             return true;
         }
 
-        public void eliminarSetor(int id)
-        {
-            db.Entry(this.DetalhesSetor(id)).State = System.Data.Entity.EntityState.Deleted;
-            db.SaveChanges();
-        }
+        //public void eliminarSetor(int id)
+        //{
+        //    db.Entry(this.DetalhesSetor(id)).State = System.Data.Entity.EntityState.Deleted;
+        //    db.SaveChanges();
+        //}
 
         public void atualizarSetor(int id, Setor setor)
         {
@@ -73,6 +73,8 @@ namespace prj_chamadosBRA.Repositories
             setorUpdate.Responsavel = setor.Responsavel;
             setorUpdate.EmailResponsavel = setor.EmailResponsavel;
             setorUpdate.EmailSetor = setor.EmailSetor;
+            Obra obra = setorUpdate.obra;
+            setorUpdate.obra = obra;            
             db.SaveChanges();
         }
     }

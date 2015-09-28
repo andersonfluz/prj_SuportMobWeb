@@ -121,6 +121,20 @@ namespace prj_chamadosBRA.GN
             }
         }
 
+        public async Task<bool> atualizarChamadoHistorico(int id, string informacoesAcompanhamento, ApplicationUser responsavel)
+        {
+            try
+            {
+                ChamadoHistorico chamadoHistorico = new ChamadoGN(db).registrarHistorico(DateTime.Now, responsavel, informacoesAcompanhamento, new ChamadoDAO(db).BuscarChamadoId(id));
+                await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> atualizarChamado(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento, ApplicationUser responsavel)
         {
             ChamadoDAO cDAO = new ChamadoDAO(db);
@@ -208,6 +222,24 @@ namespace prj_chamadosBRA.GN
                 cDAO.atualizarChamado(id, chamadoOrigem);
             }
             return true;
+        }
+
+        public async Task<bool> reaberturaChamado(int id, string justificativaReabertura, ApplicationUser responsavel)
+        {
+            try
+            {
+                Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+                chamado.StatusChamado = false;
+                new ChamadoDAO(db).atualizarChamado(id, chamado);
+                justificativaReabertura = "O chamado encerrado em: "+ chamado.DataHoraBaixa.ToString() + " foi reaberto. Justificativa: " + justificativaReabertura;
+                ChamadoHistorico chamadoHistorico = new ChamadoGN(db).registrarHistorico(DateTime.Now, responsavel, justificativaReabertura, new ChamadoDAO(db).BuscarChamadoId(id));
+                await EmailServiceUtil.envioEmailReaberturaChamado(chamadoHistorico);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

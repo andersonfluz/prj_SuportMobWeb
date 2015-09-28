@@ -10,6 +10,7 @@ using System.Web.Mvc;
 
 namespace prj_chamadosBRA.Controllers
 {
+    [Authorize]
     public class ClassificacaoController : Controller
     {
         private UserManager<ApplicationUser> manager;
@@ -43,6 +44,7 @@ namespace prj_chamadosBRA.Controllers
         // GET: Classificacao/Create
         public ActionResult Create()
         {
+            ViewBag.UserId = User.Identity.GetUserId();
             return View();
         }
 
@@ -91,17 +93,18 @@ namespace prj_chamadosBRA.Controllers
         // GET: Classificacao/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            ChamadoClassificacao classificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(id);
+            return View(classificacao);
         }
 
         // POST: Classificacao/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, ChamadoClassificacao classificacao)
         {
             try
             {
-                // TODO: Add update logic here
-
+                new ChamadoClassificacaoDAO(db).atualizarClassificacao(id, classificacao);
+                TempData["notice"] = "Classificação Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
             catch

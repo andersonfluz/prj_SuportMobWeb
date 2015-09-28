@@ -11,6 +11,7 @@ using System.Web.Mvc;
 
 namespace prj_chamadosBRA.Controllers
 {
+    [Authorize]
     public class SetorController : Controller
     {
         private UserManager<ApplicationUser> manager;
@@ -48,6 +49,7 @@ namespace prj_chamadosBRA.Controllers
         {
             if (Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "1")
             {
+                ViewBag.UserId = User.Identity.GetUserId();
                 return View();
             }
             else
@@ -105,20 +107,21 @@ namespace prj_chamadosBRA.Controllers
         // GET: Setor/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Setor setor = new SetorDAO(db).BuscarSetorId(id);
+            return View(setor);
         }
 
         // POST: Setor/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, Setor setor)
         {
             try
             {
-                // TODO: Add update logic here
-
+                new SetorDAO(db).atualizarSetor(id, setor);
+                TempData["notice"] = "Setor Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
-            catch
+            catch(Exception e)
             {
                 return View();
             }

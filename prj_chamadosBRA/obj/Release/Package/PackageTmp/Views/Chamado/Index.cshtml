@@ -17,11 +17,28 @@
 
         @Html.Label("Tipo Chamado:", new { @class = "control-label" })
         <label>&nbsp;</label>
-        @Html.DropDownList("TipoChamado")
+        @Html.DropDownList("TipoChamado", null, new { @class = "form-control" })
+        <label>&nbsp;</label>
+        @Html.Label("Consultar:", new { @class = "control-label" })
+        <label>&nbsp;</label>
+        @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
+        <input type="submit" value="Consultar" class="btn btn-default" />
+    }
+}
+else
+{
+    using (Html.BeginForm("Index", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
+    {
+        @Html.Label("Consultar:", new { @class = "control-label" })
+        <label>&nbsp;</label>
+        @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
+        <input type="submit" value="Consultar" class="btn btn-default" />
     }
 }
 @Html.Hidden("pageAtual", Model.PageNumber)
-<p></p>
+<label>&nbsp;</label>
+<p>
+</p>
 <table class="table" data-row-style="rowStyle">
     <tr>
         <th>
@@ -160,31 +177,29 @@
     }
     @section scripts{
         <script>
+            jQuery(document).ready(function ($) {
+                $(function () {
+                    $(".details").click(function () {
+                        var id = $(this).attr("data-id");
+                        $("#modal").load("../Chamado/ChamadoInfo/" + id, function () {
+                            $("#modal").modal({ show: true });
+                        })
+                    });
+                });
+                $('#TipoChamado').change(function () {
+                    var url = window.location.href;
+                    if (url.indexOf("page") > -1) {
+                        window.location.href = '../../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+                    } else {
+                        window.location.href = '../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+                    }
+                });
+            });
             $(window).load(function () {
                 if ($('#notice').val() != "") {
                     //alert($('#notice').val());
                     $('#modalNotice').modal({ show: true });
                 }
-            });
-
-            $('#TipoChamado').change(function () {
-                var url = window.location.href;
-		if(url.indexOf("page") > -1){
-		    window.location.href = '../../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-		}else{
-		    window.location.href = '../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-		}            });
-        </script>
-        <script>
-            jQuery(document).ready(function ($) {
-                $(function () {
-                    $(".details").click(function () {
-                        var id = $(this).attr("data-id");
-                        $("#modal").load("../Chamado/Details/" + id, function () {
-                            $("#modal").modal({ show: true });
-                        })
-                    });
-                })
             });
         </script>
     }

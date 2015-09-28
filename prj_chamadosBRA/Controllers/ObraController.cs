@@ -11,6 +11,7 @@ using System.Web.Mvc;
 
 namespace prj_chamadosBRA.Controllers
 {
+    [Authorize]
     public class ObraController : Controller
     {
          private UserManager<ApplicationUser> manager;
@@ -99,17 +100,20 @@ namespace prj_chamadosBRA.Controllers
         // GET: Obra/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Obra obra = new ObraDAO(db).BuscarObraId(id);
+            ViewBag.ddlCentroAdministrativo = new SelectList(new CentroAdministrativoDAO(db).BuscarCentrosAdministrativos(), "IdCA", "Nome", obra.CentroAdministrativo.idCA);
+            return View(obra);
         }
 
         // POST: Obra/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, Obra obra, string ddlCentroAdministrativo)
         {
             try
             {
-                // TODO: Add update logic here
-
+                obra.CentroAdministrativo = new CentroAdministrativoDAO(db).BuscarCentroAdministrativo(Convert.ToInt32(ddlCentroAdministrativo));
+                new ObraDAO(db).atualizarObra(id, obra);
+                TempData["notice"] = "Obra Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
             catch

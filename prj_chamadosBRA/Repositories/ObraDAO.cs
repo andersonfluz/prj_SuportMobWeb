@@ -46,5 +46,14 @@ namespace prj_chamadosBRA.Repositories
             db.SaveChanges();
             return true;
         }
+
+        public void atualizarObra(int id, Obra obra)
+        {
+            Obra obraUpdate = (from e in db.Obra where e.IDO == id select e).SingleOrDefault();
+            obraUpdate.Descricao = obra.Descricao;
+            obraUpdate.Matriz = obra.Matriz;
+            obraUpdate.CentroAdministrativo = obra.CentroAdministrativo;
+            db.SaveChanges();
+        }
     }
 }

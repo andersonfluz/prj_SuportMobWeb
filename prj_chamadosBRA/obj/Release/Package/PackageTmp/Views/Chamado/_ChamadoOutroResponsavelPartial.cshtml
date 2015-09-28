@@ -1,0 +1,34 @@
+﻿@model prj_chamadosBRA.Models.Chamado
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#pnlResponsavelAbertura">Abrir chamado em nome de outro usuário?</a>
+        </h4>
+    </div>
+    <div id="pnlResponsavelAbertura" class="panel-collapse collapse">
+        <div class="panel-body">
+            @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "4" && Session["PerfilUsuario"].ToString() != "6")
+            {
+                <div class="form-group">
+                    @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO().retornarUsuariosObra(ViewBag.SetorDestino, null), "Id", "Nome"), "-- Selecione o usuário --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione a obra primeiro --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
