@@ -31,6 +31,13 @@ namespace prj_chamadosBRA.Repositories
             return setores;
         }
 
+        public List<Setor> BuscarSetoresPorObras(List<Obra> obras)
+        {
+            List<int> idObras = (from e in obras select e.IDO).ToList();
+            List<Setor> setores = (from e in db.Setor where idObras.Contains(e.obra.IDO) select e).ToList();
+            return setores;
+        }
+
         public Setor BuscarSetorId(int id)
         {
 

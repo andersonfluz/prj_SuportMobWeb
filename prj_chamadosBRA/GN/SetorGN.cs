@@ -26,7 +26,7 @@ namespace prj_chamadosBRA.GN
                     break;
                 case 6: //Administrador Obra
                     List<Obra> obras = new ObraDAO(db).BuscarObrasPorUsuario(idUser);
-                    listSetor = new SetorDAO(db).BuscarSetoresPorObra(obras[0].IDO);
+                    listSetor = new SetorDAO(db).BuscarSetoresPorObras(obras);
                     break;
                 default:
                     listSetor = null;

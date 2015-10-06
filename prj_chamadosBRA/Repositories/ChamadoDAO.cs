@@ -45,7 +45,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Chamado> BuscarChamadosDoUsuario(ApplicationUser user, string filtro, bool encerrado)
         {
-            List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id && e.StatusChamado != true select e).ToList();
+            List<Chamado> chamados = (from e in db.Chamado where e.ResponsavelAberturaChamado.Id == user.Id && e.StatusChamado == encerrado select e).ToList();
             if (filtro != null)
             {
                 chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
@@ -90,12 +90,50 @@ namespace prj_chamadosBRA.Repositories
             return chamados;
         }
 
+        public List<Chamado> BuscarChamadosDeSetores(List<Setor> setores, string filtro, bool encerrado)
+        {
+            List<Chamado> chamados = new List<Chamado>();
+            foreach (var setor in setores)
+            {
+                var chamadosList = (from e in db.Chamado where setor.Id == e.SetorDestino.Id && e.StatusChamado == encerrado select e).ToList();
+                chamados.AddRange(chamadosList);
+            }
+            if (filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
+                                                           || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.Descricao.ToLower().Contains(filtro.ToLower())
+                                                           || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
+                                                           || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower()))).ToList();
+            }
+            return chamados;
+        }
+
         public List<Chamado> BuscarChamadosDeObrasTipoChamado(List<Obra> obras, int? tipoChamado, string filtro, bool encerrado)
         {
             List<Chamado> chamados = new List<Chamado>();
             foreach (var obra in obras)
             {
                 var chamadosList = (from e in db.Chamado where obra.IDO == e.ObraDestino.IDO && e.StatusChamado == encerrado && e.TipoChamado == tipoChamado select e).ToList();
+                chamados.AddRange(chamadosList);
+            }
+            if (filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
+                                                           || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.Descricao.ToLower().Contains(filtro.ToLower())
+                                                           || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
+                                                           || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower()))).ToList();
+            }
+            return chamados;
+        }
+
+        public List<Chamado> BuscarChamadosDeSetoresTipoChamado(List<Setor> setores, int? tipoChamado, string filtro, bool encerrado)
+        {
+            List<Chamado> chamados = new List<Chamado>();
+            foreach (var setor in setores)
+            {
+                var chamadosList = (from e in db.Chamado where setor.Id == e.SetorDestino.Id && e.StatusChamado == encerrado && e.TipoChamado == tipoChamado select e).ToList();
                 chamados.AddRange(chamadosList);
             }
             if (filtro != null)

@@ -1,0 +1,234 @@
+﻿@model prj_chamadosBRA.Models.Chamado
+
+@{
+    ViewBag.Title = "Chamado Encerrado N. " + Model.Id;
+}
+
+<h2>Chamado Encerrado</h2>
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+    <h4>Chamado Encerrado - N° @Html.DisplayFor(model => model.Id)</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id)
+    @Html.Hidden("notice", @TempData["notice"])
+    <div class="panel panel-default">
+        <div class="panel-heading">Informações</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("Chamado:")
+                    @Html.DisplayFor(model => model.Id)
+                </div>
+                <div class="col-md-4">
+                    @Html.Label("Abertura:")
+                    @Html.DisplayFor(model => model.DataHoraAbertura, "{0:hh:mm tt}")
+                </div>
+
+                <div class="col-md-4">
+                    @Html.Label("Setor Destino:")
+                    @Html.DisplayFor(model => model.SetorDestino.Nome)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("Requerente:")
+                    @Html.DisplayFor(model => model.ResponsavelAberturaChamado.Nome)
+                </div>
+                <div class="col-md-4">
+                    @Html.Label("E-mail:")
+                    @Html.DisplayFor(model => model.ResponsavelAberturaChamado.UserName)
+                </div>
+                <div class="col-md-4">
+                    @Html.Label("Obra Destino:")
+                    @Html.DisplayFor(model => model.ObraDestino.Descricao)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    @Html.Label("Responsavel:")
+                    @Html.DisplayFor(model => model.ResponsavelChamado.Nome)
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Descrição</div>
+        <div class="panel-body">
+            <div class="row">
+
+                <div class="col-md-10">
+                    @Html.Label("Assunto:")
+                    @Html.DisplayFor(model => model.Assunto)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    @Html.Label("Descrição:")
+                    @Html.DisplayFor(model => model.Descricao)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    @Html.Label("Observação:")
+                    @Html.DisplayFor(model => model.Observacao)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    @Html.Label("Tipo do Chamado:") &nbsp;
+                    @Html.RadioButtonFor(model => model.TipoChamado, "1", new { disabled = "disabled" })<label>Totvs RM</label>
+                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                    @Html.RadioButtonFor(model => model.TipoChamado, "2", new { disabled = "disabled" })<label>Outros</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Anexos do Chamado</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <table class="table" data-row-style="rowStyle">
+                        <tr>
+                            <th>
+                                @Html.DisplayName("Nome Arquivo")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Baixar")
+                            </th>
+                        </tr>
+
+                        @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoAnexo>)ViewBag.listaChamadoAnexo))
+                        {
+                            <tr>
+                                <td>
+                                    @item.NomeAnexo
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Baixar", "Filedownload", new { id = @item.idAnexo })
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Histórico do Chamado</div>
+        <div class="panel-body tab-pane">
+            <div class="row">
+                <div class="col-md-10">
+                    <table class="table" data-row-style="rowStyle">
+                        <tr>
+                            <th>
+                                @Html.DisplayName("Data")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Hora")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Responsável")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Histórico")
+                            </th>
+                        </tr>
+
+                        @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoHistorico>)ViewBag.listaChamadoHistorico))
+                        {
+                            <tr>
+                                <td>
+                                    @item.Data.ToString("dd/MM/yyyy")
+                                </td>
+                                <td>
+                                    @item.Hora.ToString("HH:mm")
+                                </td>
+                                <td>
+                                    @item.Responsavel.Nome
+                                </td>
+                                <td>
+                                    @item.Historico
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    if ((bool)ViewBag.VisualizarObsInterna)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">Informações Internas</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        @Html.Label("Obsevação Interna:")
+                        @Html.TextAreaFor(m => m.ObsevacaoInterna, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px", @readonly = true })
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Solução</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("Data/Hora Atendimento:")
+                    @Html.DisplayFor(model => model.DataHoraAtendimento, "{0:hh:mm tt}")
+                </div>
+                <div class="col-md-4">
+                    @Html.Label("Classificação:")
+                    @ViewBag.Classificacao
+                </div>
+                <div class="col-md-4">
+                    @Html.Label("SubClassificação:")
+                    @ViewBag.SubClassificacao
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    @Html.Label("Solução:")
+                    @Html.TextAreaFor(m => m.Solucao, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px", @readonly = true })
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+}
+<div>
+    <button class="btn btn-default voltar" id="voltar" data-toggle="modal">Voltar</button>
+    @*@Html.ActionLink("Voltar", "Index")*@
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        jQuery(document).ready(function ($) {
+            $(function () {
+                $("#voltar").click(function () {
+                    history.back();
+                });
+            })
+        });
+    </script>
+}

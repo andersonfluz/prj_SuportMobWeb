@@ -36,7 +36,11 @@
                             <ul class="dropdown-menu">
                                 <li>@Html.ActionLink("Novo Chamado", "Create", "Chamado")</li>
                                 <li role="separator" class="divider"></li>
-                                <li>@Html.ActionLink("Acompanhar Chamados", "Index", "Chamado")</li>
+                                @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6"))
+                                {
+                                    <li>@Html.ActionLink("Gestão", "Index", "Chamado",null, new { title = "Gerencie as solicitações do seu setor" })</li>
+                                }
+                                <li>@Html.ActionLink("Acompanhamento", "Acompanhamento", "Chamado", null, new { title = "Acompanhe suas solicitações"})</li>
                                 @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6"))
                                 {
                                     <li role="separator" class="divider"></li>
@@ -52,7 +56,7 @@
                                     @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5")
                                     {
                                         <li>@Html.ActionLink("Usuários", "Index", "Account")</li>
-                                        
+
                                     }
                                     @if (Session["PerfilUsuario"].ToString().Equals("1"))
                                     {

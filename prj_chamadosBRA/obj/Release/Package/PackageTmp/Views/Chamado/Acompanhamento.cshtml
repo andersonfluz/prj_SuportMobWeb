@@ -2,40 +2,33 @@
 @using PagedList.Mvc;
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
-    ViewBag.Title = "Gestão de Chamados";
+    ViewBag.Title = "Acompanhamento de Chamados";
 }
-<h2>Gestão de Chamados @ViewBag.NomeObra</h2>
+<h2>Acompanhamento de Chamados @ViewBag.NomeObra</h2>
 <p>
     @Html.ActionLink("Novo Chamado", "Create", null, new { @class = "btn btn-default" })
 </p>
 <div class="modal" id="modal">
 </div>
-@if (Session["PerfilUsuario"].ToString() != "2" || Session["PerfilUsuario"].ToString() != "4")
+@using (Html.BeginForm("Acompanhamento", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
 {
-    using (Html.BeginForm("Index", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
-    {
 
-        @Html.Label("Tipo Chamado:", new { @class = "control-label" })
-        <label>&nbsp;</label>
-        @Html.DropDownList("TipoChamado", null, new { @class = "form-control" })
-        <label>&nbsp;</label>
-        @Html.Label("Consultar:", new { @class = "control-label" })
-        <label>&nbsp;</label>
-        @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
-        <input type="submit" value="Consultar" class="btn btn-default" />
-    }
+    @Html.Label("Tipo Chamado:", new { @class = "control-label" })
+    <label>&nbsp;</label>
+    @Html.DropDownList("TipoChamado", null, new { @class = "form-control" })
+    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+    @Html.CheckBox("Encerrado")
+    <label>&nbsp;</label>
+    @Html.Label("Encerrados?", new { @class = "control-label" })
+    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+    @Html.Label("Consultar:", new { @class = "control-label" })
+    <label>&nbsp;</label>
+    @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
+    <input type="submit" value="Consultar" class="btn btn-default" />
 }
-else
-{
-    using (Html.BeginForm("Index", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
-    {
-        @Html.Label("Consultar:", new { @class = "control-label" })
-        <label>&nbsp;</label>
-        @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
-        <input type="submit" value="Consultar" class="btn btn-default" />
-    }
-}
+
 @Html.Hidden("pageAtual", Model.PageNumber)
+@Html.Hidden("encerrado", Session["encerrado"])
 <label>&nbsp;</label>
 <p>
 </p>
@@ -71,26 +64,16 @@ else
         <th>
             @Html.DisplayName("Tipo Chamado")
         </th>
-        @if (Session["PerfilUsuario"].ToString() == "2" || Session["PerfilUsuario"].ToString() == "4")
-        {
-            <th>
-                @Html.DisplayName("Visualizar")
-            </th>
-        }
+        <th>
+            @Html.DisplayName("Visualizar")
+        </th>
 
     </tr>
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @if (Session["PerfilUsuario"].ToString() == "2" || Session["PerfilUsuario"].ToString() == "4")
-                {
-                    @Html.DisplayFor(modelItem => item.Id)
-                }
-                else
-                {
-                    @Html.ActionLink(item.Id.ToString(), "Edit", new { id = item.Id })
-                }
+                @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DataHoraAbertura)
@@ -137,10 +120,16 @@ else
                     <p>Indefinido</p>
                 }
             </td>
-            @if (Session["PerfilUsuario"].ToString() == "2" || Session["PerfilUsuario"].ToString() == "4")
+            @if (item.StatusChamado != true)
             {
                 <td align="center">
                     <button class="btn btn-default details" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
+                </td>
+            }
+            else
+            {
+                <td align="center">
+                    <button class="btn btn-default detailsEncerrado" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
                 </td>
             }
 
@@ -149,8 +138,8 @@ else
 </table>
     Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("Index",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    @Html.PagedListPager(Model, page => Url.Action("Acompanhamento",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, encerrado = Session["encerrado"], TipoChamado = Session["tipoChamado"] }))
 
     @Html.Hidden("notice", @TempData["notice"])
     @if (TempData["notice"] != null)
@@ -189,10 +178,24 @@ else
                 $('#TipoChamado').change(function () {
                     var url = window.location.href;
                     if (url.indexOf("page") > -1) {
-                        window.location.href = '../../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+                        window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val()+ '&encerrado='+ $('#Encerrado').val();
                     } else {
-                        window.location.href = '../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
+                        window.location.href = '../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $('#Encerrado').val();
                     }
+                });
+                $('#Encerrado').change(function () {
+                    var url = window.location.href;
+                    if ($(this).is(":checked")) {
+                        window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val()+ '&encerrado=true';
+                    } else {
+                        window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=false';
+                    }
+                });                
+                $(function () {
+                    $(".detailsEncerrado").click(function () {
+                        var id = $(this).attr("data-id");
+                        window.location.href = '../Chamado/Encerrado/' + id;
+                    });
                 });
             });
             $(window).load(function () {

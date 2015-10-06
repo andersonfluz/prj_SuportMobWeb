@@ -138,6 +138,14 @@
                     </table>
                 </div>
             </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    @Html.Label("Adicionar anexo:", new { @class = "control-label col-md-2" })
+                    <input type="file" id="anexo" name="upload" />
+                    @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
+
+                </div>
+            </div>
         </div>
     </div>
 
@@ -198,23 +206,23 @@
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">Informações Internas</div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-10">
-                    @Html.Label("Obsevação Interna:")
-                    @Html.TextAreaFor(m => m.ObsevacaoInterna, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+            <div class="panel panel-default">
+                <div class="panel-heading">Informações Internas</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            @Html.Label("Obsevação Interna:")
+                            @Html.TextAreaFor(m => m.ObsevacaoInterna, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="form-group">
-        <div class="col-md-2 col-md-10">
-            <input type="submit" value="Atualizar" class="btn btn-default" />
-        </div>
-    </div>
+            <div class="form-group">
+                <div class="col-md-2 col-md-10">
+                    <input type="submit" value="Atualizar" class="btn btn-default" />
+                </div>
+            </div>
 
 }
 <button class="btn btn-default encerrar" id="encerrar" data-toggle="modal" data-id="@Model.Id">Encerrar</button>
@@ -225,7 +233,7 @@
 
 
 @if (TempData["notice"] != null)
-{
+            {
     <div id="modalNotice" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
@@ -297,6 +305,36 @@
                     }
                 });
                 return false;
+            })
+            $('#anexo').on('change', function (e) {
+                var files = e.target.files;
+                if (files.length > 0) {
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+                        for (var x = 0; x < files.length; x++) {
+                            data.append("file" + x, files[x]);
+                        }
+
+                        $.ajax({
+                            type: "POST",
+                            url: '/Chamado/AdicionarAnexo?id=' + $("#Id").val(),
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (result) {
+                                location.reload();
+                            },
+                            error: function (xhr, status, p3, p4) {
+                                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                                if (xhr.responseText && xhr.responseText[0] == "{")
+                                    err = JSON.parse(xhr.responseText).Message;
+                                console.log(err);
+                            }
+                        });
+                    } else {
+                        alert("This browser doesn't support HTML5 file uploads!");
+                    }
+                }
             })
         });
     </script>

@@ -61,22 +61,14 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Setor/Create
         [HttpPost]
-        public ActionResult Create(Setor setor, String obra)
+        public ActionResult Create(Setor setor, string obra)
         {
             try
             {
                 this.ModelState.Remove("obra");
                 if (ModelState.IsValid)
                 {
-                    if (Session["PerfilUsuario"].ToString() == "6")
-                    {
-                        ApplicationUser user = new ApplicationUserDAO(db).retornarUsuario(User.Identity.GetUserId());
-                        setor.obra = new UsuarioObraDAO(db).buscarObrasDoUsuario(user)[0];
-                    }
-                    else
-                    {
-                        setor.obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(obra));
-                    }
+                    setor.obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(obra));
 
                     if (new SetorDAO(db).salvarSetor(setor))
                     {
@@ -121,7 +113,7 @@ namespace prj_chamadosBRA.Controllers
                 TempData["notice"] = "Setor Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return View();
             }

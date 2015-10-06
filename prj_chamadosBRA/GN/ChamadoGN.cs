@@ -92,11 +92,20 @@ namespace prj_chamadosBRA.GN
                     chamado.Anexos = new List<ChamadoAnexo> { anexo };
                 }
                 cDAO.salvarChamado(chamado);
+                new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao()
+                {
+                    IdChamado = chamado.Id,
+                    ChamadoAcao = new ChamadoAcaoDAO(db).buscarChamadoAcaoPorId(1),
+                    Texto = "Chamado Aberto",
+                    DataAcao = DateTime.Now,
+                    UsuarioAcao = user
+
+                });
                 //await Task.Run(() => EmailService.envioEmailAberturaChamado(chamado));
                 await EmailServiceUtil.envioEmailAberturaChamado(chamado);
                 return true;
             }
-            catch
+            catch(Exception e)
             {
                 return false;
             }
@@ -233,6 +242,15 @@ namespace prj_chamadosBRA.GN
                 new ChamadoDAO(db).atualizarChamado(id, chamado);
                 justificativaReabertura = "O chamado encerrado em: "+ chamado.DataHoraBaixa.ToString() + " foi reaberto. Justificativa: " + justificativaReabertura;
                 ChamadoHistorico chamadoHistorico = new ChamadoGN(db).registrarHistorico(DateTime.Now, responsavel, justificativaReabertura, new ChamadoDAO(db).BuscarChamadoId(id));
+                new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao()
+                {
+                    IdChamado = chamado.Id,
+                    ChamadoAcao = new ChamadoAcaoDAO(db).buscarChamadoAcaoPorId(3),
+                    Texto = "Chamado Reaberto",
+                    DataAcao = DateTime.Now,
+                    UsuarioAcao = responsavel
+
+                });
                 await EmailServiceUtil.envioEmailReaberturaChamado(chamadoHistorico);
                 return true;
             }
@@ -240,6 +258,22 @@ namespace prj_chamadosBRA.GN
             {
                 return false;
             }
+        }
+
+        public bool registarAnexo(int idChamado, HttpPostedFileBase upload)
+        {
+            ChamadoAnexoDAO caDAO = new ChamadoAnexoDAO(db);
+            var anexo = new ChamadoAnexo
+            {
+                NomeAnexo = System.IO.Path.GetFileName(upload.FileName),
+                ContentType = upload.ContentType
+            };
+            using (var reader = new System.IO.BinaryReader(upload.InputStream))
+            {
+                anexo.arquivoAnexo = reader.ReadBytes(upload.ContentLength);
+            }
+            anexo.Chamado = new ChamadoDAO(db).BuscarChamadoId(idChamado);
+            return caDAO.salvarChamadoAnexo(anexo);
         }
     }
 }

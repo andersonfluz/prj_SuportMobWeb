@@ -230,7 +230,7 @@ namespace prj_chamadosBRA.Utils
                 {
                     copia = chamadoHistorico.chamado.SetorDestino.EmailSetor;
                 }
-                string assunto = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
+                string assunto = "ChamadosBRA - Notificação Reabertura Chamado N. " + chamadoHistorico.chamado.Id;
                 string corpoMensagem = montarCorpoMensagemReabertura(chamadoHistorico);
                 WebMail.Send(para, assunto, corpoMensagem, null, copia);
                 return true;
@@ -513,15 +513,10 @@ namespace prj_chamadosBRA.Utils
                                    + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
                                    + "Informação Importante:</td>"
                                    + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
-                                   + "Caso não concorde com o encerramento do chamado, poderá solicitar a reabertura do mesmo <a href='http://localhost:63896/Chamado/ReaberturaChamado/" + HttpContext.Current.Server.UrlEncode(IdCriptografado) + "'>aqui</a></td>"
+                                   + "Caso não concorde com o encerramento do chamado, poderá solicitar dentro de 7 dias a reabertura do mesmo <a href='http://suporte.ani.org.br/ChamadosBRA/Chamado/ReaberturaChamado/?id=" + IdCriptografado + "'>aqui</a></td>"
                                    + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
                                    + "&nbsp;</td>"
                                    + "</tr>"
-                                   //+ "<tr>"
-                                   //+ "</br>"
-                                   //+ "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
-                                   //+ "Caso não concorde com o encerramento do chamado, poderá solicitar a reabertura do mesmo <a href='http://localhost:63896/Chamado/ReaberturaChamado/"+ IdCriptografado + "'>aqui</a></td>"
-                                   //+ "</tr>"
                                    + "</tbody>"
                                    + "</table>"
                                    + "</div>";

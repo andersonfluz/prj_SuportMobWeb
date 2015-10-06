@@ -14,6 +14,7 @@ using System.Web.Mvc;
 using PagedList;
 using prj_chamadosBRA.GN;
 using System.Net;
+using System.IO;
 
 namespace prj_chamadosBRA.Controllers
 {
@@ -94,7 +95,12 @@ namespace prj_chamadosBRA.Controllers
                     }
                     else
                     {
-                        ViewBag.NomeObra = "- " + obras[0].Descricao;
+
+                        ViewBag.NomeObra = "";
+                        for (int i = 0; i < obras.Count; i++)
+                        {
+                            ViewBag.NomeObra = ViewBag.NomeObra + "- " + obras[i].Descricao;
+                        }
                         int pageSize = 7;
                         int pageNumber = (page ?? 1);
                         if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
@@ -110,7 +116,12 @@ namespace prj_chamadosBRA.Controllers
                 }
                 else
                 {
-                    ViewBag.NomeObra = " - " + new UsuarioObraDAO(db).buscarObrasDoUsuario(user)[0].Descricao;
+                    List<Obra> obras = new UsuarioObraDAO(db).buscarObrasDoUsuario(user);
+                    ViewBag.NomeObra = "";
+                    for (int i = 0; i < obras.Count; i++)
+                    {
+                        ViewBag.NomeObra = ViewBag.NomeObra + "- " + obras[i].Descricao;
+                    }
                     int pageSize = 7;
                     int pageNumber = (page ?? 1);
                     if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
@@ -130,11 +141,180 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
+        // GET: Chamado
+        [Authorize]
+        public ActionResult Acompanhamento(int? page, string tipoChamado, string filtro, bool? encerrado)
+        {
+            try
+            {
+                bool chamadosEncerrados;
+                if (encerrado == true)
+                {
+                    Session["encerrado"] = chamadosEncerrados = true;
+                }
+                else
+                {
+                    Session["encerrado"] = chamadosEncerrados = false;
+                }
+                //Verificação de tipo de chamado
+                if (tipoChamado != null)
+                {
+                    Session["tipoChamado"] = tipoChamado;
+                }
+                else
+                {
+                    if (Session["tipoChamado"] != null)
+                    {
+                        if (tipoChamado != null)
+                        {
+                            Session["tipoChamado"] = tipoChamado;
+                        }
+                    }
+                    else
+                    {
+                        Session["tipoChamado"] = "-2";
+                    }
+                }
+                //Criação da lista de tipos de chamados
+                List<SelectListItem> dropdownItems = new List<SelectListItem>();
+                dropdownItems.AddRange(new[]{
+                                                new SelectListItem() { Text = "Todos", Value = "-2" },
+                                                new SelectListItem() { Text = "Totvs RM", Value = "1" },
+                                                new SelectListItem() { Text = "Outros", Value = "2" }
+                                            });
+                ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", Session["tipoChamado"].ToString());
+
+                ApplicationUser user = manager.FindById(User.Identity.GetUserId());
+                //Usuario para Gestao
+
+                //Usuario Vinculado a Obras
+                List<Obra> obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
+                bool isMatriz = false;
+                foreach (var obra in obras)
+                {
+                    if (obra.Matriz)
+                    {
+                        isMatriz = true;
+                    }
+                }
+                int pageSize;
+                int pageNumber;
+                if (isMatriz && Session["PerfilUsuario"].ToString().Equals("1"))
+                {
+                    ViewBag.NomeObra = "";
+                    pageSize = 7;
+                    pageNumber = (page ?? 1);
+                    if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamados(filtro, chamadosEncerrados).ToPagedList(pageNumber, pageSize));
+                    }
+                    else
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, chamadosEncerrados).ToPagedList(pageNumber, pageSize));
+                    }
+
+                }
+                else if (Session["PerfilUsuario"].ToString().Equals("2") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("4"))
+                {
+                    List<Obra> obra = new UsuarioObraDAO(db).buscarObrasDoUsuario(user);
+                    ViewBag.NomeObra = "";
+                    for (int i = 0; i < obras.Count; i++)
+                    {
+                        ViewBag.NomeObra = ViewBag.NomeObra + "- " + obras[i].Descricao;
+                    }                    
+                    pageSize = 7;
+                    pageNumber = (page ?? 1);
+                    if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, chamadosEncerrados).ToPagedList(pageNumber, pageSize));
+                    }
+                    else
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, chamadosEncerrados).ToPagedList(pageNumber, pageSize));
+                    }
+                }
+                else if (Session["PerfilUsuario"].ToString().Equals("5"))
+                {
+                    ViewBag.NomeObra = "- " + obras[0].Descricao;
+                    List<Setor> setores = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                    pageSize = 7;
+                    pageNumber = (page ?? 1);
+                    if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDeSetores(setores, filtro, chamadosEncerrados).ToPagedList(pageNumber, pageSize));
+                    }
+                    else
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setores, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, chamadosEncerrados).ToPagedList(pageNumber, pageSize));
+                    }
+                }
+                else
+                {
+                    ViewBag.NomeObra = "";
+                    pageSize = 7;
+                    pageNumber = (page ?? 1);
+                    if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, chamadosEncerrados).ToPagedList(pageNumber, pageSize));
+                    }
+                    else
+                    {
+                        return View(new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, chamadosEncerrados).ToPagedList(pageNumber, pageSize));
+                    }
+                }
+
+
+            }
+            catch (NullReferenceException ne)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
+
+
+
         // GET: Chamado/Details/5
         public ActionResult Details(int id)
         {
             ViewBag.listaChamadoHistorico = new ChamadoHistoricoDAO(db).buscarHistoricosPorIdChamado(id);
             Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            return View(chamado);
+        }
+
+        // GET: Chamado/Encerrado/5
+        public ActionResult Encerrado(int id)
+        {
+            Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            ViewBag.listaChamadoHistorico = new ChamadoHistoricoDAO(db).buscarHistoricosPorIdChamado(id);
+            ViewBag.listaChamadoAnexo = new ChamadoAnexoDAO(db).retornarListaAnexoChamado(id);
+            ViewBag.Classificacao = new ChamadoClassificacaoDAO().BuscarClassificacao(chamado.Classificacao.Value).Descricao.ToString();
+            ViewBag.SubClassificacao = new ChamadoSubClassificacaoDAO().BuscarSubClassificacao(chamado.SubClassificacao.Value).Descricao.ToString();
+
+            bool isSetor = false;
+            bool isObra = false;
+            List<Setor> setoresUsuario = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(manager.FindById(User.Identity.GetUserId()));
+            List<Obra> obrasUsuario = new UsuarioObraDAO(db).buscarObrasDoUsuario(manager.FindById(User.Identity.GetUserId()));
+            if (setoresUsuario.Contains(chamado.SetorDestino))
+            {
+                isSetor = true;
+            }
+            if (obrasUsuario.Contains(chamado.ObraDestino))
+            {
+                isObra = true;
+            }
+            if (Session["PerfilUsuario"].ToString().Equals("1") || (Session["PerfilUsuario"].ToString().Equals("6") && isObra))
+            {
+                ViewBag.VisualizarObsInterna = true;
+            }
+            else if ((Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5")) && isSetor)
+            {
+                ViewBag.VisualizarObsInterna = true;
+            }
+            else
+            {
+                ViewBag.VisualizarObsInterna = false;
+            }
             return View(chamado);
         }
 
@@ -366,13 +546,37 @@ namespace prj_chamadosBRA.Controllers
             return File(fileData, "text", fileName);
         }
 
+        public async Task<ActionResult> AdicionarAnexo(string id)
+        {
+            try
+            {
+                ChamadoGN cGN = new ChamadoGN(db);
+                foreach (string file in Request.Files)
+                {
+                    var fileContent = Request.Files[file];
+                    if (fileContent != null && fileContent.ContentLength > 0)
+                    {
+                        cGN.registarAnexo(Convert.ToInt32(id), fileContent);
+                        await cGN.atualizarChamadoHistorico(Convert.ToInt32(id), "Arquivo Inserido no Chamado N. " + id, manager.FindById(User.Identity.GetUserId()));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json("Problemas no carregamento do aquivo.");
+            }
+            return Json("Arquivo Carregado com sucesso!");
+        }
+
+
         // POST: Chamado/Edit/5
         [HttpPost]
         public async Task<ActionResult> Edit(int id, Chamado chamado, string SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento)
         {
             try
             {
-                if (ddlResponsavelChamado != null)
+                if (ddlResponsavelChamado != "")
                 {
                     ChamadoGN cGN = new ChamadoGN(db);
                     if (await cGN.atualizarChamado(id, chamado, SetorDestino, ddlResponsavelChamado, informacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
@@ -456,8 +660,18 @@ namespace prj_chamadosBRA.Controllers
                 chamadoOriginal.SubClassificacao = chamado.SubClassificacao;
                 chamadoOriginal.Solucao = chamado.Solucao;
                 chamadoOriginal.DataHoraBaixa = DateTime.Now;
+                chamadoOriginal.ResponsavelChamado = manager.FindById(User.Identity.GetUserId());
                 new ChamadoDAO(db).encerrarChamado(id, chamadoOriginal);
                 await EmailServiceUtil.envioEmailEncerramentoChamado(chamadoOriginal);
+                new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao()
+                {
+                    IdChamado = chamado.Id,
+                    ChamadoAcao = new ChamadoAcaoDAO(db).buscarChamadoAcaoPorId(2),
+                    Texto = "Chamado Encerrado",
+                    DataAcao = DateTime.Now,
+                    UsuarioAcao = manager.FindById(User.Identity.GetUserId())
+
+                });
                 TempData["notice"] = "Chamado Encerrado com Sucesso!";
                 return RedirectToAction("Index");
             }
@@ -568,7 +782,11 @@ namespace prj_chamadosBRA.Controllers
                     }
                     else
                     {
-                        ViewBag.NomeObra = "- " + obras[0].Descricao;
+                        ViewBag.NomeObra = "";
+                        for (int i = 0; i < obras.Count; i++)
+                        {
+                            ViewBag.NomeObra = ViewBag.NomeObra + "- " + obras[i].Descricao;
+                        }
                         int pageSize = 7;
                         int pageNumber = (page ?? 1);
                         if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
@@ -584,7 +802,12 @@ namespace prj_chamadosBRA.Controllers
                 }
                 else
                 {
-                    ViewBag.NomeObra = " - " + new UsuarioObraDAO(db).buscarObrasDoUsuario(user)[0].Descricao;
+                    List<Obra> obras = new UsuarioObraDAO(db).buscarObrasDoUsuario(user);
+                    ViewBag.NomeObra = "";
+                    for (int i = 0; i < obras.Count; i++)
+                    {
+                        ViewBag.NomeObra = ViewBag.NomeObra + "- " + obras[i].Descricao;
+                    }
                     int pageSize = 7;
                     int pageNumber = (page ?? 1);
                     if (Session["tipoChamado"] == null || Session["tipoChamado"].ToString() == "-2")
@@ -607,24 +830,33 @@ namespace prj_chamadosBRA.Controllers
         // GET: Chamado
         [Authorize]
         public ActionResult ReaberturaChamado(string id)
-        //public ActionResult ReaberturaChamado(int id)
         {
-            Criptografia objCript = new Criptografia(WebUtility.UrlDecode(id));
+            Criptografia objCript = new Criptografia(id);
             int idChamado = Convert.ToInt32(objCript["id"].ToString());
             Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(idChamado);
-            //Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+
             if (chamado.StatusChamado.Value)
             {
-                ReaberturaChamadoViewModel model = new ReaberturaChamadoViewModel()
+                TimeSpan? date = DateTime.Now - chamado.DataHoraBaixa;
+                int dias = date.Value.Days;
+                if (dias <= 7)
                 {
-                    Id = chamado.Id,
-                    StatusChamado = chamado.StatusChamado,
-                    ResponsavelChamado = chamado.ResponsavelChamado,
-                    DataHoraAtendimento = chamado.DataHoraAtendimento,
-                    Assunto = chamado.Assunto,
-                    Solucao = chamado.Solucao
-                };
-                return View(model);
+                    ReaberturaChamadoViewModel model = new ReaberturaChamadoViewModel()
+                    {
+                        Id = chamado.Id,
+                        StatusChamado = chamado.StatusChamado,
+                        ResponsavelChamado = chamado.ResponsavelChamado,
+                        DataHoraAtendimento = chamado.DataHoraAtendimento,
+                        Assunto = chamado.Assunto,
+                        Solucao = chamado.Solucao
+                    };
+                    return View(model);
+                }
+                else
+                {
+                    TempData["notice"] = "Chamado não pode ser reaberto, pois o período de reabertura expirou.";
+                    return RedirectToAction("Index", "Chamado");
+                }
             }
             else
             {
@@ -635,10 +867,13 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado
         [HttpPost]
-        public async Task<ActionResult> ReaberturaChamado(int id, ReaberturaChamadoViewModel chamado)
+        public async Task<ActionResult> ReaberturaChamado(string id, ReaberturaChamadoViewModel chamado)
         {
             ChamadoGN cGN = new ChamadoGN(db);
-            await cGN.reaberturaChamado(id, chamado.JustificativaReabertura, manager.FindById(User.Identity.GetUserId()));
+            Criptografia objCript = new Criptografia(id);
+            int idChamado = Convert.ToInt32(objCript["id"].ToString());
+            await cGN.reaberturaChamado(idChamado, chamado.JustificativaReabertura, manager.FindById(User.Identity.GetUserId()));
+
             TempData["notice"] = "Chamado Reaberto com Sucesso!";
             return RedirectToAction("Index");
         }

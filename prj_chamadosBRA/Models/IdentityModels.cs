@@ -37,6 +37,8 @@ namespace prj_chamadosBRA.Models
         public DbSet<ChamadoHistorico> ChamadoHistorico { get; set; }
         public DbSet<ChamadoClassificacao> ChamadoClassificacao { get; set; }
         public DbSet<ChamadoSubClassificacao> ChamadoSubClassificacao { get; set; }
+        public DbSet<ChamadoAcao> ChamadoAcao { get; set; }
+        public DbSet<ChamadoLogAcao> ChamadoLogAcao { get; set; }
 
         public ApplicationDbContext()
             : base("ChamadosBRAConnectionString", throwIfV1Schema: false)

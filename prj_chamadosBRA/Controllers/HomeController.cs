@@ -19,7 +19,7 @@ namespace prj_chamadosBRA.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Index", "Chamado");
+                    return RedirectToAction("Acompanhamento", "Chamado");
                 }
             }
             catch (NullReferenceException ne)

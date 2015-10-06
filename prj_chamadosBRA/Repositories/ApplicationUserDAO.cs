@@ -58,6 +58,19 @@ namespace prj_chamadosBRA.Repositories
             return users;
         }
 
+        public List<ApplicationUser> retornarUsuariosSetores(List<Setor> setores, string filtro)
+        {
+            List<int> idSetores = (from e in setores select e.Id).ToList();
+            List<String> userIds = (from e in db.UsuarioSetor where idSetores.Contains(e.Setor) select e.Usuario).ToList();
+            List<ApplicationUser> users = (from e in db.Users where userIds.Contains(e.Id) select e).ToList();
+            if (users != null && filtro != null)
+            {
+                users = users.Where(s => s.UserName.ToLower().Contains(filtro.ToLower())
+                                              || s.Nome.ToLower().Contains(filtro.ToLower())).ToList();
+            }
+            return users;
+        }
+
         public List<ApplicationUser> retornarUsuariosObra(int idObra, string filtro)
         {
             List<String> userIds = (from e in db.UsuarioObra where e.Obra == idObra select e.Usuario).ToList();
@@ -70,6 +83,19 @@ namespace prj_chamadosBRA.Repositories
             return users;
         }
 
-        
+        public List<ApplicationUser> retornarUsuariosObras(List<Obra> obras, string filtro)
+        {
+            List<int> idObras = (from e in obras select e.IDO).ToList();
+            List<string> userIds = (from e in db.UsuarioObra where idObras.Contains(e.Obra) select e.Usuario).ToList();
+            List<ApplicationUser> users = (from e in db.Users where userIds.Contains(e.Id) select e).ToList();
+            if (users != null && filtro != null)
+            {
+                users = users.Where(s => s.UserName.ToLower().Contains(filtro.ToLower())
+                                              || s.Nome.ToLower().Contains(filtro.ToLower())).ToList();
+            }
+            return users;
+        }
+
+
     }
 }

@@ -1,10 +1,10 @@
-﻿@model prj_chamadosBRA.Models.Chamado
+﻿@model prj_chamadosBRA.Models.NovoChamadoViewModel
 @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "6")
 {
     <div class="form-group">
         @Html.Label("Setor Destino", new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.SetorDestino, new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetoresPorObra(ViewBag.ObraUsuario), "Id", "Nome"), new { @class = "form-control" })
+            @Html.DropDownListFor(m => m.SetorDestino, new SelectList(new prj_chamadosBRA.Repositories.SetorDAO().BuscarSetoresPorObra(ViewBag.ObraUsuario), "Id", "Nome"), "-- Selecione o Setor --", new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.SetorDestino, "", new { @class = "text-danger validacaoSetor" })
         </div>
     </div>

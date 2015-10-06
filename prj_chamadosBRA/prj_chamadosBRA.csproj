@@ -198,9 +198,11 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CentroAdministrativo.cs" />
     <Compile Include="Models\Chamado.cs" />
+    <Compile Include="Models\ChamadoAcao.cs" />
     <Compile Include="Models\ChamadoAnexo.cs" />
     <Compile Include="Models\ChamadoClassificacao.cs" />
     <Compile Include="Models\ChamadoHistorico.cs" />
+    <Compile Include="Models\ChamadoLogAcao.cs" />
     <Compile Include="Models\ChamadoSubClassificacao.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ChamadoViewModel.cs" />
@@ -212,10 +214,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\ApplicationUserDAO.cs" />
     <Compile Include="Repositories\CentroAdministrativoDAO.cs" />
+    <Compile Include="Repositories\ChamadoAcaoDAO.cs" />
     <Compile Include="Repositories\ChamadoAnexoDAO.cs" />
     <Compile Include="Repositories\ChamadoClassificacaoDAO.cs" />
     <Compile Include="Repositories\ChamadoDAO.cs" />
     <Compile Include="Repositories\ChamadoHistoricoDAO.cs" />
+    <Compile Include="Repositories\ChamadoLogAcaoDAO.cs" />
     <Compile Include="Repositories\ChamadoSubClassificacaoDAO.cs" />
     <Compile Include="Repositories\ObraDAO.cs" />
     <Compile Include="Repositories\PerfilUsuarioDAO.cs" />
@@ -506,6 +510,8 @@
     <Content Include="Views\SubClassificacao\Edit.cshtml" />
     <Content Include="Views\Setor\Edit.cshtml" />
     <Content Include="Views\Chamado\ReaberturaChamado.cshtml" />
+    <Content Include="Views\Chamado\Acompanhamento.cshtml" />
+    <Content Include="Views\Chamado\Encerrado.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
