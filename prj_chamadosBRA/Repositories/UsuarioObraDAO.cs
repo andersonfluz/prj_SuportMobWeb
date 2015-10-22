@@ -22,19 +22,43 @@ namespace prj_chamadosBRA.Repositories
         public List<Obra> buscarObrasDoUsuario(ApplicationUser user)
         {
 
-            List<Obra> obras = (from o in db.Obra
-                                join uo in db.UsuarioObra on o.IDO equals uo.Obra
-                                where uo.Usuario == user.Id
-                                select o).ToList();
+            var obras = (from o in db.Obra
+                         join uo in db.UsuarioObra on o.IDO equals uo.Obra
+                         where uo.Usuario == user.Id
+                         select o).ToList();
             return obras;
         }
 
+        public UsuarioObra buscarUsuarioObra(ApplicationUser user, int idObra)
+        {
 
-        public Boolean salvarUsuarioObra(UsuarioObra usuarioObra)
-        {            
+            var obra = (from uo in db.UsuarioObra
+                         where uo.Usuario == user.Id && uo.Obra == idObra
+                        select uo).SingleOrDefault();
+            return obra;
+        }
+
+
+        public bool salvarUsuarioObra(UsuarioObra usuarioObra)
+        {
             db.UsuarioObra.Add(usuarioObra);
             db.SaveChanges();
             return true;
+        }
+
+        public bool removerUsuarioObra(UsuarioObra usuarioObra)
+        {
+            db.UsuarioObra.Remove(usuarioObra);
+            db.SaveChanges();
+            return true;
+        }
+
+        public bool existObraUsuario(ApplicationUser user, int idObra)
+        {
+            var obras = (from uo in db.UsuarioObra
+                         where uo.Usuario == user.Id && uo.Obra == idObra
+                         select uo).ToList();
+            return obras.Count > 0 ? true : false;
         }
     }
 }

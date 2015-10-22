@@ -24,8 +24,8 @@ namespace prj_chamadosBRA.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
-            List<Obra> obras = new ObraGN(db).obrasPorPerfil(perfil, User.Identity.GetUserId());
+            var perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
+            var obras = new ObraGN(db).obrasPorPerfil(perfil);
             if (obras == null)
             {
                 return RedirectToAction("Index", "Home");
@@ -60,16 +60,18 @@ namespace prj_chamadosBRA.Controllers
                 {
                     if (obra.Matriz)
                     {
-                        CentroAdministrativo centroAdm = new CentroAdministrativo();
-                        centroAdm.Nome = obra.Descricao;
+                        var centroAdm = new CentroAdministrativo
+                        {
+                            Nome = obra.Descricao
+                        };
                         if (new CentroAdministrativoDAO(db).salvarCentroAdministrativo(centroAdm))
                         {
-                            obra.CentroAdministrativo = centroAdm;                            
+                            obra.CentroAdministrativo = centroAdm;
                         }
                     }
                     else
                     {
-                        CentroAdministrativo centroAdm = new CentroAdministrativoDAO(db).BuscarCentroAdministrativo(Convert.ToInt32(CentroAdministrativo));
+                        var centroAdm = new CentroAdministrativoDAO(db).BuscarCentroAdministrativo(Convert.ToInt32(CentroAdministrativo));
                         obra.CentroAdministrativo = centroAdm;                        
                     }
                     
@@ -91,7 +93,7 @@ namespace prj_chamadosBRA.Controllers
                 }
 
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }
@@ -100,7 +102,7 @@ namespace prj_chamadosBRA.Controllers
         // GET: Obra/Edit/5
         public ActionResult Edit(int id)
         {
-            Obra obra = new ObraDAO(db).BuscarObraId(id);
+            var obra = new ObraDAO(db).BuscarObraId(id);
             ViewBag.ddlCentroAdministrativo = new SelectList(new CentroAdministrativoDAO(db).BuscarCentrosAdministrativos(), "IdCA", "Nome", obra.CentroAdministrativo.idCA);
             return View(obra);
         }
@@ -116,7 +118,7 @@ namespace prj_chamadosBRA.Controllers
                 TempData["notice"] = "Obra Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }
@@ -138,7 +140,7 @@ namespace prj_chamadosBRA.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }

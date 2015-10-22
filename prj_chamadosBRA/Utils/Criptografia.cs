@@ -43,36 +43,44 @@ namespace prj_chamadosBRA.Utils
 
         private string encrypt(string serializedQueryString)
         {
-            byte[] buffer = Encoding.ASCII.GetBytes(serializedQueryString);
-            TripleDESCryptoServiceProvider des = new TripleDESCryptoServiceProvider();
-            MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
-            des.Key = MD5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(cryptoKey));
-            des.IV = IV;
-            return Convert.ToBase64String(
-                des.CreateEncryptor().TransformFinalBlock(
-                    buffer,
-                    0,
-                    buffer.Length
-                )
-            );
+            var buffer = Encoding.ASCII.GetBytes(serializedQueryString);
+            using (var des = new TripleDESCryptoServiceProvider())
+            {
+                using (var MD5 = new MD5CryptoServiceProvider())
+                {
+                    des.Key = MD5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(cryptoKey));
+                    des.IV = IV;
+                    return Convert.ToBase64String(
+                        des.CreateEncryptor().TransformFinalBlock(
+                            buffer,
+                            0,
+                            buffer.Length
+                        )
+                    );
+                }
+            }
         }
 
         private string decrypt(string encryptedQueryString)
         {
             try
             {
-                byte[] buffer = Convert.FromBase64String(encryptedQueryString);
-                TripleDESCryptoServiceProvider des = new TripleDESCryptoServiceProvider();
-                MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
-                des.Key = MD5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(cryptoKey));
-                des.IV = IV;
-                return Encoding.ASCII.GetString(
-                    des.CreateDecryptor().TransformFinalBlock(
-                        buffer,
-                        0,
-                        buffer.Length
-                    )
-                );
+                var buffer = Convert.FromBase64String(encryptedQueryString);
+                using (var des = new TripleDESCryptoServiceProvider())
+                {
+                    using (var MD5 = new MD5CryptoServiceProvider())
+                    {
+                        des.Key = MD5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(cryptoKey));
+                        des.IV = IV;
+                        return Encoding.ASCII.GetString(
+                            des.CreateDecryptor().TransformFinalBlock(
+                                buffer,
+                                0,
+                                buffer.Length
+                            )
+                        );
+                    }
+                }
             }
             catch (CryptographicException)
             {
@@ -86,10 +94,10 @@ namespace prj_chamadosBRA.Utils
 
         private void deserialize(string decryptedQueryString)
         {
-            string[] nameValuePairs = decryptedQueryString.Split('&');
+            var nameValuePairs = decryptedQueryString.Split('&');
             for (int i = 0; i < nameValuePairs.Length; i++)
             {
-                string[] nameValue = nameValuePairs[i].Split('=');
+                var nameValue = nameValuePairs[i].Split('=');
                 if (nameValue.Length == 2)
                 {
                     base.Add(nameValue[0], nameValue[1]);
@@ -100,7 +108,7 @@ namespace prj_chamadosBRA.Utils
 
         private string serialize()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (string key in base.AllKeys)
             {
                 sb.Append(key);

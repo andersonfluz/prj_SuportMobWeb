@@ -25,8 +25,8 @@ namespace prj_chamadosBRA.Controllers
         // GET: Setor
         public ActionResult Index()
         {
-            int perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
-            List<Setor> setores = new SetorGN(db).setoresPorPerfil(perfil, User.Identity.GetUserId());
+            var perfil = Convert.ToInt32(Session["PerfilUsuario"].ToString());
+            var setores = new SetorGN(db).setoresPorPerfil(perfil, User.Identity.GetUserId());
             if (setores == null)
             {
                 return RedirectToAction("Index", "Home");
@@ -89,7 +89,7 @@ namespace prj_chamadosBRA.Controllers
 
 
             }
-            catch
+            catch (Exception)
             {
                 TempData["notice"] = "Algo errado Aconteceu, tente novamente.";
                 return View();
@@ -99,7 +99,7 @@ namespace prj_chamadosBRA.Controllers
         // GET: Setor/Edit/5
         public ActionResult Edit(int id)
         {
-            Setor setor = new SetorDAO(db).BuscarSetorId(id);
+            var setor = new SetorDAO(db).BuscarSetorId(id);
             return View(setor);
         }
 
@@ -113,7 +113,7 @@ namespace prj_chamadosBRA.Controllers
                 TempData["notice"] = "Setor Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return View();
             }
@@ -135,7 +135,7 @@ namespace prj_chamadosBRA.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }

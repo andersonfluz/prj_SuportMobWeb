@@ -143,7 +143,7 @@
                     @Html.Label("Adicionar anexo:", new { @class = "control-label col-md-2" })
                     <input type="file" id="anexo" name="upload" />
                     @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
-
+                    <span id="carregamentoAnexo" class="glyphicon glyphicon-refresh glyphicon-refresh-animate" style="display: none"></span>
                 </div>
             </div>
         </div>
@@ -307,6 +307,7 @@
                 return false;
             })
             $('#anexo').on('change', function (e) {
+                $('#carregamentoAnexo').show();
                 var files = e.target.files;
                 if (files.length > 0) {
                     if (window.FormData !== undefined) {

@@ -21,7 +21,7 @@ namespace prj_chamadosBRA.Repositories
 
         public ChamadoAcao buscarChamadoAcaoPorId(int id)
         {
-            ChamadoAcao chamadoAcao = (from e in db.ChamadoAcao where e.IdAcao == id select e).SingleOrDefault();
+            var chamadoAcao = (from e in db.ChamadoAcao where e.IdAcao == id select e).SingleOrDefault();
             return chamadoAcao;
         }
     }

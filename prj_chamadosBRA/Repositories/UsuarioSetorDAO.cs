@@ -21,7 +21,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Setor> buscarSetoresDoUsuario(ApplicationUser user)
         {
-            List<Setor> setores = (from o in db.Setor
+            var setores = (from o in db.Setor
                                    join us in db.UsuarioSetor on o.Id equals us.Setor
                                    where us.Usuario == user.Id
                                    select o).ToList();
@@ -29,11 +29,19 @@ namespace prj_chamadosBRA.Repositories
         }
 
 
-        public Boolean salvarUsuarioSetor(UsuarioSetor usuarioSetor)
+        public bool salvarUsuarioSetor(UsuarioSetor usuarioSetor)
         {
             db.UsuarioSetor.Add(usuarioSetor);
             db.SaveChanges();
             return true;
+        }
+
+        internal bool existSetorUsuario(ApplicationUser user, int idSetores)
+        {
+            var setores = (from uo in db.UsuarioSetor
+                         where uo.Usuario == user.Id && uo.Setor == idSetores
+                           select uo).ToList();
+            return setores.Count > 0 ? true : false;
         }
     }
 }

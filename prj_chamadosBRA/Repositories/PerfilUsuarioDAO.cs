@@ -12,34 +12,34 @@ namespace prj_chamadosBRA.Repositories
         {
             using (var ctx = new ApplicationDbContext())
             {
-                List<PerfilUsuario> perfis = (from e in ctx.PerfilUsuario select e).ToList();
+                var perfis = (from e in ctx.PerfilUsuario select e).ToList();
                 return perfis;
             }
         }
 
-        public PerfilUsuario BuscarPerfil(Int32 idPerfil)
+        public static PerfilUsuario BuscarPerfil(Int32 idPerfil)
         {
             using (var ctx = new ApplicationDbContext())
             {
-                PerfilUsuario perfil = (from e in ctx.PerfilUsuario where e.IdPerfil == idPerfil select e).SingleOrDefault();
+                var perfil = (from e in ctx.PerfilUsuario where e.IdPerfil == idPerfil select e).SingleOrDefault();
                 return perfil;
             }
         }
 
-        public List<PerfilUsuario> BuscarPerfisParaGestor()
+        public static List<PerfilUsuario> BuscarPerfisParaGestor()
         {
             using (var ctx = new ApplicationDbContext())
             {
-                List<PerfilUsuario> perfis = (from e in ctx.PerfilUsuario where e.IdPerfil == 3 || e.IdPerfil == 4 select e).ToList();
+                var perfis = (from e in ctx.PerfilUsuario where e.IdPerfil == 3 || e.IdPerfil == 4 select e).ToList();
                 return perfis;
             }
         }
 
-        public List<PerfilUsuario> BuscarPerfisParaAdmObra()
+        public static List<PerfilUsuario> BuscarPerfisParaAdmObra()
         {
             using (var ctx = new ApplicationDbContext())
             {
-                List<PerfilUsuario> perfis = (from e in ctx.PerfilUsuario where e.IdPerfil == 3 || e.IdPerfil == 4 || e.IdPerfil == 5 select e).ToList();
+                var perfis = (from e in ctx.PerfilUsuario where e.IdPerfil == 3 || e.IdPerfil == 4 || e.IdPerfil == 5 select e).ToList();
                 return perfis;
             }
         }

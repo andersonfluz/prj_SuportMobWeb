@@ -14,7 +14,7 @@ namespace prj_chamadosBRA.Controllers
     public class ClassificacaoController : Controller
     {
         private UserManager<ApplicationUser> manager;
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly ApplicationDbContext db = new ApplicationDbContext();
         public ClassificacaoController()
         {
             manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
@@ -29,7 +29,7 @@ namespace prj_chamadosBRA.Controllers
             }
             else
             {
-                List<Obra> obras = new UsuarioObraDAO(db).buscarObrasDoUsuario(manager.FindById(User.Identity.GetUserId()));
+                var obras = new UsuarioObraDAO(db).buscarObrasDoUsuario(manager.FindById(User.Identity.GetUserId()));
                 classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorObras(obras);
             }
             return View(classificacoes);
@@ -62,7 +62,7 @@ namespace prj_chamadosBRA.Controllers
                 ModelState.Remove("Obra");
                 if (ModelState.IsValid)
                 {
-                    Obra obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(Obra));
+                    var obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(Obra));
                     ChamadoClassificacao.Obra = obra;
                     if (new ChamadoClassificacaoDAO(db).salvarClassificacao(ChamadoClassificacao))
                     {
@@ -83,7 +83,7 @@ namespace prj_chamadosBRA.Controllers
 
 
             }
-            catch
+            catch (Exception)
             {
                 TempData["notice"] = "Algo errado Aconteceu, tente novamente.";
                 return View();
@@ -93,7 +93,7 @@ namespace prj_chamadosBRA.Controllers
         // GET: Classificacao/Edit/5
         public ActionResult Edit(int id)
         {
-            ChamadoClassificacao classificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(id);
+            var classificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(id);
             return View(classificacao);
         }
 
@@ -107,7 +107,7 @@ namespace prj_chamadosBRA.Controllers
                 TempData["notice"] = "Classificação Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }
@@ -129,7 +129,7 @@ namespace prj_chamadosBRA.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }

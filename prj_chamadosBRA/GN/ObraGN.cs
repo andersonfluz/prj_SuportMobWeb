@@ -16,9 +16,9 @@ namespace prj_chamadosBRA.GN
             this.db = db;
         }
 
-        public List<Obra> obrasPorPerfil(int perfil, string idUser)
+        public List<Obra> obrasPorPerfil(int perfil)
         {
-            List<Obra> listObra = new List<Obra>();
+            var listObra = new List<Obra>();
             switch (perfil)
             {
                 case 1: //Administrador

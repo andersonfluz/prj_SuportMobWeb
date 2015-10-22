@@ -16,7 +16,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<ChamadoHistorico> buscarHistoricosPorIdChamado(int idChamado)
         {
-            List<ChamadoHistorico> chamadoHistoricos = (from ch in db.ChamadoHistorico where ch.chamado.Id == idChamado orderby ch.Data descending select ch).ToList();
+            var chamadoHistoricos = (from ch in db.ChamadoHistorico where ch.chamado.Id == idChamado orderby ch.Data descending select ch).ToList();
             return chamadoHistoricos;
         }
 
@@ -28,7 +28,7 @@ namespace prj_chamadosBRA.Repositories
                 db.SaveChanges();
                 return true;
             }
-            catch
+            catch (Exception)
             {
                 return false;
             }

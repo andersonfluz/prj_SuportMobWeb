@@ -23,7 +23,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<ChamadoAnexo> retornarListaAnexoChamado(int idChamado)
         {
-            List<ChamadoAnexo> chamadoAnexos = (from ca in db.ChamadoAnexo where ca.Chamado.Id == idChamado select ca).ToList();
+            var chamadoAnexos = (from ca in db.ChamadoAnexo where ca.Chamado.Id == idChamado select ca).ToList();
             return chamadoAnexos;
         }
     }

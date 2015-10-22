@@ -22,7 +22,7 @@ namespace prj_chamadosBRA.Controllers
                     return RedirectToAction("Acompanhamento", "Chamado");
                 }
             }
-            catch (NullReferenceException ne)
+            catch (NullReferenceException)
             {
                 return RedirectToAction("Login", "Account");
             }

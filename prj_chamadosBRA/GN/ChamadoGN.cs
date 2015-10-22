@@ -19,7 +19,7 @@ namespace prj_chamadosBRA.GN
             this.db = db;
         }
 
-        public List<Setor> RetornarSetoresPorObra(string idObra)
+        public static List<Setor> RetornarSetoresPorObra(string idObra)
         {
             return new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(idObra));
         }
@@ -28,10 +28,10 @@ namespace prj_chamadosBRA.GN
         {
             try
             {
-                ChamadoDAO cDAO = new ChamadoDAO(db);
-                ObraDAO oDAO = new ObraDAO(db);
-                SetorDAO sDAO = new SetorDAO(db);
-                ApplicationUserDAO aDAO = new ApplicationUserDAO(db);
+                var cDAO = new ChamadoDAO(db);
+                var oDAO = new ObraDAO(db);
+                var sDAO = new SetorDAO(db);
+                var aDAO = new ApplicationUserDAO(db);
                 Setor setor;
                 Obra obra;
                 chamado.DataHoraAbertura = DateTime.Now;
@@ -79,7 +79,7 @@ namespace prj_chamadosBRA.GN
 
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    ChamadoAnexoDAO caDAO = new ChamadoAnexoDAO(db);
+                    var caDAO = new ChamadoAnexoDAO(db);
                     var anexo = new ChamadoAnexo
                     {
                         NomeAnexo = System.IO.Path.GetFileName(upload.FileName),
@@ -92,7 +92,7 @@ namespace prj_chamadosBRA.GN
                     chamado.Anexos = new List<ChamadoAnexo> { anexo };
                 }
                 cDAO.salvarChamado(chamado);
-                new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao()
+                new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao
                 {
                     IdChamado = chamado.Id,
                     ChamadoAcao = new ChamadoAcaoDAO(db).buscarChamadoAcaoPorId(1),
@@ -102,10 +102,10 @@ namespace prj_chamadosBRA.GN
 
                 });
                 //await Task.Run(() => EmailService.envioEmailAberturaChamado(chamado));
-                await EmailServiceUtil.envioEmailAberturaChamado(chamado);
+                await EmailServiceUtil.envioEmailAberturaChamadoAsync(chamado);
                 return true;
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return false;
             }
@@ -115,16 +115,18 @@ namespace prj_chamadosBRA.GN
         {
             try
             {
-                ChamadoHistorico ch = new ChamadoHistorico();
-                ch.chamado = chamado;
-                ch.Data = dataHora;
-                ch.Hora = dataHora;
-                ch.Responsavel = responsavel;
-                ch.Historico = Historico;
+                var ch = new ChamadoHistorico
+                {
+                    chamado = chamado,
+                    Data = dataHora,
+                    Hora = dataHora,
+                    Responsavel = responsavel,
+                    Historico = Historico
+                };
                 new ChamadoHistoricoDAO(db).salvarHistorico(ch);
                 return ch;
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
@@ -134,8 +136,8 @@ namespace prj_chamadosBRA.GN
         {
             try
             {
-                ChamadoHistorico chamadoHistorico = new ChamadoGN(db).registrarHistorico(DateTime.Now, responsavel, informacoesAcompanhamento, new ChamadoDAO(db).BuscarChamadoId(id));
-                await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
+                var chamadoHistorico = new ChamadoGN(db).registrarHistorico(DateTime.Now, responsavel, informacoesAcompanhamento, new ChamadoDAO(db).BuscarChamadoId(id));
+                await EmailServiceUtil.envioEmailDirecionamentoChamadoAsync(chamadoHistorico);
                 return true;
             }
             catch (Exception)
@@ -146,11 +148,11 @@ namespace prj_chamadosBRA.GN
 
         public async Task<bool> atualizarChamado(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento, ApplicationUser responsavel)
         {
-            ChamadoDAO cDAO = new ChamadoDAO(db);
-            ChamadoGN cGN = new ChamadoGN(db);
-            SetorDAO sDAO = new SetorDAO(db);
-            ApplicationUserDAO aDAO = new ApplicationUserDAO(db);
-            Chamado chamadoOrigem = cDAO.BuscarChamadoId(id);
+            var cDAO = new ChamadoDAO(db);
+            var cGN = new ChamadoGN(db);
+            var sDAO = new SetorDAO(db);
+            var aDAO = new ApplicationUserDAO(db);
+            var chamadoOrigem = cDAO.BuscarChamadoId(id);
             ChamadoHistorico chamadoHistorico;
 
 
@@ -173,21 +175,21 @@ namespace prj_chamadosBRA.GN
             {
                 if (chamadoOrigem.SetorDestino.Id != Convert.ToInt32(SetorDestino))
                 {
-                    Setor setor = sDAO.BuscarSetorId(Convert.ToInt32(SetorDestino));
+                    var setor = sDAO.BuscarSetorId(Convert.ToInt32(SetorDestino));
                     chamadoOrigem.SetorDestino = setor;
                     chamadoOrigem.ResponsavelChamado = null;
                     cDAO.atualizarChamado(id, chamadoOrigem);
                     chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
-                    await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
+                    await EmailServiceUtil.envioEmailDirecionamentoChamadoAsync(chamadoHistorico);
                 }
             }
             else if (chamadoOrigem.SetorDestino == null && SetorDestino != null)
             {
-                Setor setor = sDAO.BuscarSetorId(Convert.ToInt32(SetorDestino));
+                var setor = sDAO.BuscarSetorId(Convert.ToInt32(SetorDestino));
                 chamadoOrigem.SetorDestino = setor;
                 cDAO.atualizarChamado(id, chamadoOrigem);
                 chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
-                await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
+                await EmailServiceUtil.envioEmailDirecionamentoChamadoAsync(chamadoHistorico);
             }
 
             //Atualização de Responsavel pelo Chamado
@@ -202,28 +204,28 @@ namespace prj_chamadosBRA.GN
                     }
                     else
                     {
-                        ApplicationUser user = aDAO.retornarUsuario(ddlResponsavelChamado);
+                        var user = aDAO.retornarUsuario(ddlResponsavelChamado);
                         chamadoOrigem.ResponsavelChamado = user;
                         cDAO.atualizarChamado(id, chamadoOrigem);
                         chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
-                        await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
+                        await EmailServiceUtil.envioEmailDirecionamentoChamadoAsync(chamadoHistorico);
 
                     }
                 }
             }
             else if (chamadoOrigem.ResponsavelChamado == null && ddlResponsavelChamado != "")
             {
-                ApplicationUser user = aDAO.retornarUsuario(ddlResponsavelChamado);
+                var user = aDAO.retornarUsuario(ddlResponsavelChamado);
                 chamadoOrigem.ResponsavelChamado = user;
                 cDAO.atualizarChamado(id, chamadoOrigem);
                 chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
-                await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
+                await EmailServiceUtil.envioEmailDirecionamentoChamadoAsync(chamadoHistorico);
             }
 
             if (informacoesAcompanhamento == null || informacoesAcompanhamento != "")
             {
                 chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, informacoesAcompanhamento, chamadoOrigem);
-                await EmailServiceUtil.envioEmailDirecionamentoChamado(chamadoHistorico);
+                await EmailServiceUtil.envioEmailDirecionamentoChamadoAsync(chamadoHistorico);
             }
             if (chamadoOrigem.ObsevacaoInterna != chamado.ObsevacaoInterna)
             {
@@ -237,12 +239,12 @@ namespace prj_chamadosBRA.GN
         {
             try
             {
-                Chamado chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+                var chamado = new ChamadoDAO(db).BuscarChamadoId(id);
                 chamado.StatusChamado = false;
                 new ChamadoDAO(db).atualizarChamado(id, chamado);
                 justificativaReabertura = "O chamado encerrado em: "+ chamado.DataHoraBaixa.ToString() + " foi reaberto. Justificativa: " + justificativaReabertura;
-                ChamadoHistorico chamadoHistorico = new ChamadoGN(db).registrarHistorico(DateTime.Now, responsavel, justificativaReabertura, new ChamadoDAO(db).BuscarChamadoId(id));
-                new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao()
+                var chamadoHistorico = new ChamadoGN(db).registrarHistorico(DateTime.Now, responsavel, justificativaReabertura, new ChamadoDAO(db).BuscarChamadoId(id));
+                new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao
                 {
                     IdChamado = chamado.Id,
                     ChamadoAcao = new ChamadoAcaoDAO(db).buscarChamadoAcaoPorId(3),
@@ -262,7 +264,7 @@ namespace prj_chamadosBRA.GN
 
         public bool registarAnexo(int idChamado, HttpPostedFileBase upload)
         {
-            ChamadoAnexoDAO caDAO = new ChamadoAnexoDAO(db);
+            var caDAO = new ChamadoAnexoDAO(db);
             var anexo = new ChamadoAnexo
             {
                 NomeAnexo = System.IO.Path.GetFileName(upload.FileName),

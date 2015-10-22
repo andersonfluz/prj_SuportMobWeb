@@ -22,7 +22,7 @@ namespace prj_chamadosBRA.Controllers
         // GET: SubClassificacao
         public ActionResult Index()
         {
-            List<ChamadoSubClassificacao> subclassificacoes = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacoes();
+            var subclassificacoes = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacoes();
             return View(subclassificacoes);
         }
 
@@ -74,7 +74,7 @@ namespace prj_chamadosBRA.Controllers
                     return View();
                 }
             }
-            catch
+            catch (Exception)
             {
                 TempData["notice"] = "Algo errado Aconteceu, tente novamente.";
                 return View();
@@ -84,7 +84,7 @@ namespace prj_chamadosBRA.Controllers
         // GET: SubClassificacao/Edit/5
         public ActionResult Edit(int id)
         {
-            ChamadoSubClassificacao subClassificacao = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(id);
+            var subClassificacao = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(id);
             ViewBag.ddlClassificacao = new SelectList(new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorObras(new ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId())), "Id", "Descricao", subClassificacao.ChamadoClassificacao.Id);
             return View(subClassificacao);
         }
@@ -99,7 +99,7 @@ namespace prj_chamadosBRA.Controllers
                 TempData["notice"] = "SubClassificação Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }
@@ -121,7 +121,7 @@ namespace prj_chamadosBRA.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }
@@ -131,11 +131,11 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
-                List<ChamadoClassificacao> classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorObra(new ObraDAO(db).BuscarObraId(Convert.ToInt32(selectedValue)));
+                var classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorObra(new ObraDAO(db).BuscarObraId(Convert.ToInt32(selectedValue)));
                 ActionResult json = Json(new SelectList(classificacoes, "Id", "Descricao"));
                 return json;
             }
-            catch
+            catch (Exception)
             {
                 return Json(new SelectList(String.Empty, "Id", "Nome")); ;
             }

@@ -21,40 +21,40 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Setor> BuscarSetores()
         {
-            List<Setor> setores = (from e in db.Setor select e).ToList();
+            var setores = (from e in db.Setor select e).ToList();
             return setores;
         }
 
         public List<Setor> BuscarSetoresPorObra(int idObra)
         {
-            List<Setor> setores = (from e in db.Setor where e.obra.IDO == idObra select e).ToList();
+            var setores = (from e in db.Setor where e.obra.IDO == idObra select e).ToList();
             return setores;
         }
 
         public List<Setor> BuscarSetoresPorObras(List<Obra> obras)
         {
-            List<int> idObras = (from e in obras select e.IDO).ToList();
-            List<Setor> setores = (from e in db.Setor where idObras.Contains(e.obra.IDO) select e).ToList();
+            var idObras = (from e in obras select e.IDO).ToList();
+            var setores = (from e in db.Setor where idObras.Contains(e.obra.IDO) select e).ToList();
             return setores;
         }
 
         public Setor BuscarSetorId(int id)
         {
 
-            Setor setor = (from e in db.Setor where e.Id == id select e).SingleOrDefault();
+            var setor = (from e in db.Setor where e.Id == id select e).SingleOrDefault();
             return setor;
         }
 
         public List<Setor> BuscarSetoresNome(string nome)
         {
 
-            List<Setor> setores = (from e in db.Setor where e.Nome == nome select e).ToList();
+            var setores = (from e in db.Setor where e.Nome == nome select e).ToList();
             return setores;
         }
 
         public Setor DetalhesSetor(int id)
         {
-            Setor setor = (from e in db.Setor where e.Id == id select e).SingleOrDefault();
+            var setor = (from e in db.Setor where e.Id == id select e).SingleOrDefault();
             return setor;
         }
 
@@ -74,13 +74,13 @@ namespace prj_chamadosBRA.Repositories
 
         public void atualizarSetor(int id, Setor setor)
         {
-            Setor setorUpdate = (from e in db.Setor where e.Id == id select e).SingleOrDefault();
+            var setorUpdate = (from e in db.Setor where e.Id == id select e).SingleOrDefault();
             setorUpdate.Nome = setor.Nome;
             setorUpdate.Descricao = setor.Descricao;
             setorUpdate.Responsavel = setor.Responsavel;
             setorUpdate.EmailResponsavel = setor.EmailResponsavel;
             setorUpdate.EmailSetor = setor.EmailSetor;
-            Obra obra = setorUpdate.obra;
+            var obra = setorUpdate.obra;
             setorUpdate.obra = obra;            
             db.SaveChanges();
         }
