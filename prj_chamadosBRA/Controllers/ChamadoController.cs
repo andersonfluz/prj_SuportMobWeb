@@ -33,7 +33,7 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
-                if(tipoChamado == null)
+                if (tipoChamado == null)
                 {
                     tipoChamado = "-2";
                 }
@@ -80,7 +80,8 @@ namespace prj_chamadosBRA.Controllers
                             return View(new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(tipoChamado), filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
                         }
 
-                    }else if (isMatriz && Session["PerfilUsuario"].ToString().Equals("7"))
+                    }
+                    else if (isMatriz && Session["PerfilUsuario"].ToString().Equals("7"))
                     {
                         ViewBag.NomeObra = "";
                         for (int i = 0; i < obras.Count; i++)
@@ -108,7 +109,7 @@ namespace prj_chamadosBRA.Controllers
                         }
                         var pageSize = 7;
                         var pageNumber = (page ?? 1);
-                        if (tipoChamado == null || tipoChamado  == "-2")
+                        if (tipoChamado == null || tipoChamado == "-2")
                         {
                             return View(new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
                         }
@@ -208,7 +209,7 @@ namespace prj_chamadosBRA.Controllers
                     }
 
                 }
-                else if (Session["PerfilUsuario"].ToString().Equals("2") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("4"))
+                else if (Session["PerfilUsuario"].ToString().Equals("2") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("4") || Session["PerfilUsuario"].ToString().Equals("7"))
                 {
                     var obra = new UsuarioObraDAO(db).buscarObrasDoUsuario(user);
                     ViewBag.NomeObra = "";
@@ -301,7 +302,7 @@ namespace prj_chamadosBRA.Controllers
             {
                 ViewBag.VisualizarObsInterna = true;
             }
-            else if ((Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5")) && isSetor)
+            else if ((Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("7")) && isSetor)
             {
                 ViewBag.VisualizarObsInterna = true;
             }
@@ -503,11 +504,25 @@ namespace prj_chamadosBRA.Controllers
                 ViewBag.SetorDestino = new SelectList(new SetorDAO(db).BuscarSetoresPorObra(chamado.ObraDestino.IDO), "Id", "Nome", chamado.SetorDestino.Id);
                 if (chamado.ResponsavelChamado != null)
                 {
-                    ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino, null), "Id", "Nome", chamado.ResponsavelChamado.Id);
+                    if (chamado.TipoChamado == 1)
+                    {
+                        ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosTecnicoTotvs(chamado.SetorDestino, null), "Id", "Nome", chamado.ResponsavelChamado.Id);
+                    }
+                    else
+                    {
+                        ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino, null), "Id", "Nome", chamado.ResponsavelChamado.Id);
+                    }
                 }
                 else
                 {
-                    ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino, null), "Id", "Nome");
+                    if (chamado.TipoChamado == 1)
+                    {
+                        ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosTecnicoTotvs(chamado.SetorDestino, null), "Id", "Nome");
+                    }
+                    else
+                    {
+                        ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino, null), "Id", "Nome");
+                    }
                 }
             }
             else
@@ -592,7 +607,7 @@ namespace prj_chamadosBRA.Controllers
                 return RedirectToAction("Edit", id);
             }
         }
-        
+
         // GET: Chamado/Encerrar/5
         public ActionResult Encerrar(int id)
         {
@@ -724,7 +739,8 @@ namespace prj_chamadosBRA.Controllers
                 if (Session["PerfilUsuario"].ToString().Equals("1")
                     || Session["PerfilUsuario"].ToString().Equals("3")
                     || Session["PerfilUsuario"].ToString().Equals("5")
-                    || Session["PerfilUsuario"].ToString().Equals("6"))
+                    || Session["PerfilUsuario"].ToString().Equals("6")
+                    || Session["PerfilUsuario"].ToString().Equals("7"))
                 {
                     //Usuario Vinculado a Obras
                     var obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
@@ -750,6 +766,24 @@ namespace prj_chamadosBRA.Controllers
                             return View(new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(Session["tipoChamado"].ToString()), filtro, true, sortOrder).ToPagedList(pageNumber, pageSize));
                         }
 
+                    }
+                    else if (isMatriz && Session["PerfilUsuario"].ToString().Equals("7"))
+                    {
+                        ViewBag.NomeObra = "";
+                        for (int i = 0; i < obras.Count; i++)
+                        {
+                            ViewBag.NomeObra = ViewBag.NomeObra + "- " + obras[i].Descricao;
+                        }
+                        var pageSize = 7;
+                        var pageNumber = (page ?? 1);
+                        if (tipoChamado == null || tipoChamado == "-2")
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosTecnicoRM(obras, filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
+                        }
+                        else
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosTecnicoRMTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
+                        }
                     }
                     else
                     {

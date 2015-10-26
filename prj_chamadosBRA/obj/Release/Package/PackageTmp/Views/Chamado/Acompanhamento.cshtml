@@ -19,7 +19,7 @@
     <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
     @Html.CheckBox("Encerrado")
     <label>&nbsp;</label>
-    @Html.Label("Encerrados?", new { @class = "control-label" })
+    @Html.Label("Encerrados", new { @class = "control-label" })
     <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
     @Html.Label("Consultar:", new { @class = "control-label" })
     <label>&nbsp;</label>
@@ -28,37 +28,79 @@
 }
 
 @Html.Hidden("pageAtual", Model.PageNumber)
-@Html.Hidden("encerrado", Session["encerrado"])
+@Html.Hidden("encerrado",(bool) ViewBag.CurrentEncerrado)
 <label>&nbsp;</label>
 <p>
 </p>
 <table class="table" data-row-style="rowStyle">
     <tr>
         <th>
-            @Html.DisplayName("Chamado N°")
+            @Html.ActionLink("Chamado N°", "Acompanhamento", new
+       {
+           sortOrder = "Id",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Abertura")
+            @Html.ActionLink("Abertura", "Acompanhamento", new
+       {
+           sortOrder = "dataAbertura",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Solicitante")
+            @Html.ActionLink("Solicitante", "Acompanhamento", new
+       {
+           sortOrder = "solicitante",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Assunto")
+            @Html.ActionLink("Assunto", "Acompanhamento", new
+       {
+           sortOrder = "assunto",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Responsavel")
+            @Html.ActionLink("Responsavel", "Acompanhamento", new
+       {
+           sortOrder = "responsavel",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         @if ((bool)Session["ObraVisivel"])
         {
             <th>
-                @Html.DisplayName("Obra")
+                @Html.ActionLink("Obra", "Acompanhamento", new
+           {
+               sortOrder = "obra",
+               pageAtual = Model.PageNumber,
+               tipoChamado = ViewBag.CurrentTipoChamado,
+               filtro = ViewBag.CurrentFiltro
+           })
             </th>
         }
         @if ((bool)Session["SetorVisivel"])
         {
             <th>
-                @Html.DisplayName("Setor")
+                @Html.ActionLink("Setor", "Acompanhamento", new
+           {
+               sortOrder = "setor",
+               pageAtual = Model.PageNumber,
+               tipoChamado = ViewBag.CurrentTipoChamado,
+               filtro = ViewBag.CurrentFiltro
+           })
             </th>
         }
         <th>
@@ -139,7 +181,7 @@
     Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
 
     @Html.PagedListPager(Model, page => Url.Action("Acompanhamento",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, encerrado = Session["encerrado"], TipoChamado = Session["tipoChamado"] }))
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, encerrado = ViewBag.CurrentEncerrado, TipoChamado = ViewBag.CurrentTipoChamado }))
 
     @Html.Hidden("notice", @TempData["notice"])
     @if (TempData["notice"] != null)
@@ -178,7 +220,7 @@
                 $('#TipoChamado').change(function () {
                     var url = window.location.href;
                     if (url.indexOf("page") > -1) {
-                        window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val()+ '&encerrado='+ $('#Encerrado').val();
+                        window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $('#Encerrado').val();
                     } else {
                         window.location.href = '../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $('#Encerrado').val();
                     }
@@ -186,11 +228,11 @@
                 $('#Encerrado').change(function () {
                     var url = window.location.href;
                     if ($(this).is(":checked")) {
-                        window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val()+ '&encerrado=true';
+                        window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=true';
                     } else {
-                        window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=false';
+                        window.location.href = '../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=false';
                     }
-                });                
+                });
                 $(function () {
                     $(".detailsEncerrado").click(function () {
                         var id = $(this).attr("data-id");

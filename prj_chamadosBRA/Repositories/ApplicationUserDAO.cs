@@ -46,6 +46,18 @@ namespace prj_chamadosBRA.Repositories
             return users;
         }
 
+        public List<ApplicationUser> retornarUsuariosTecnicoTotvs(Setor setor, string filtro)
+        {
+            var userIds = (from e in db.UsuarioSetor where e.Setor == setor.Id select e.Usuario).ToList();
+            var users = (from e in db.Users where userIds.Contains(e.Id) || e.PerfilUsuario == 7 select e).ToList();
+            if (users != null && filtro != null)
+            {
+                users = users.Where(s => s.UserName.ToLower().Contains(filtro.ToLower())
+                                              || s.Nome.ToLower().Contains(filtro.ToLower())).ToList();
+            }
+            return users;
+        }
+
         public List<ApplicationUser> retornarUsuariosSetor(Setor setor, string filtro)
         {
             var userIds = (from e in db.UsuarioSetor where e.Setor == setor.Id select e.Usuario).ToList();
@@ -94,6 +106,13 @@ namespace prj_chamadosBRA.Repositories
                                               || s.Nome.ToLower().Contains(filtro.ToLower())).ToList();
             }
             return users;
+        }
+
+        public void atualizarUltimoAcesso(string id, DateTime UltimoAcesso)
+        {
+            var usuario = db.Set<ApplicationUser>().Find(id);
+            usuario.UltimoAcesso = UltimoAcesso;
+            db.SaveChanges();
         }
 
 

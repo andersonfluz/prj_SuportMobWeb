@@ -229,6 +229,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\Criptografia.cs" />
     <Compile Include="Utils\EmailServiceUtil.cs" />
+    <Compile Include="Utils\TratamentoListaUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-datetimepicker.min.css" />

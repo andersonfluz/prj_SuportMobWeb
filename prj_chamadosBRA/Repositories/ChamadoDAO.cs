@@ -15,14 +15,16 @@ namespace prj_chamadosBRA.Repositories
         {
             this.db = db;
         }
-
+        
         public List<Chamado> BuscarChamados(string filtro, bool encerrado, string sortOrder)
         {
             var chamados = (from e in db.Chamado where e.StatusChamado == encerrado select e);
+            //return organizarLista(chamados, filtro, sortOrder);
             if (filtro != null)
             {
                 chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
@@ -62,10 +64,13 @@ namespace prj_chamadosBRA.Repositories
         public List<Chamado> BuscarChamadosTipoChamado(int? tipoChamado, string filtro, bool encerrado, string sortOrder)
         {
             var chamados = (from e in db.Chamado where e.StatusChamado == encerrado && e.TipoChamado == tipoChamado select e);
+            //var ListChamados = organizarLista(chamados, filtro, sortOrder);
+            //return ListChamados;
             if (filtro != null)
             {
                 chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
@@ -108,6 +113,7 @@ namespace prj_chamadosBRA.Repositories
             {
                 chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
@@ -150,6 +156,7 @@ namespace prj_chamadosBRA.Repositories
             {
                 chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
@@ -196,6 +203,7 @@ namespace prj_chamadosBRA.Repositories
             {
                 chamados = chamados.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower()))).ToList();
@@ -242,6 +250,7 @@ namespace prj_chamadosBRA.Repositories
             {
                 chamados = chamados.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower()))).ToList();
@@ -288,6 +297,7 @@ namespace prj_chamadosBRA.Repositories
             {
                 chamados = chamados.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower()))).ToList();
@@ -334,6 +344,7 @@ namespace prj_chamadosBRA.Repositories
             {
                 chamados = chamados.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower()))).ToList();
@@ -377,6 +388,7 @@ namespace prj_chamadosBRA.Repositories
             {
                 chamadosList = chamadosList.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
@@ -421,6 +433,7 @@ namespace prj_chamadosBRA.Repositories
             {
                 chamadosList = chamadosList.Where(s => s.Id.ToString().ToLower().Contains(filtro.ToLower())
                                                            || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || s.Descricao.ToLower().Contains(filtro.ToLower())
                                                            || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
                                                            || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
@@ -457,8 +470,7 @@ namespace prj_chamadosBRA.Repositories
 
         public Chamado BuscarChamadoId(int id)
         {
-            var chamado = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
-            return chamado;
+            return db.Set<Chamado>().Find(id);
         }
 
         public Boolean salvarChamado(Chamado chamado)

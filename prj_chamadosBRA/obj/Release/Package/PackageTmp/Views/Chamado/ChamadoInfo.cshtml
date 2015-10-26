@@ -8,6 +8,7 @@
     <div class="modal-content">
         @using (Html.BeginForm("ChamadoInfo", "Chamado", null, FormMethod.Post))
         {
+            @Html.HiddenFor(model => model.Id)
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
                 <h4 class="modal-title">Consulta do Chamado N. @Model.Id</h4>
@@ -95,6 +96,45 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
+                    <div class="panel-heading">Anexos do Chamado</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <table class="table" data-row-style="rowStyle">
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayName("Nome Arquivo")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Baixar")
+                                        </th>
+                                    </tr>
+
+                                    @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoAnexo>)ViewBag.listaChamadoAnexo))
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.NomeAnexo
+                                            </td>
+                                            <td>
+                                                @Html.ActionLink("Baixar", "Filedownload", new { id = @item.idAnexo })
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.Label("Adicionar anexo:", new { @class = "control-label col-md-2" })
+                                <input type="file" id="anexo" name="upload" />
+                                @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
+                                <span id="carregamentoAnexo" class="glyphicon glyphicon-refresh glyphicon-refresh-animate" style="visibility:hidden"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
                     <div class="panel-heading">Informações de Acompanhamento</div>
                     <div class="panel-body">
                         <div class="row">
@@ -119,3 +159,40 @@
         overflow: auto;
     }
 </style>
+<script>
+    $(document).ready(function () {
+        $('#anexo').on('change', function (e) {
+            $('#carregamentoAnexo').css('visibility', 'visible');
+            var files = e.target.files;
+            if (files.length > 0) {
+                if (window.FormData !== undefined) {
+                    var data = new FormData();
+                    for (var x = 0; x < files.length; x++) {
+                        data.append("file" + x, files[x]);
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: '/Chamado/AdicionarAnexo?id=' + $("#Id").val(),
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (result) {
+                            alert("Arquivo inserido com sucesso!");                            
+                            $('#carregamentoAnexo').css('visibility', 'hidden');
+                            location.reload();
+                        },
+                        error: function (xhr, status, p3, p4) {
+                            var err = "Error " + " " + status + " " + p3 + " " + p4;
+                            if (xhr.responseText && xhr.responseText[0] == "{")
+                                err = JSON.parse(xhr.responseText).Message;
+                            console.log(err);
+                        }
+                    });
+                } else {
+                    alert("This browser doesn't support HTML5 file uploads!");
+                }
+            }
+        })
+    });
+</script>

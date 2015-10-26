@@ -317,6 +317,7 @@ namespace prj_chamadosBRA.Controllers
                 var user = await UserManager.FindAsync(model.UserName, model.Password);
                 if (user != null)
                 {
+                    new ApplicationUserDAO().atualizarUltimoAcesso(user.Id, DateTime.Now);
                     Session["UserId"] = user.Id;
                     Session["PerfilUsuario"] = user.PerfilUsuario;
                     switch (Session["PerfilUsuario"].ToString())

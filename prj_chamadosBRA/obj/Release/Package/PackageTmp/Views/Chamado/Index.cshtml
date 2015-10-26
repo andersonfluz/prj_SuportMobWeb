@@ -42,55 +42,84 @@ else
 <table class="table" data-row-style="rowStyle">
     <tr>
         <th>
-            @Html.DisplayName("Chamado N°")
+            @Html.ActionLink("Chamado N°", "Index", new
+       {
+           sortOrder = "Id",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Abertura")
+            @Html.ActionLink("Abertura", "Index", new
+       {
+           sortOrder = "dataAbertura",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Solicitante")
+            @Html.ActionLink("Solicitante", "Index", new
+       {
+           sortOrder = "solicitante",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Assunto")
+            @Html.ActionLink("Assunto", "Index", new
+       {
+           sortOrder = "assunto",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Responsavel")
+            @Html.ActionLink("Responsavel", "Index", new
+       {
+           sortOrder = "responsavel",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         @if ((bool)Session["ObraVisivel"])
         {
             <th>
-                @Html.DisplayName("Obra")
+                @Html.ActionLink("Obra", "Index", new
+           {
+               sortOrder = "obra",
+               pageAtual = Model.PageNumber,
+               tipoChamado = ViewBag.CurrentTipoChamado,
+               filtro = ViewBag.CurrentFiltro
+           })
             </th>
         }
         @if ((bool)Session["SetorVisivel"])
         {
             <th>
-                @Html.DisplayName("Setor")
+                @Html.ActionLink("Setor", "Index", new
+           {
+               sortOrder = "setor",
+               pageAtual = Model.PageNumber,
+               tipoChamado = ViewBag.CurrentTipoChamado,
+               filtro = ViewBag.CurrentFiltro
+           })
             </th>
         }
         <th>
             @Html.DisplayName("Tipo Chamado")
         </th>
-        @if (Session["PerfilUsuario"].ToString() == "2" || Session["PerfilUsuario"].ToString() == "4")
-        {
-            <th>
-                @Html.DisplayName("Visualizar")
-            </th>
-        }
 
     </tr>
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @if (Session["PerfilUsuario"].ToString() == "2" || Session["PerfilUsuario"].ToString() == "4")
-                {
-                    @Html.DisplayFor(modelItem => item.Id)
-                }
-                else
-                {
-                    @Html.ActionLink(item.Id.ToString(), "Edit", new { id = item.Id })
-                }
+                @Html.ActionLink(item.Id.ToString(), "Edit", new { id = item.Id })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DataHoraAbertura)
@@ -137,12 +166,6 @@ else
                     <p>Indefinido</p>
                 }
             </td>
-            @if (Session["PerfilUsuario"].ToString() == "2" || Session["PerfilUsuario"].ToString() == "4")
-            {
-                <td align="center">
-                    <button class="btn btn-default details" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
-                </td>
-            }
 
         </tr>
     }
@@ -150,7 +173,7 @@ else
     Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
 
     @Html.PagedListPager(Model, page => Url.Action("Index",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, tipoChamado = ViewBag.CurrentTipoChamado }))
 
     @Html.Hidden("notice", @TempData["notice"])
     @if (TempData["notice"] != null)

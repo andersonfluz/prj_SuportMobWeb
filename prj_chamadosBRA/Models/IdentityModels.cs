@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Collections.Generic;
+using System;
 
 namespace prj_chamadosBRA.Models
 {
@@ -14,6 +15,7 @@ namespace prj_chamadosBRA.Models
         public int PerfilUsuario { get; set; }
         public string Nome { get; set; }
         public string Contato { get; set; }
+        public DateTime? UltimoAcesso { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
