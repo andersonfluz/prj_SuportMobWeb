@@ -17,6 +17,10 @@ namespace prj_chamadosBRA.Models
         public string Descricao { get; set; }
         [Display(Name = "Classificação")]
         public virtual ChamadoClassificacao ChamadoClassificacao { get; set; }
+        public bool Ativo { get; set; }
+        public string Usuario { get; set; }
+        public DateTime? DataCriacao { get; set; }
+        public DateTime? DataAlteracao { get; set; }
     }
 
 }

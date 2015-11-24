@@ -10,6 +10,7 @@
     <WebStackScaffolding_ViewDialogWidth>600</WebStackScaffolding_ViewDialogWidth>
     <NameOfLastUsedPublishProfile>publicação</NameOfLastUsedPublishProfile>
     <WebStackScaffolding_DbContextTypeFullName>prj_chamadosBRA.Models.ApplicationDbContext</WebStackScaffolding_DbContextTypeFullName>
+    <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

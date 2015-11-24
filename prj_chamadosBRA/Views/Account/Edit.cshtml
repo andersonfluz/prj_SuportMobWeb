@@ -13,10 +13,14 @@
 
     <div class="form-horizontal">
         <h4>Usuário</h4>
+        <div class="row">
+            <div class="col-md-2"><input type="submit" value="Salvar" class="btn btn-default" /></div>
+            <div class="col-md-4 col-md-offset-6" align="right">@Html.ActionLink("Redefinir Senha do Usuario", "ReiniciarSenha", "Account", new { id = Model.Id }, new { @class = "btn btn-default" })</div>  
+        </div>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
-
+        
         <div class="form-group">
             @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -34,53 +38,6 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.PerfilUsuario, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @if (Model.PerfilUsuario != null)
-                {
-                    @Html.DropDownList("PerfilUsuario")
-                }
-                else
-                {
-                    @Html.DropDownList("PerfilUsuario", "-- Selecione o Perfil --")
-                }
-                @Html.ValidationMessageFor(model => model.PerfilUsuario, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        @*@if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("6"))
-        {
-            <div class="form-group">
-                @Html.Label("Obra do Usuario", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @if (ViewBag.SetorUsuario != null)
-                    {
-                        @Html.DropDownList("ObrasUsuario")
-                    }
-                    else
-                    {
-                        @Html.DropDownList("ObrasUsuario", "-- Selecione a Obra --")
-                    }
-                    @Html.ValidationMessageFor(model => model.PerfilUsuario, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.Label("Setor do Usuario", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @if (ViewBag.SetorUsuario != null)
-                    {
-                        @Html.DropDownList("SetoresUsuario")
-                    }
-                    else
-                    {
-                        @Html.DropDownList("SetoresUsuario", "-- Selecione o Setor --")
-                    }
-                    @Html.ValidationMessageFor(model => model.PerfilUsuario, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        }*@
-        <div class="form-group">
             @Html.LabelFor(model => model.Contato, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Contato, new { htmlAttributes = new { @class = "form-control" } })
@@ -88,131 +45,162 @@
             </div>
         </div>
 
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.EmailConfirmed, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        @Html.EditorFor(model => model.EmailConfirmed)
-                        @Html.ValidationMessageFor(model => model.EmailConfirmed, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.PasswordHash, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.PasswordHash, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.PasswordHash, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.SecurityStamp, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.SecurityStamp, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.SecurityStamp, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.PhoneNumberConfirmed, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        @Html.EditorFor(model => model.PhoneNumberConfirmed)
-                        @Html.ValidationMessageFor(model => model.PhoneNumberConfirmed, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.TwoFactorEnabled, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        @Html.EditorFor(model => model.TwoFactorEnabled)
-                        @Html.ValidationMessageFor(model => model.TwoFactorEnabled, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.LockoutEndDateUtc, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.LockoutEndDateUtc, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.LockoutEndDateUtc, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.LockoutEnabled, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        @Html.EditorFor(model => model.LockoutEnabled)
-                        @Html.ValidationMessageFor(model => model.LockoutEnabled, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.AccessFailedCount, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.AccessFailedCount, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.AccessFailedCount, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
-
-
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                @Html.ActionLink("Redefinir Senha do Usuario", "ReiniciarSenha", "Account", new { id = Model.Id }, new { @class = "btn btn-default" })
+            @Html.LabelFor(model => model.PerfilUsuario, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.PerfilUsuario != null)
+                {
+                    @Html.DropDownList("PerfilUsuario", (IEnumerable<SelectListItem>)ViewBag.PerfilUsuario, new { @class = "form-control" })
+                }
+                else
+                {
+                    @Html.DropDownList("PerfilUsuario", (IEnumerable<SelectListItem>)ViewBag.PerfilUsuario, "-- Selecione o Perfil --", new { @class = "form-control" })
+                }
+                @Html.ValidationMessageFor(model => model.PerfilUsuario, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+            @Html.Label("Obras", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("ObrasDisponiveis", (IEnumerable<SelectListItem>)ViewBag.ObrasDisponiveis, "-- Selecione a Obra --", new { @class = "form-control" })                
             </div>
         </div>
+
+        <div class="form-group">
+            @Html.Label("Setores", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SetoresDisponiveis", (IEnumerable<SelectListItem>)ViewBag.SetoresDisponiveis, "-- Selecione a Obra Primeiro --", new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label(" ", htmlAttributes: new { @class = "control-label col-md-2" })            
+            <div class="col-md-10">
+                <button class="btn btn-default adicionarobrasetor" type="button" data-id="Model.Id">Adicionar Obra/Setor</button>
+                @*@Html.ActionLink("Adicionar Obra/Setor", "AdicionarObraSetorUsuario", new { id = Model.Id }, new { @class = "btn btn-default" })*@
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Obras do Usuario</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <table class="table" data-row-style="rowStyle">
+                            <tr>
+                                <th>
+                                    @Html.DisplayName("Nome Obra")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Eliminar")
+                                </th>
+                            </tr>
+
+                            @foreach (var item in ((List<prj_chamadosBRA.Models.UsuarioObra>)ViewBag.ObrasUsuario))
+                            {
+                                <tr>
+                                    <td>
+                                        @item.Obra.Descricao
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Eliminar", "EliminarUsuarioObra", new { id = @item.idUsuarioObra })
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Setores do Usuario</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <table class="table" data-row-style="rowStyle">
+                            <tr>
+                                <th>
+                                    @Html.DisplayName("Nome Setor")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Nome Obra")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Eliminar")
+                                </th>
+                            </tr>
+
+                            @foreach (var item in ((List<prj_chamadosBRA.Models.UsuarioSetor>)ViewBag.SetorUsuario))
+                            {
+                                <tr>
+                                    <td>
+                                        @item.Setor.Descricao
+                                    </td>
+                                    <td>
+                                        @item.Setor.obra.Descricao
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Eliminar", "EliminarUsuarioSetor", new { id = @item.idUsuarioSetor })
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>       
     </div>
 }
 
 <div>
-    @Html.ActionLink("Voltar a Lista", "Index")
+    @Html.ActionLink("Voltar", "Index", "Account", new { @class = "btn btn-default" })
 </div>
+@Html.Hidden("notice", @TempData["notice"])
+@if (TempData["notice"] != null)
+{
+    <div id="modalNotice" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mensagem</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-success"><strong>@TempData["notice"]</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
         $(document).ready(function () {
             //Dropdownlist Selectedchange event
-            $("#ObrasUsuario").change(function () {
-                $("#SetoresUsuario").empty();
+            $("#ObrasDisponiveis").change(function () {
+                $("#SetoresDisponiveis").empty();
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("RetornaSetoresPorObra", "Account")',
                     dataType: 'json',
-                    data: { selectedValue: $("#ObrasUsuario").val() },
+                    data: { selectedValue: $("#ObrasDisponiveis").val() },
                     success: function (setores) {
                         // states contains the JSON formatted list
                         // of states passed from the controller
-                        $("#SetoresUsuario").append('<option value="">-- Selecione o Setor --</option>');
+                        $("#SetoresDisponiveis").append('<option value="">-- Selecione o Setor --</option>');
                         $.each(setores, function (i, setor) {
-                            $("#SetoresUsuario").append('<option value="'
+                            $("#SetoresDisponiveis").append('<option value="'
                             + setor.Value + '">'
                             + setor.Text + '</option>');
                         });
@@ -223,6 +211,21 @@
                 });
                 return false;
             })
+            $(function () {
+                $(".adicionarobrasetor").click(function () {
+                    var id = $('#Id').val();
+                    var obra = $('#ObrasDisponiveis').val();
+                    var setor = $('#SetoresDisponiveis').val();
+                    var url = '@Url.Action("AdicionarObraSetorUsuario", "Account", new { idUser = "__id__", obra = "__obra__", setor = "__setor__" })';
+                    window.location.href = url.replace('__id__&amp;', id + '&').replace('__obra__&amp;', obra + '&').replace('__setor__', setor);
+                });
+            })            
+        });
+        $(window).load(function () {
+            if ($('#notice').val() != "") {
+                //alert($('#notice').val());
+                $('#modalNotice').modal({ show: true });
+            }
         });
     </script>
 }

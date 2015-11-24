@@ -17,7 +17,7 @@ namespace prj_chamadosBRA.Repositories
             }
         }
 
-        public static PerfilUsuario BuscarPerfil(Int32 idPerfil)
+        public PerfilUsuario BuscarPerfil(Int32 idPerfil)
         {
             using (var ctx = new ApplicationDbContext())
             {

@@ -14,7 +14,7 @@ namespace prj_chamadosBRA.Controllers
     [Authorize]
     public class ObraController : Controller
     {
-         private UserManager<ApplicationUser> manager;
+        private UserManager<ApplicationUser> manager;
         private ApplicationDbContext db = new ApplicationDbContext();
         public ObraController()
         {
@@ -72,9 +72,10 @@ namespace prj_chamadosBRA.Controllers
                     else
                     {
                         var centroAdm = new CentroAdministrativoDAO(db).BuscarCentroAdministrativo(Convert.ToInt32(CentroAdministrativo));
-                        obra.CentroAdministrativo = centroAdm;                        
+                        obra.CentroAdministrativo = centroAdm;
                     }
-                    
+                    obra.DataCriacao = DateTime.Now;
+                    obra.Usuario = User.Identity.GetUserId();
                     if (new ObraDAO(db).salvarObra(obra))
                     {
                         TempData["notice"] = "Obra criada com Sucesso!";
@@ -114,7 +115,7 @@ namespace prj_chamadosBRA.Controllers
             try
             {
                 obra.CentroAdministrativo = new CentroAdministrativoDAO(db).BuscarCentroAdministrativo(Convert.ToInt32(ddlCentroAdministrativo));
-                new ObraDAO(db).atualizarObra(id, obra);
+                new ObraDAO(db).atualizarObra(id, obra, User.Identity.GetUserId());
                 TempData["notice"] = "Obra Atualizada Com Sucesso!";
                 return RedirectToAction("Index");
             }
@@ -127,20 +128,21 @@ namespace prj_chamadosBRA.Controllers
         // GET: Obra/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var obra = new ObraDAO(db).BuscarObraId(id);
+            return View(obra);
         }
 
         // POST: Obra/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, Obra obra)
         {
             try
             {
-                // TODO: Add delete logic here
-
+                new ObraDAO().desativarObra(obra, User.Identity.GetUserId());
+                TempData["notice"] = "Obra Eliminada Com Sucesso!";
                 return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return View();
             }

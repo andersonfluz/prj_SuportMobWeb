@@ -15,7 +15,7 @@ namespace prj_chamadosBRA.Repositories
         {
             this.db = db;
         }
-        
+
         public List<Chamado> BuscarChamados(string filtro, bool encerrado, string sortOrder)
         {
             var chamados = (from e in db.Chamado where e.StatusChamado == encerrado select e);
@@ -468,12 +468,190 @@ namespace prj_chamadosBRA.Repositories
             return chamadosList.ToList();
         }
 
+        public List<Chamado> BuscarChamadosSemResponsaveis(string filtro, string sortOrder, int? tipoChamado)
+        {
+            if (tipoChamado == -2)
+            {
+                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.ResponsavelChamado == null select e);
+                if (filtro != null)
+                {
+                    chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                               || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                               || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
+                                                               || s.Descricao.ToLower().Contains(filtro.ToLower())
+                                                               || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower())));
+                }
+
+                switch (sortOrder)
+                {
+                    case "id":
+                        chamados = chamados.OrderByDescending(s => s.Id);
+                        break;
+                    case "dataAbertura":
+                        chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
+                        break;
+                    case "solicitante":
+                        chamados = chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome);
+                        break;
+                    case "assunto":
+                        chamados = chamados.OrderBy(s => s.Assunto);
+                        break;
+                    case "responsavel":
+                        chamados = chamados.OrderBy(s => s.ResponsavelChamado.Nome);
+                        break;
+                    case "obra":
+                        chamados = chamados.OrderBy(s => s.ObraDestino.Descricao);
+                        break;
+                    case "setor":
+                        chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
+                        break;
+                    default:
+                        chamados = chamados.OrderBy(s => s.Id);
+                        break;
+                }
+
+                return chamados.ToList();
+            }
+            else
+            {
+                var chamados = (from f in db.Chamado where f.StatusChamado == false && f.ResponsavelChamado == null && f.TipoChamado == tipoChamado select f);
+                if (filtro != null)
+                {
+                    chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                               || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                               || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
+                                                               || s.Descricao.ToLower().Contains(filtro.ToLower())
+                                                               || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower())));
+                }
+
+                switch (sortOrder)
+                {
+                    case "id":
+                        chamados = chamados.OrderByDescending(s => s.Id);
+                        break;
+                    case "dataAbertura":
+                        chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
+                        break;
+                    case "solicitante":
+                        chamados = chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome);
+                        break;
+                    case "assunto":
+                        chamados = chamados.OrderBy(s => s.Assunto);
+                        break;
+                    case "responsavel":
+                        chamados = chamados.OrderBy(s => s.ResponsavelChamado.Nome);
+                        break;
+                    case "obra":
+                        chamados = chamados.OrderBy(s => s.ObraDestino.Descricao);
+                        break;
+                    case "setor":
+                        chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
+                        break;
+                    default:
+                        chamados = chamados.OrderBy(s => s.Id);
+                        break;
+                }
+
+                return chamados.ToList();
+            }
+            //return organizarLista(chamados, filtro, sortOrder);
+
+        }
+
+        public List<Chamado> BuscarChamadosSemResponsaveisPorObra(Int32 obra, int? tipoChamado, string filtro, string sortOrder)
+        {
+            if (tipoChamado == -2)
+            {
+                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.ResponsavelChamado == null && e.ObraDestino.IDO == obra select e);
+                if (filtro != null)
+                {
+                    chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                               || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                               || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
+                                                               || s.Descricao.ToLower().Contains(filtro.ToLower())
+                                                               || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
+                                                               || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
+                }
+                switch (sortOrder)
+                {
+                    case "id":
+                        chamados = chamados.OrderByDescending(s => s.Id);
+                        break;
+                    case "dataAbertura":
+                        chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
+                        break;
+                    case "solicitante":
+                        chamados = chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome);
+                        break;
+                    case "assunto":
+                        chamados = chamados.OrderBy(s => s.Assunto);
+                        break;
+                    case "responsavel":
+                        chamados = chamados.OrderBy(s => s.ResponsavelChamado.Nome);
+                        break;
+                    case "obra":
+                        chamados = chamados.OrderBy(s => s.ObraDestino.Descricao);
+                        break;
+                    case "setor":
+                        chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
+                        break;
+                    default:
+                        chamados = chamados.OrderBy(s => s.Id);
+                        break;
+                }
+
+                return chamados.ToList();
+            }
+            else
+            {
+                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.TipoChamado == tipoChamado && e.ResponsavelChamado == null && e.ObraDestino.IDO == obra select e);
+                if (filtro != null)
+                {
+                    chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                               || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                               || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
+                                                               || s.Descricao.ToLower().Contains(filtro.ToLower())
+                                                               || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
+                                                               || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
+                }
+                switch (sortOrder)
+                {
+                    case "id":
+                        chamados = chamados.OrderByDescending(s => s.Id);
+                        break;
+                    case "dataAbertura":
+                        chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
+                        break;
+                    case "solicitante":
+                        chamados = chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome);
+                        break;
+                    case "assunto":
+                        chamados = chamados.OrderBy(s => s.Assunto);
+                        break;
+                    case "responsavel":
+                        chamados = chamados.OrderBy(s => s.ResponsavelChamado.Nome);
+                        break;
+                    case "obra":
+                        chamados = chamados.OrderBy(s => s.ObraDestino.Descricao);
+                        break;
+                    case "setor":
+                        chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
+                        break;
+                    default:
+                        chamados = chamados.OrderBy(s => s.Id);
+                        break;
+                }
+
+                return chamados.ToList();
+            }
+        }
+
         public Chamado BuscarChamadoId(int id)
         {
             return db.Set<Chamado>().Find(id);
         }
 
-        public Boolean salvarChamado(Chamado chamado)
+        public bool salvarChamado(Chamado chamado)
         {
             db.Chamado.Add(chamado);
             db.SaveChanges();

@@ -69,7 +69,9 @@ namespace prj_chamadosBRA.Controllers
                 if (ModelState.IsValid)
                 {
                     setor.obra = new ObraDAO(db).BuscarObraId(Convert.ToInt32(obra));
-
+                    setor.DataCriacao = DateTime.Now;
+                    setor.Usuario = User.Identity.GetUserId();
+                    
                     if (new SetorDAO(db).salvarSetor(setor))
                     {
                         TempData["notice"] = "Setor criado com Sucesso!";
@@ -109,8 +111,10 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
+                setor.DataAlteracao = DateTime.Now;
+                setor.Usuario = User.Identity.GetUserId();
                 new SetorDAO(db).atualizarSetor(id, setor);
-                TempData["notice"] = "Setor Atualizada Com Sucesso!";
+                TempData["notice"] = "Setor Atualizado Com Sucesso!";
                 return RedirectToAction("Index");
             }
             catch (Exception)
@@ -122,17 +126,21 @@ namespace prj_chamadosBRA.Controllers
         // GET: Setor/Delete/5
         public ActionResult Delete(int id)
         {
+            var setor = new SetorDAO(db).BuscarSetorId(id);
             return View();
         }
 
         // POST: Setor/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, Setor setor)
         {
             try
             {
-                // TODO: Add delete logic here
-
+                setor.DataAlteracao = DateTime.Now;
+                setor.Usuario = User.Identity.GetUserId();
+                setor.Ativo = false;
+                new SetorDAO(db).atualizarSetor(id, setor);
+                TempData["notice"] = "Setor Eliminado Com Sucesso!";
                 return RedirectToAction("Index");
             }
             catch (Exception)

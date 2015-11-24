@@ -31,6 +31,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Contato)
         </th>
+        <th>
+            @Html.DisplayName("Último Acesso")
+        </th>
         <th></th>
     </tr>
 
@@ -48,6 +51,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Contato)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UltimoAcesso)
             </td>
             <th>
                 @Html.ActionLink("Editar", "Edit", "Account", new { id = item.Id }, new { @class = "btn btn-default" })

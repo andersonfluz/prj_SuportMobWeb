@@ -29,7 +29,8 @@ namespace prj_chamadosBRA
                       "~/Scripts/bootstrap-datepicker.js",
                       "~/Scripts/bootstrap-datetimepicker.js",
                       "~/Scripts/locales/bootstrap-datepicker.pt-BR.js",
-                      "~/Scripts/respond.js"));
+                      "~/Scripts/respond.js",
+                      "~/Scripts/modalCarregamento.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/mvcfoolproof").Include(
                     "~/Scripts/MicrosoftAjax.js",

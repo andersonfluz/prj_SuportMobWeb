@@ -29,5 +29,11 @@ namespace prj_chamadosBRA.Models
         [Required]
         [Display(Name = "Obra")]
         public virtual Obra obra { get; set; }
+        public int? CentroAdministrativo { get; set; }
+        public int? SetorCorporativo { get; set; }
+        public bool Ativo { get; set; }
+        public string Usuario { get; set; }
+        public DateTime? DataCriacao { get; set; }
+        public DateTime? DataAlteracao { get; set; }
     }
 }

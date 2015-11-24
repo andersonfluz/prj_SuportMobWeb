@@ -20,5 +20,10 @@ namespace prj_chamadosBRA.Models
         [Required]
         [Display(Name = "Centro Administrativo")]
         public virtual CentroAdministrativo CentroAdministrativo { get; set; }
+        public bool Ativo { get; set; }
+        public string Usuario { get; set; }
+        public DateTime? DataCriacao { get; set; }
+        public DateTime? DataAlteracao { get; set; }
+
     }
 }

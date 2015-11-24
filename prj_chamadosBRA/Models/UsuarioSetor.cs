@@ -13,6 +13,6 @@ namespace prj_chamadosBRA.Models
         [Key]
         public int idUsuarioSetor { get; set; }
         public string Usuario { get; set; }
-        public int Setor { get; set; }
+        public virtual Setor Setor { get; set; }
     }
 }

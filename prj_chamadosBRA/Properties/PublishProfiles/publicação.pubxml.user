@@ -82,7 +82,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/25/2015 15:26:35</publishTime>
     </File>
     <File Include="bin/prj_chamadosBRA.dll">
-      <publishTime>10/23/2015 10:42:13</publishTime>
+      <publishTime>10/29/2015 07:03:20</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -709,28 +709,28 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/19/2015 11:38:59</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.sv.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.sw.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.th.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.tr.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.uk.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.vi.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.zh-CN.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/locales/bootstrap-datepicker.zh-TW.js">
-      <publishTime>01/01/0001 00:00:00</publishTime>
+      <publishTime>06/19/2015 11:39:00</publishTime>
     </File>
     <File Include="Scripts/modernizr-2.6.2.js">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -778,7 +778,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Views/Account/Index.cshtml">
-      <publishTime>09/11/2015 14:09:24</publishTime>
+      <publishTime>10/26/2015 11:28:30</publishTime>
     </File>
     <File Include="Views/Account/Login.cshtml">
       <publishTime>06/18/2015 12:42:42</publishTime>
@@ -826,7 +826,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/09/2015 14:37:53</publishTime>
     </File>
     <File Include="Views/Chamado/Index.cshtml">
-      <publishTime>10/08/2015 13:23:09</publishTime>
+      <publishTime>10/26/2015 09:01:01</publishTime>
     </File>
     <File Include="Views/Chamado/ReaberturaChamado.cshtml">
       <publishTime>09/28/2015 16:00:42</publishTime>
@@ -925,7 +925,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 12:42:42</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>10/23/2015 10:26:57</publishTime>
+      <publishTime>10/29/2015 07:03:22</publishTime>
     </File>
   </ItemGroup>
 </Project>

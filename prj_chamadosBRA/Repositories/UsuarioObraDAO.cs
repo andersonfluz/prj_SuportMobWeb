@@ -23,7 +23,7 @@ namespace prj_chamadosBRA.Repositories
         {
 
             var obras = (from o in db.Obra
-                         join uo in db.UsuarioObra on o.IDO equals uo.Obra
+                         join uo in db.UsuarioObra on o equals uo.Obra
                          where uo.Usuario == user.Id
                          select o).ToList();
             return obras;
@@ -31,9 +31,27 @@ namespace prj_chamadosBRA.Repositories
 
         public UsuarioObra buscarUsuarioObra(ApplicationUser user, int idObra)
         {
+            var obraParameter = new ObraDAO().BuscarObraId(idObra);
+            var obra = (from uo in db.UsuarioObra
+                        where uo.Usuario == user.Id && uo.Obra == obraParameter
+                        select uo).SingleOrDefault();
+            return obra;
+        }
+
+        public List<UsuarioObra> buscarUsuariosObras(ApplicationUser user)
+        {
 
             var obra = (from uo in db.UsuarioObra
-                         where uo.Usuario == user.Id && uo.Obra == idObra
+                        where uo.Usuario == user.Id
+                        select uo).ToList();
+            return obra;
+        }
+
+        public UsuarioObra buscarUsuarioObraPorId(int idusuarioobra)
+        {
+
+            var obra = (from uo in db.UsuarioObra
+                        where uo.idUsuarioObra == idusuarioobra
                         select uo).SingleOrDefault();
             return obra;
         }
@@ -41,8 +59,11 @@ namespace prj_chamadosBRA.Repositories
 
         public bool salvarUsuarioObra(UsuarioObra usuarioObra)
         {
-            db.UsuarioObra.Add(usuarioObra);
-            db.SaveChanges();
+            if (!existObraUsuario(new ApplicationUserDAO(db).retornarUsuario(usuarioObra.Usuario), usuarioObra.Obra.IDO))
+            {
+                db.UsuarioObra.Add(usuarioObra);
+                db.SaveChanges();
+            }
             return true;
         }
 
@@ -56,7 +77,7 @@ namespace prj_chamadosBRA.Repositories
         public bool existObraUsuario(ApplicationUser user, int idObra)
         {
             var obras = (from uo in db.UsuarioObra
-                         where uo.Usuario == user.Id && uo.Obra == idObra
+                         where uo.Usuario == user.Id && uo.Obra.IDO == idObra
                          select uo).ToList();
             return obras.Count > 0 ? true : false;
         }

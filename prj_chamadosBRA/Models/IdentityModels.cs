@@ -16,7 +16,7 @@ namespace prj_chamadosBRA.Models
         public string Nome { get; set; }
         public string Contato { get; set; }
         public DateTime? UltimoAcesso { get; set; }
-
+        
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType

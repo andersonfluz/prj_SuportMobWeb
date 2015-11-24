@@ -4,235 +4,227 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Helpers;
+using System.ComponentModel;
 
 namespace prj_chamadosBRA.Utils
 {
-    public static class EmailServiceUtil
+    public class EmailServiceUtil
     {
-
-
-        public static async Task envioEmailAberturaChamadoAsync(Chamado chamado)
-        {
-            WebMail.SmtpServer = "smtp.office365.com";
-            WebMail.SmtpPort = 587;
-            WebMail.EnableSsl = true;
-            WebMail.UserName = "chamados@brasilnordeste.org.br";
-            WebMail.From = "chamados@brasilnordeste.org.br";
-            WebMail.Password = "Fozo4723";
-
-            var para = chamado.ResponsavelAberturaChamado.UserName;
-            var copia = "";
-            if (chamado.SetorDestino == null)
-            {
-                var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
-                foreach (var setor in setores)
-                {
-                    copia = copia + setor.EmailSetor + ";";
-                }
-            }
-            else
-            {
-                copia = chamado.SetorDestino.EmailSetor;
-            }
-            var assunto = "ChamadosBRA - Notificação Abertura Chamado N. " + chamado.Id;
-            var corpoMensagem = montarCorpoMensagemAbertura(chamado);
-            WebMail.Send(para, assunto, corpoMensagem, null, copia);
-
-        }
-
-        public static async Task<bool> envioEmailDirecionamentoChamadoAsync(ChamadoHistorico chamadoHistorico)
+        public async Task envioEmailAberturaChamadoAsync(Chamado chamado)
         {
             try
             {
-                WebMail.SmtpServer = "smtp.office365.com";
-                WebMail.SmtpPort = 587;
-                WebMail.EnableSsl = true;
-                WebMail.UserName = "chamados@brasilnordeste.org.br";
-                WebMail.From = "chamados@brasilnordeste.org.br";
-                WebMail.Password = "Fozo4723";
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
 
-                var para = chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName;
-                var copia = "";
-                if (chamadoHistorico.chamado.ResponsavelChamado != null)
-                {
-                    copia = chamadoHistorico.chamado.ResponsavelChamado.UserName;
-                }
-                else if (chamadoHistorico.chamado.SetorDestino == null)
-                {
-                    var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
-                    foreach (var setor in setores)
+                    mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamado.SetorDestino == null)
                     {
-                        copia = copia + setor.EmailSetor + ";";
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
+                        foreach (var setor in setores)
+                        {
+                            mail.CC.Add(setor.EmailSetor);
+                        }
                     }
-                }
-                else
-                {
-                    copia = chamadoHistorico.chamado.SetorDestino.EmailSetor;
-                }
-                var assunto = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
-                var corpoMensagem = montarCorpoMensagemAlteracao(chamadoHistorico);
-                WebMail.Send(para, assunto, corpoMensagem, null, copia);
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public static async Task<bool> envioEmailAtualizacaoChamadoAsync(ChamadoHistorico chamadoHistorico)
-        {
-            try
-            {
-                WebMail.SmtpServer = "smtp.office365.com";
-                WebMail.SmtpPort = 587;
-                WebMail.EnableSsl = true;
-                WebMail.UserName = "chamados@brasilnordeste.org.br";
-                WebMail.From = "chamados@brasilnordeste.org.br";
-                WebMail.Password = "Fozo4723";
-
-                var para = chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName;
-                var copia = "";
-                if (chamadoHistorico.chamado.ResponsavelChamado != null)
-                {
-                    copia = chamadoHistorico.chamado.ResponsavelChamado.UserName;
-                }
-                else if (chamadoHistorico.chamado.SetorDestino == null)
-                {
-                    var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
-                    foreach (var setor in setores)
+                    else
                     {
-                        copia = copia + setor.EmailSetor + ";";
+                        mail.CC.Add(chamado.SetorDestino.EmailSetor);
                     }
+                    mail.Subject = "ChamadosBRA - Notificação Abertura Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemAbertura(chamado);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    await smtpClient.SendMailAsync(mail);
                 }
-                else
-                {
-                    copia = chamadoHistorico.chamado.SetorDestino.EmailSetor;
-                }
-                var assunto = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
-                var corpoMensagem = montarCorpoMensagemAlteracao(chamadoHistorico);
-                WebMail.Send(para, assunto, corpoMensagem, null, copia);
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public static async Task<bool> envioEmailEncerramentoChamado(Chamado chamado)
-        {
-            try
-            {
-                WebMail.SmtpServer = "smtp.office365.com";
-                WebMail.SmtpPort = 587;
-                WebMail.EnableSsl = true;
-                WebMail.UserName = "chamados@brasilnordeste.org.br";
-                WebMail.From = "chamados@brasilnordeste.org.br";
-                WebMail.Password = "Fozo4723";
-
-                var para = chamado.ResponsavelAberturaChamado.UserName;
-                string copia = null;
-                if (chamado.ResponsavelChamado != null)
-                {
-                    copia = chamado.ResponsavelChamado.UserName;
-                }
-                var assunto = "ChamadosBRA - Notificação Encerramento do Chamado N. " + chamado.Id;
-                var corpoMensagem = montarCorpoMensagemEncerramento(chamado);
-                WebMail.Send(para, assunto, corpoMensagem, null, copia);
-                return true;
             }
             catch (Exception e)
             {
-                throw;
+
             }
+
         }
 
-        public static async Task<bool> envioEmailCriacaoUsuario(ApplicationUser user)
+        public async Task envioEmailDirecionamentoChamadoAsync(ChamadoHistorico chamadoHistorico)
         {
             try
             {
-                WebMail.SmtpServer = "smtp.office365.com";
-                WebMail.SmtpPort = 587;
-                WebMail.EnableSsl = true;
-                WebMail.UserName = "chamados@brasilnordeste.org.br";
-                WebMail.From = "chamados@brasilnordeste.org.br";
-                WebMail.Password = "Fozo4723";
-
-                var para = user.UserName;
-                var assunto = "ChamadosBRA - Criação de novo usuario na plataforma";
-                var corpoMensagem = montarCorpoMensagemCriacaoUsuario(user);
-                WebMail.Send(para, assunto, corpoMensagem, null);
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public static async Task<bool> envioEmailRedefinicaoSenhaUsuario(ApplicationUser user)
-        {
-            try
-            {
-                WebMail.SmtpServer = "smtp.office365.com";
-                WebMail.SmtpPort = 587;
-                WebMail.EnableSsl = true;
-                WebMail.UserName = "chamados@brasilnordeste.org.br";
-                WebMail.From = "chamados@brasilnordeste.org.br";
-                WebMail.Password = "Fozo4723";
-
-                var para = user.UserName;
-                var assunto = "ChamadosBRA - Redefinição de senha do usuario na plataforma";
-                var corpoMensagem = montarCorpoMensagemReiniciarSenhaUsuario(user);
-                WebMail.Send(para, assunto, corpoMensagem, null);
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public static async Task<bool> envioEmailReaberturaChamado(ChamadoHistorico chamadoHistorico)
-        {
-            try
-            {
-                WebMail.SmtpServer = "smtp.office365.com";
-                WebMail.SmtpPort = 587;
-                WebMail.EnableSsl = true;
-                WebMail.UserName = "chamados@brasilnordeste.org.br";
-                WebMail.From = "chamados@brasilnordeste.org.br";
-                WebMail.Password = "Fozo4723";
-
-                var para = chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName;
-                var copia = "";
-                if (chamadoHistorico.chamado.ResponsavelChamado != null)
+                using (var mail = new MailMessage())
                 {
-                    copia = chamadoHistorico.chamado.ResponsavelChamado.UserName;
-                }
-                else if (chamadoHistorico.chamado.SetorDestino == null)
-                {
-                    var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
-                    foreach (var setor in setores)
+                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+
+                    mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamadoHistorico.chamado.ResponsavelChamado != null)
                     {
-                        copia = copia + setor.EmailSetor + ";";
+                        mail.CC.Add(chamadoHistorico.chamado.ResponsavelChamado.UserName);
                     }
+                    else if (chamadoHistorico.chamado.SetorDestino == null)
+                    {
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
+                        foreach (var setor in setores)
+                        {
+                            mail.CC.Add(setor.EmailSetor);
+                        }
+                    }
+                    else
+                    {
+                        mail.CC.Add(chamadoHistorico.chamado.SetorDestino.EmailSetor);
+                    }
+                    mail.Subject = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
+                    mail.Body = montarCorpoMensagemAlteracao(chamadoHistorico);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    await smtpClient.SendMailAsync(mail);
                 }
-                else
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        public async Task envioEmailAtualizacaoChamadoAsync(ChamadoHistorico chamadoHistorico)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
                 {
-                    copia = chamadoHistorico.chamado.SetorDestino.EmailSetor;
+                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+
+                    mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamadoHistorico.chamado.ResponsavelChamado != null)
+                    {
+                        mail.CC.Add(chamadoHistorico.chamado.ResponsavelChamado.UserName);
+                    }
+                    else if (chamadoHistorico.chamado.SetorDestino == null)
+                    {
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
+                        foreach (var setor in setores)
+                        {
+                            mail.CC.Add(setor.EmailSetor);
+                        }
+                    }
+                    else
+                    {
+                        mail.CC.Add(chamadoHistorico.chamado.SetorDestino.EmailSetor);
+                    }
+                    mail.Subject = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
+                    mail.Body = montarCorpoMensagemAlteracao(chamadoHistorico);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    await smtpClient.SendMailAsync(mail);
                 }
-                var assunto = "ChamadosBRA - Notificação Reabertura Chamado N. " + chamadoHistorico.chamado.Id;
-                var corpoMensagem = montarCorpoMensagemReabertura(chamadoHistorico);
-                WebMail.Send(para, assunto, corpoMensagem, null, copia);
-                return true;
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        public async Task envioEmailEncerramentoChamado(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+
+                    mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamado.ResponsavelChamado != null)
+                    {
+                        mail.CC.Add(chamado.ResponsavelChamado.UserName);
+                    }
+                    mail.Subject = "ChamadosBRA - Notificação Encerramento do Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemEncerramento(chamado);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    await smtpClient.SendMailAsync(mail);
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        public async Task envioEmailCriacaoUsuario(ApplicationUser user)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+
+                    mail.To.Add(new MailAddress(user.UserName));
+                    mail.Subject = "ChamadosBRA - Criação de novo usuario na plataforma";
+                    mail.Body = montarCorpoMensagemCriacaoUsuario(user);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    await smtpClient.SendMailAsync(mail);
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        public async Task envioEmailRedefinicaoSenhaUsuario(ApplicationUser user)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+
+                    mail.To.Add(new MailAddress(user.UserName));
+                    mail.Subject = "ChamadosBRA - Redefinição de senha do usuario na plataforma";
+                    mail.Body = montarCorpoMensagemReiniciarSenhaUsuario(user);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    await smtpClient.SendMailAsync(mail);
+                }
             }
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        public static async Task envioEmailReaberturaChamado(ChamadoHistorico chamadoHistorico)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+
+                    mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamadoHistorico.chamado.ResponsavelChamado != null)
+                    {
+                        mail.CC.Add(chamadoHistorico.chamado.ResponsavelChamado.UserName);
+                    }
+                    else if (chamadoHistorico.chamado.SetorDestino == null)
+                    {
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
+                        foreach (var setor in setores)
+                        {
+                            mail.CC.Add(setor.EmailSetor);
+                        }
+                    }
+                    else
+                    {
+                        mail.CC.Add(chamadoHistorico.chamado.SetorDestino.EmailSetor);
+                    }
+                    mail.Subject = "ChamadosBRA - Notificação Reabertura Chamado N. " + chamadoHistorico.chamado.Id;
+                    mail.Body = montarCorpoMensagemReabertura(chamadoHistorico);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    await smtpClient.SendMailAsync(mail);
+                }
+            }
+            catch (Exception e)
+            {
             }
         }
 
@@ -351,6 +343,8 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -514,6 +508,8 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -649,6 +645,8 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -698,6 +696,8 @@ namespace prj_chamadosBRA.Utils
                                 + "</tr>"
                                 + "</tbody>"
                                 + "</table>"
+                                + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
                                 + "</div>";
             return corpoMensagem;
         }
@@ -747,6 +747,8 @@ namespace prj_chamadosBRA.Utils
                                 + "</tr>"
                                 + "</tbody>"
                                 + "</table>"
+                                + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
                                 + "</div>";
             return corpoMensagem;
         }
@@ -882,6 +884,8 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
                                    + "</div>";
             return corpoMensagem;
         }

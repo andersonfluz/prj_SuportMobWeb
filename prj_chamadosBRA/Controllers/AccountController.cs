@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using prj_chamadosBRA.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -112,19 +109,21 @@ namespace prj_chamadosBRA.Controllers
             if (Session["PerfilUsuario"].ToString().Equals("1"))
             {
                 //montagem de perfil
-                var perfils = new SelectList(new PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao", user.PerfilUsuario);
+                var perfil = new PerfilUsuarioDAO().BuscarPerfil(Convert.ToInt32(user.PerfilUsuario));
+                var perfils = new SelectList(new PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao", perfil);
                 ViewBag.PerfilUsuario = perfils;
-                //montagem de setor
-                var setoresUsuario = new UsuarioSetorDAO().buscarSetoresDoUsuario(user);
-                ViewBag.SetorUsuario = setoresUsuario[0];
-                var setores = new SelectList(new SetorDAO().BuscarSetores(), "Id", "Descricao", setoresUsuario[0].Id);
-                ViewBag.SetoresUsuario = setores;
-                //montagem de obra
-                var obrasUsuario = new UsuarioObraDAO().buscarObrasDoUsuario(user);
-                ViewBag.ObraUsuario = obrasUsuario[0];
-                var obras = new SelectList(new ObraDAO().BuscarObras(), "IDO", "Descricao", obrasUsuario[0].IDO);
-                ViewBag.ObrasUsuario = obras;
 
+                //montagem de obra
+                var obrasUsuario = new UsuarioObraDAO().buscarUsuariosObras(user);
+                ViewBag.ObrasUsuario = obrasUsuario;
+                var obras = new SelectList(new ObraDAO().BuscarObras(), "IDO", "Descricao");
+                ViewBag.ObrasDisponiveis = obras;
+
+                //montagem de setor
+                var setoresUsuario = new UsuarioSetorDAO().buscarUsuariosSetores(user);
+                ViewBag.SetorUsuario = setoresUsuario;
+                var setores = new SelectList(new SetorDAO().BuscarSetores(), "Id", "Descricao");
+                ViewBag.SetoresDisponiveis = setores;
             }
             else if (Session["PerfilUsuario"].ToString().Equals("5"))
             {
@@ -136,16 +135,32 @@ namespace prj_chamadosBRA.Controllers
                 //montagem de perfil
                 var perfils = new SelectList(PerfilUsuarioDAO.BuscarPerfisParaAdmObra(), "IdPerfil", "Descricao", user.PerfilUsuario);
                 ViewBag.PerfilUsuario = perfils;
-                //montagem de setor
-                var setoresUsuario = new UsuarioSetorDAO().buscarSetoresDoUsuario(user);
-                ViewBag.SetorUsuario = setoresUsuario[0];
-                var setores = new SelectList(new SetorDAO().BuscarSetoresPorObras(new UsuarioObraDAO().buscarObrasDoUsuario(UserManager.FindById(User.Identity.GetUserId()))), "Id", "Descricao", setoresUsuario[0].Id);
-                ViewBag.SetoresUsuario = setores;
                 //montagem de obra
                 var obrasUsuario = new UsuarioObraDAO().buscarObrasDoUsuario(user);
-                ViewBag.ObraUsuario = obrasUsuario[0];
-                var obras = new SelectList(new ObraDAO().BuscarObrasPorUsuario(User.Identity.GetUserId()), "IDO", "Descricao", obrasUsuario[0].IDO);
-                ViewBag.ObrasUsuario = obras;
+                if (obrasUsuario.Count() != 0)
+                {
+                    var obras = new MultiSelectList(new ObraDAO().BuscarObras(), "IDO", "Descricao", obrasUsuario);
+                    ViewBag.ObrasUsuario = obras;
+                }
+                else
+                {
+                    var obras = new MultiSelectList(new ObraDAO().BuscarObras(), "IDO", "Descricao");
+                    ViewBag.ObrasUsuario = obras;
+                }
+                //montagem de setor
+                var setoresUsuario = new UsuarioSetorDAO().buscarSetoresDoUsuario(user);
+                if (setoresUsuario.Count() != 0)
+                {
+                    var setores = new SelectList(new SetorDAO().BuscarSetoresPorObras(obrasUsuario), "Id", "Descricao", setoresUsuario);
+                    ViewBag.SetoresUsuario = setores;
+                }
+                else
+                {
+                    ViewBag.SetorUsuario = null;
+                    var setores = new SelectList(new SetorDAO().BuscarSetores(), "Id", "Descricao");
+                    ViewBag.SetoresUsuario = setores;
+                }
+
             }
             return View(user);
         }
@@ -153,47 +168,21 @@ namespace prj_chamadosBRA.Controllers
         // POST: /Account/Edit/5
         [Authorize]
         [HttpPost]
-        public ActionResult Edit(ApplicationUser user, string SetoresUsuario, string ObrasUsuario)
+        public ActionResult Edit(ApplicationUser user, string PerfilUsuario)
         {
-
-            var appDAO = new ApplicationUserDAO();
-            var userOrigem = appDAO.retornarUsuario(user.Id);
-            userOrigem.Nome = user.Nome;
-            userOrigem.UserName = user.UserName;
-            userOrigem.PerfilUsuario = user.PerfilUsuario;
-            userOrigem.Contato = user.Contato;
-            //if (ObrasUsuario != null || ObrasUsuario != "")
-            //{
-            //    var obrasUsuario = new UsuarioObraDAO().buscarObrasDoUsuario(user);
-
-            //    var obra = new ObraDAO().BuscarObraId(Convert.ToInt32(ObrasUsuario));
-            //    if (obrasUsuario.Contains(obra))
-            //    {
-
-            //    }
-            //    if (!new UsuarioObraDAO().existObraUsuario(user, Convert.ToInt32(ObrasUsuario)))
-            //    {
-            //        new UsuarioObraDAO().salvarUsuarioObra(new UsuarioObra
-            //        {
-            //            Obra = Convert.ToInt32(ObrasUsuario),
-            //            Usuario = user.Id
-            //        });
-            //    }
-            //}
-            //if (SetoresUsuario != null || SetoresUsuario != "")
-            //{
-            //    if (!new UsuarioSetorDAO().existSetorUsuario(user, Convert.ToInt32(SetoresUsuario)))
-            //    {
-            //        new UsuarioSetorDAO().salvarUsuarioSetor(new UsuarioSetor
-            //        {
-            //            Setor = Convert.ToInt32(SetoresUsuario),
-            //            Usuario = user.Id
-            //        });
-            //    }
-            //}
-            appDAO.atualizarApplicationUser(user.Id, userOrigem);
+            using (var context = new ApplicationDbContext())
+            {
+                var appDAO = new ApplicationUserDAO(context);
+                var userOrigem = appDAO.retornarUsuario(user.Id);
+                userOrigem.Nome = user.Nome;
+                userOrigem.UserName = user.UserName;
+                userOrigem.PerfilUsuario = Convert.ToInt32(PerfilUsuario);
+                userOrigem.Contato = user.Contato;
+                appDAO.atualizarApplicationUser(user.Id, userOrigem);
+            }
             TempData["notice"] = "Dados alterados com sucesso!";
             return RedirectToAction("Index");
+
         }
 
         [Authorize]
@@ -201,12 +190,12 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
-                var newPassword = "123456";
+                const string newPassword = "123456";
                 UserManager.RemovePassword(id);
                 UserManager.AddPassword(id, newPassword);
                 using (var context = new ApplicationDbContext())
                 {
-                    await EmailServiceUtil.envioEmailRedefinicaoSenhaUsuario(new ApplicationUserDAO(context).retornarUsuario(id));
+                    await new EmailServiceUtil().envioEmailRedefinicaoSenhaUsuario(new ApplicationUserDAO(context).retornarUsuario(id));
                     TempData["notice"] = "Senha do usuário redefinida com Sucesso!";
                     return RedirectToAction("Index");
                 }
@@ -218,6 +207,112 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
+        [Authorize]
+        public async Task<ActionResult> AdicionarObraSetorUsuario(string idUser, string obra, string setor)
+        {
+            try
+            {
+                using (ApplicationDbContext context = new ApplicationDbContext())
+                {
+                    if (setor != "" && setor != "undefined")
+                    {
+                        var usuarioSetor = new UsuarioSetor()
+                        {
+                            Setor = new SetorDAO(context).BuscarSetorId(Convert.ToInt32(setor)),
+                            Usuario = idUser
+                        };
+                        var usuarioObra = new UsuarioObra()
+                        {
+                            Obra = usuarioSetor.Setor.obra,
+                            Usuario = idUser
+                        };
+                        new UsuarioSetorDAO(context).salvarUsuarioSetor(usuarioSetor);
+                        new UsuarioObraDAO(context).salvarUsuarioObra(usuarioObra);
+                        TempData["notice"] = "Obra/Setor Adicionado com Sucesso!";
+                        return RedirectToAction("Edit", new { id = idUser });
+                    }
+                    else if (obra != "")
+                    {
+                        var usuarioObra = new UsuarioObra()
+                        {
+                            Obra = new ObraDAO(context).BuscarObraId(Convert.ToInt32(obra)),
+                            Usuario = idUser
+                        };
+                        new UsuarioObraDAO(context).salvarUsuarioObra(usuarioObra);
+                        TempData["notice"] = "Obra Adicionada com Sucesso!";
+                        return RedirectToAction("Edit", new { id = idUser });
+                    }
+                    else
+                    {
+                        TempData["notice"] = "Nenhuma Obra/Setor selecionada";
+                        return RedirectToAction("Edit", new { id = idUser });
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                TempData["notice"] = "Problemas ao adicionar Obra/Setor";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        public async Task<ActionResult> EliminarUsuarioObra(string id)
+        {
+            try
+            {
+                using (ApplicationDbContext context = new ApplicationDbContext())
+                {
+                    var usuarioobra = new UsuarioObraDAO(context).buscarUsuarioObraPorId(Convert.ToInt32(id));
+                    if (new UsuarioObraDAO(context).removerUsuarioObra(usuarioobra))
+                    {
+                        TempData["notice"] = "Obra Removida do Usuario com Sucesso!";
+                        return RedirectToAction("Edit", new { id = usuarioobra.Usuario });
+                    }
+                    else
+                    {
+                        TempData["notice"] = "Problemas ao remover Obra do usuario";
+                        return RedirectToAction("Edit", new { id = usuarioobra.Usuario });
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                TempData["notice"] = "Problemas ao remover Obra do usuario";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        public async Task<ActionResult> EliminarUsuarioSetor(string id)
+        {
+            try
+            {
+                using (ApplicationDbContext context = new ApplicationDbContext())
+                {
+                    var usuariosetor = new UsuarioSetorDAO(context).buscarUsuarioSetorPorId(Convert.ToInt32(id));
+                    if (new UsuarioSetorDAO(context).removerUsuarioSetor(usuariosetor))
+                    {
+                        TempData["notice"] = "Obra Removida do Usuario com Sucesso!";
+                        return RedirectToAction("Edit", new { id = usuariosetor.Usuario });
+                    }
+                    else
+                    {
+                        TempData["notice"] = "Problemas ao remover Obra do usuario";
+                        return RedirectToAction("Edit", new { id = usuariosetor.Usuario });
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                TempData["notice"] = "Problemas ao remover Obra do usuario";
+                return RedirectToAction("Index");
+            }
+        }
+
+        #region loginProposto
         ////
         //// POST: /Account/Login
         //[HttpPost]
@@ -302,6 +397,8 @@ namespace prj_chamadosBRA.Controllers
         //            return View(model);
         //    }
         //}
+        #endregion
+
 
         #region Login Antigo
         //
@@ -409,7 +506,7 @@ namespace prj_chamadosBRA.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            var obras = new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(User.Identity.GetUserId());
+            var obras = new ObraDAO().BuscarObrasPorUsuario(User.Identity.GetUserId());
             ViewBag.UserId = User.Identity.GetUserId();
             var listObra = new SelectList(obras, "IDO", "Descricao");
             ViewBag.ObraDestino = listObra;
@@ -424,7 +521,7 @@ namespace prj_chamadosBRA.Controllers
 
             if (Session["PerfilUsuario"].ToString().Equals("1"))
             {
-                ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis();
+                ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
             }
             else if (Session["PerfilUsuario"].ToString().Equals("5"))
             {
@@ -463,7 +560,7 @@ namespace prj_chamadosBRA.Controllers
                             var usuarioObra = new UsuarioObra
                             {
                                 Usuario = user.Id,
-                                Obra = Convert.ToInt32(obra)
+                                Obra = new ObraDAO(context).BuscarObraId(Convert.ToInt32(obra))
                             };
                             if (new UsuarioObraDAO(context).salvarUsuarioObra(usuarioObra))
                             {
@@ -472,11 +569,11 @@ namespace prj_chamadosBRA.Controllers
                                     var usuarioSetor = new UsuarioSetor
                                     {
                                         Usuario = user.Id,
-                                        Setor = Convert.ToInt32(setor)
+                                        Setor = new SetorDAO(context).BuscarSetorId(Convert.ToInt32(setor))
                                     };
                                     if (new UsuarioSetorDAO(context).salvarUsuarioSetor(usuarioSetor))
                                     {
-                                        await EmailServiceUtil.envioEmailCriacaoUsuario(user);
+                                        await new EmailServiceUtil().envioEmailCriacaoUsuario(user);
                                         TempData["notice"] = "Usuário criado com Sucesso!";
                                         return RedirectToAction("Index");
                                     }
@@ -492,7 +589,7 @@ namespace prj_chamadosBRA.Controllers
                         {
                             if (Session["PerfilUsuario"].ToString().Equals("1"))
                             {
-                                ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis();
+                                ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
                             }
                             else if (Session["PerfilUsuario"].ToString().Equals("5"))
                             {
@@ -503,11 +600,11 @@ namespace prj_chamadosBRA.Controllers
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 if (Session["PerfilUsuario"].ToString().Equals("1"))
                 {
-                    ViewBag.Perfis = new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis();
+                    ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
                 }
                 else if (Session["PerfilUsuario"].ToString().Equals("5"))
                 {
@@ -522,9 +619,18 @@ namespace prj_chamadosBRA.Controllers
 
         public ActionResult RetornaSetoresPorObra(string selectedValue)
         {
-            var setores = new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(selectedValue));
-            ActionResult json = Json(new SelectList(setores, "Id", "Nome"));
-            return json;
+            if (selectedValue != "")
+            {
+                var setores = new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(selectedValue));
+                ActionResult json = Json(new SelectList(setores, "Id", "Nome"));
+                return json;
+            }
+            else
+            {
+                var setores = new List<Setor>();
+                ActionResult json = Json(new SelectList(setores, "Id", "Nome"));
+                return json;
+            }
         }
 
         //
