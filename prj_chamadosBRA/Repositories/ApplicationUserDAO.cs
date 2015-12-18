@@ -48,7 +48,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<ApplicationUser> retornarUsuariosTecnicoTotvs(Setor setor, string filtro)
         {
-            var userIds = (from e in db.UsuarioSetor where e.Setor == setor select e.Usuario).ToList();
+            var userIds = (from e in db.UsuarioSetor where e.Setor.Id == setor.Id select e.Usuario).ToList();
             var users = (from e in db.Users where userIds.Contains(e.Id) || e.PerfilUsuario == 7 select e).ToList();
             if (users != null && filtro != null)
             {
@@ -60,7 +60,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<ApplicationUser> retornarUsuariosSetor(Setor setor, string filtro)
         {
-            var userIds = (from e in db.UsuarioSetor where e.Setor == setor select e.Usuario).ToList();
+            var userIds = (from e in db.UsuarioSetor where e.Setor.Id == setor.Id select e.Usuario).ToList();
             var users = (from e in db.Users where userIds.Contains(e.Id) select e).ToList();
             if (users != null && filtro != null)
             {
@@ -97,8 +97,8 @@ namespace prj_chamadosBRA.Repositories
 
         public List<ApplicationUser> retornarUsuariosObras(List<Obra> obras, string filtro)
         {
-            var idObras = (from e in obras select e).ToList();
-            var userIds = (from e in db.UsuarioObra where idObras.Contains(e.Obra) select e.Usuario).ToList();
+            var idObras = (from e in obras select e.IDO).ToList();
+            var userIds = (from e in db.UsuarioObra where idObras.Contains(e.Obra.IDO) select e.Usuario).ToList();
             var users = (from e in db.Users where userIds.Contains(e.Id) select e).ToList();
             if (users != null && filtro != null)
             {

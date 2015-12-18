@@ -20,7 +20,7 @@
             @Html.DisplayNameFor(model => model.Descricao)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Obra)
+            @Html.DisplayNameFor(model => model.Setor)
         </th>
         <th>
             @Html.DisplayName("Editar")
@@ -40,7 +40,7 @@
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Obra.Descricao)
+                @Html.DisplayFor(modelItem => item.Setor.Descricao)
             </td>
             <td>
                 <button class="btn btn-default edit" data-id="@item.Id"><i class="glyphicon glyphicon-edit"></i></button>

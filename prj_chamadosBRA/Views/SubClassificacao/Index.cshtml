@@ -21,6 +21,9 @@
             @Html.DisplayName("Classificação")
         </th>
         <th>
+            @Html.DisplayName("Setor")
+        </th>
+        <th>
             @Html.DisplayName("Editar")
         </th>
     </tr>
@@ -38,7 +41,10 @@
                 @Html.DisplayFor(modelItem => item.ChamadoClassificacao.Descricao)
             </td>
             <td>
-                <button class="btn btn-default edit" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
+                @Html.DisplayFor(modelItem => item.ChamadoClassificacao.Setor.Descricao)
+            </td>
+            <td>
+                <button class="btn btn-default edit" data-id="@item.Id"><i class="glyphicon glyphicon-edit"></i></button>
             </td>
         </tr>
     }

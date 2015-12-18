@@ -35,7 +35,6 @@ namespace prj_chamadosBRA.Controllers
             {
                 return View(setores);
             }
-
         }
 
         // GET: Setor/Details/5

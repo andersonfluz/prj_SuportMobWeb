@@ -519,6 +519,7 @@
     <Content Include="Views\Setor\Delete.cshtml" />
     <Content Include="Views\Chamado\Triagem.cshtml" />
     <Content Include="Views\Chamado\TriagemInfo.cshtml" />
+    <Content Include="Views\Chamado\EncerradoInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

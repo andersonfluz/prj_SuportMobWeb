@@ -46,7 +46,7 @@
                     <div class="form-group">
                         @Html.Label("Classificação", new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(m => m.Classificacao, new SelectList(new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoesPorObra(Model.ObraDestino), "Id", "Descricao"), "-- Selecione a Classificação --", new { @class = "form-control Classificacao" })
+                            @Html.DropDownListFor(m => m.Classificacao, new SelectList(new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoesPorSetor(Model.SetorDestino), "Id", "Descricao"), "-- Selecione a Classificação --", new { @class = "form-control Classificacao" })
                             @Html.ValidationMessageFor(m => m.Classificacao, "", new { @class = "text-danger" })
                         </div>
                     </div>

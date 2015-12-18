@@ -15,7 +15,7 @@ namespace prj_chamadosBRA.Models
         [Required]
         [Display(Name = "Descrição")]
         public string Descricao { get; set; }
-        public virtual Obra Obra { get; set; }
+        public virtual Setor Setor { get; set; }
         public bool Ativo { get; set; }
         public string Usuario { get; set; }
         public DateTime? DataCriacao { get; set; }

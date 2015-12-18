@@ -49,6 +49,7 @@ namespace prj_chamadosBRA.Models
         public int? SubClassificacao { get; set; }
         public virtual ApplicationUser ResponsavelChamado { get; set; }
         public virtual Obra ObraDestino { get; set; }
+        public virtual Setor SetorDestino { get; set; }
         [Display(Name = "Erro Operacional")]
         public bool ErroOperacional { get; set; }
     }

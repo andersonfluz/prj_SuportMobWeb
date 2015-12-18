@@ -99,6 +99,25 @@ namespace prj_chamadosBRA.Controllers
                             return View(new ChamadoDAO(db).BuscarChamadosTecnicoRMTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
                         }
                     }
+                    else if (isMatriz && Session["PerfilUsuario"].ToString().Equals("3"))
+                    {
+                        ViewBag.NomeObra = "";
+                        for (int i = 0; i < obras.Count; i++)
+                        {
+                            ViewBag.NomeObra = ViewBag.NomeObra + "- " + obras[i].Descricao;
+                        }
+                        var pageSize = 7;
+                        var pageNumber = (page ?? 1);
+                        var setoresUsuario = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                        if (tipoChamado == null || tipoChamado == "-2")
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosDeSetores(setoresUsuario, filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
+                        }
+                        else
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setoresUsuario, Convert.ToInt32(tipoChamado), filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
+                        }
+                    }
                     else
                     {
                         ViewBag.NomeObra = "";
@@ -398,7 +417,7 @@ namespace prj_chamadosBRA.Controllers
                 var cDAO = new ChamadoDAO(db);
                 var chamado = cDAO.BuscarChamadoId(id);
                 chamado.ResponsavelChamado = new ApplicationUserDAO(db).retornarUsuario(User.Identity.GetUserId());
-                
+
                 if (await cGN.atualizarChamadoHistorico(id, "O Chamado foi direcionado para o Usuario " + chamado.ResponsavelChamado.Nome, manager.FindById(User.Identity.GetUserId())))
                 {
                     TempData["notice"] = "Chamado Assumido Com Sucesso!";
@@ -461,6 +480,17 @@ namespace prj_chamadosBRA.Controllers
             }
             return View(chamado);
         }
+
+        public ActionResult EncerradoInfo(int id)
+        {
+            ViewBag.listaChamadoHistorico = new ChamadoHistoricoDAO(db).buscarHistoricosPorIdChamado(id);
+            var chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            ViewBag.listaChamadoAnexo = new ChamadoAnexoDAO(db).retornarListaAnexoChamado(id);
+            ViewBag.Classificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(chamado.Classificacao.Value).Descricao;
+            ViewBag.SubClassificacao = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(chamado.SubClassificacao.Value).Descricao;
+            return View(chamado);
+        }
+
 
         // GET: Chamado/Details/5
         public ActionResult ChamadoInfo(int id)
@@ -747,7 +777,7 @@ namespace prj_chamadosBRA.Controllers
                 }
                 else
                 {
-                    TempData["notice"] = "Por favor informe o Técnico Responsavel pelo Atendimento.";
+                    TempData["notice"] = "Por favor falta informar o Técnico Responsavel pelo Atendimento.";
                     return RedirectToAction("Edit", id);
                 }
             }
@@ -772,7 +802,8 @@ namespace prj_chamadosBRA.Controllers
                 Classificacao = chamado.Classificacao,
                 SubClassificacao = chamado.SubClassificacao,
                 ResponsavelChamado = chamado.ResponsavelChamado,
-                ObraDestino = chamado.ObraDestino
+                ObraDestino = chamado.ObraDestino,
+                SetorDestino = chamado.SetorDestino
             };
             if (chamado.ResponsavelChamado == null)
             {
@@ -928,11 +959,30 @@ namespace prj_chamadosBRA.Controllers
                         var pageNumber = (page ?? 1);
                         if (tipoChamado == null || tipoChamado == "-2")
                         {
-                            return View(new ChamadoDAO(db).BuscarChamadosTecnicoRM(obras, filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamadosTecnicoRM(obras, filtro, true, sortOrder).ToPagedList(pageNumber, pageSize));
                         }
                         else
                         {
-                            return View(new ChamadoDAO(db).BuscarChamadosTecnicoRMTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
+                            return View(new ChamadoDAO(db).BuscarChamadosTecnicoRMTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, true, sortOrder).ToPagedList(pageNumber, pageSize));
+                        }
+                    }
+                    else if (isMatriz && Session["PerfilUsuario"].ToString().Equals("3"))
+                    {
+                        ViewBag.NomeObra = "";
+                        for (int i = 0; i < obras.Count; i++)
+                        {
+                            ViewBag.NomeObra = ViewBag.NomeObra + "- " + obras[i].Descricao;
+                        }
+                        var pageSize = 7;
+                        var pageNumber = (page ?? 1);
+                        var setoresUsuario = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                        if (tipoChamado == null || tipoChamado == "-2")
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosDeSetores(setoresUsuario, filtro, true, sortOrder).ToPagedList(pageNumber, pageSize));
+                        }
+                        else
+                        {
+                            return View(new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setoresUsuario, Convert.ToInt32(tipoChamado), filtro, true, sortOrder).ToPagedList(pageNumber, pageSize));
                         }
                     }
                     else

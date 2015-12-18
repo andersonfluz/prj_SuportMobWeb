@@ -37,6 +37,16 @@ namespace prj_chamadosBRA.Repositories
             return setores;
         }
 
+        public List<Setor> buscarSetoresCorporativosPrincipaisVinculadosAoUsuario(ApplicationUser user)
+        {
+            var idsetores = (from o in db.Setor
+                           join us in db.UsuarioSetor on o equals us.Setor
+                           where us.Usuario == user.Id && o.SetorCorporativo != null
+                           select o.SetorCorporativo).ToList();
+            var setorescorporativos = (from o in db.Setor where idsetores.Contains(o.Id) select o).ToList();
+            return setorescorporativos;
+        }
+
         public UsuarioSetor buscarUsuarioSetorPorId(int idusuariosetor)
         {
 

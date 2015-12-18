@@ -38,11 +38,13 @@ namespace prj_chamadosBRA.Controllers
             ViewBag.UserId = User.Identity.GetUserId();
             if (Session["PerfilUsuario"].ToString() == "1")
             {
-                ViewBag.Classificacoes = new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoes();
+                ViewBag.Obras = new ObraDAO().BuscarObras();
+                ViewBag.Classificacoes = new ChamadoClassificacaoDAO().BuscarClassificacoes();
             }
             else
             {
-                ViewBag.Classificacoes = new prj_chamadosBRA.Repositories.ChamadoClassificacaoDAO().BuscarClassificacoesPorObras(new UsuarioObraDAO(db).buscarObrasDoUsuario(manager.FindById(User.Identity.GetUserId())));
+                ViewBag.Obras = new ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId);
+                ViewBag.Classificacoes = new ChamadoClassificacaoDAO().BuscarClassificacoesPorSetores(new UsuarioSetorDAO(db).buscarSetoresDoUsuario(manager.FindById(User.Identity.GetUserId())));
             }
             return View();
         }
@@ -85,7 +87,7 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult Edit(int id)
         {
             var subClassificacao = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(id);
-            ViewBag.ddlClassificacao = new SelectList(new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorObras(new ObraDAO(db).BuscarObrasPorUsuario(User.Identity.GetUserId())), "Id", "Descricao", subClassificacao.ChamadoClassificacao.Id);
+            ViewBag.ddlClassificacao = new SelectList(new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorSetores(new UsuarioSetorDAO(db).buscarSetoresDoUsuario(new ApplicationUserDAO(db).retornarUsuario(User.Identity.GetUserId()))), "Id", "Descricao", subClassificacao.ChamadoClassificacao.Id);
             return View(subClassificacao);
         }
 
@@ -127,17 +129,33 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
-        public ActionResult RetornaClassificacaoPorObra(string selectedValue)
+        public ActionResult RetornaClassificacaoPorSetor(string selectedValue)
         {
             try
             {
-                var classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorObra(new ObraDAO(db).BuscarObraId(Convert.ToInt32(selectedValue)));
+                var classificacoes = new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorSetor(new SetorDAO(db).BuscarSetorId(Convert.ToInt32(selectedValue)));
                 ActionResult json = Json(new SelectList(classificacoes, "Id", "Descricao"));
                 return json;
             }
             catch (Exception)
             {
                 return Json(new SelectList(String.Empty, "Id", "Nome")); ;
+            }
+        }
+
+        public ActionResult RetornaSetoresPorObra(string selectedValue)
+        {
+            if (selectedValue != "")
+            {
+                var setores = new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(selectedValue));
+                ActionResult json = Json(new SelectList(setores, "Id", "Nome"));
+                return json;
+            }
+            else
+            {
+                var setores = new List<Setor>();
+                ActionResult json = Json(new SelectList(setores, "Id", "Nome"));
+                return json;
             }
         }
     }

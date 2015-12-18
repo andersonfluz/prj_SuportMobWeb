@@ -110,7 +110,7 @@ namespace prj_chamadosBRA.Controllers
             {
                 //montagem de perfil
                 var perfil = new PerfilUsuarioDAO().BuscarPerfil(Convert.ToInt32(user.PerfilUsuario));
-                var perfils = new SelectList(new PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao", perfil);
+                var perfils = new SelectList(new PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao", perfil.IdPerfil);
                 ViewBag.PerfilUsuario = perfils;
 
                 //montagem de obra
@@ -135,31 +135,18 @@ namespace prj_chamadosBRA.Controllers
                 //montagem de perfil
                 var perfils = new SelectList(PerfilUsuarioDAO.BuscarPerfisParaAdmObra(), "IdPerfil", "Descricao", user.PerfilUsuario);
                 ViewBag.PerfilUsuario = perfils;
+                
                 //montagem de obra
-                var obrasUsuario = new UsuarioObraDAO().buscarObrasDoUsuario(user);
-                if (obrasUsuario.Count() != 0)
-                {
-                    var obras = new MultiSelectList(new ObraDAO().BuscarObras(), "IDO", "Descricao", obrasUsuario);
-                    ViewBag.ObrasUsuario = obras;
-                }
-                else
-                {
-                    var obras = new MultiSelectList(new ObraDAO().BuscarObras(), "IDO", "Descricao");
-                    ViewBag.ObrasUsuario = obras;
-                }
+                var obrasUsuario = new UsuarioObraDAO().buscarUsuariosObras(user);
+                ViewBag.ObrasUsuario = obrasUsuario;
+                var obras = new SelectList(new ObraDAO().BuscarObrasPorUsuario(user.Id), "IDO", "Descricao");
+                ViewBag.ObrasDisponiveis = obras;
+
                 //montagem de setor
-                var setoresUsuario = new UsuarioSetorDAO().buscarSetoresDoUsuario(user);
-                if (setoresUsuario.Count() != 0)
-                {
-                    var setores = new SelectList(new SetorDAO().BuscarSetoresPorObras(obrasUsuario), "Id", "Descricao", setoresUsuario);
-                    ViewBag.SetoresUsuario = setores;
-                }
-                else
-                {
-                    ViewBag.SetorUsuario = null;
-                    var setores = new SelectList(new SetorDAO().BuscarSetores(), "Id", "Descricao");
-                    ViewBag.SetoresUsuario = setores;
-                }
+                var setoresUsuario = new UsuarioSetorDAO().buscarUsuariosSetores(user);
+                ViewBag.SetorUsuario = setoresUsuario;
+                var setores = new SelectList(new SetorDAO().BuscarSetoresPorObras(new ObraDAO().BuscarObrasPorUsuario(user.Id)), "Id", "Descricao");
+                ViewBag.SetoresDisponiveis = setores;
 
             }
             return View(user);
@@ -466,6 +453,14 @@ namespace prj_chamadosBRA.Controllers
                             Session["ObraVisivel"] = false;
                             Session["TipoChamadoVisivel"] = true;
                             break;
+                    }
+                    if(new UsuarioSetorDAO().buscarSetoresCorporativosDoUsuario(user).Count > 0)
+                    {
+                        Session["UsuarioSetorCorporativo"] = true;
+                    }
+                    else
+                    {
+                        Session["UsuarioSetorCorporativo"] = false;
                     }
 
                     await SignInAsync(user, model.RememberMe);
