@@ -54,7 +54,7 @@ namespace prj_chamadosBRA.Repositories
                     chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                     break;
                 default:
-                    chamados = chamados.OrderBy(s => s.Id);
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                     break;
             }
 
@@ -99,7 +99,7 @@ namespace prj_chamadosBRA.Repositories
                     chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                     break;
                 default:
-                    chamados = chamados.OrderBy(s => s.Id);
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                     break;
             }
 
@@ -142,7 +142,7 @@ namespace prj_chamadosBRA.Repositories
                     chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                     break;
                 default:
-                    chamados = chamados.OrderBy(s => s.Id);
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                     break;
             }
 
@@ -185,7 +185,7 @@ namespace prj_chamadosBRA.Repositories
                     chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                     break;
                 default:
-                    chamados = chamados.OrderBy(s => s.Id);
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                     break;
             }
             return chamados.ToList();
@@ -232,7 +232,7 @@ namespace prj_chamadosBRA.Repositories
                     chamados = chamados.OrderBy(s => s.SetorDestino.Descricao).ToList();
                     break;
                 default:
-                    chamados = chamados.OrderBy(s => s.Id).ToList();
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura).ToList();
                     break;
             }
             return chamados.ToList();
@@ -279,7 +279,7 @@ namespace prj_chamadosBRA.Repositories
                     chamados = (List<Chamado>)chamados.OrderBy(s => s.SetorDestino.Descricao);
                     break;
                 default:
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.Id);
+                    chamados = (List<Chamado>)chamados.OrderByDescending(s => s.DataHoraAbertura);
                     break;
             }
             return chamados;
@@ -326,7 +326,7 @@ namespace prj_chamadosBRA.Repositories
                     chamados = chamados.OrderBy(s => s.SetorDestino.Descricao).ToList();
                     break;
                 default:
-                    chamados = chamados.OrderBy(s => s.Id).ToList();
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura).ToList();
                     break;
             }
             return chamados;
@@ -418,7 +418,7 @@ namespace prj_chamadosBRA.Repositories
                     chamadosList = chamadosList.OrderBy(s => s.SetorDestino.Descricao);
                     break;
                 default:
-                    chamadosList = chamadosList.OrderBy(s => s.Id);
+                    chamadosList = chamadosList.OrderByDescending(s => s.DataHoraAbertura);
                     break;
             }
             return chamadosList.ToList();
@@ -462,7 +462,7 @@ namespace prj_chamadosBRA.Repositories
                     chamadosList = chamadosList.OrderBy(s => s.SetorDestino.Descricao);
                     break;
                 default:
-                    chamadosList = chamadosList.OrderBy(s => s.Id);
+                    chamadosList = chamadosList.OrderByDescending(s => s.DataHoraAbertura);
                     break;
             }
             return chamadosList.ToList();
@@ -506,7 +506,7 @@ namespace prj_chamadosBRA.Repositories
                         chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                         break;
                     default:
-                        chamados = chamados.OrderBy(s => s.Id);
+                        chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                         break;
                 }
 
@@ -548,7 +548,7 @@ namespace prj_chamadosBRA.Repositories
                         chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                         break;
                     default:
-                        chamados = chamados.OrderBy(s => s.Id);
+                        chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                         break;
                 }
 
@@ -596,7 +596,7 @@ namespace prj_chamadosBRA.Repositories
                         chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                         break;
                     default:
-                        chamados = chamados.OrderBy(s => s.Id);
+                        chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                         break;
                 }
 
@@ -638,7 +638,7 @@ namespace prj_chamadosBRA.Repositories
                         chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                         break;
                     default:
-                        chamados = chamados.OrderBy(s => s.Id);
+                        chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                         break;
                 }
 

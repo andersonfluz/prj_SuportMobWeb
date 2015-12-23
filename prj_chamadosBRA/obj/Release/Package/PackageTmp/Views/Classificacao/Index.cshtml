@@ -20,14 +20,14 @@
             @Html.DisplayNameFor(model => model.Descricao)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Obra)
+            @Html.DisplayNameFor(model => model.Setor)
         </th>
         <th>
             @Html.DisplayName("Editar")
         </th>
-        @*<th>
+        <th>
             @Html.DisplayName("Eliminar")
-        </th>*@
+        </th>
     </tr>
 
     @foreach (var item in Model)
@@ -40,14 +40,14 @@
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Obra.Descricao)
+                @Html.DisplayFor(modelItem => item.Setor.Descricao)
             </td>
             <td>
-                <button class="btn btn-default edit" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
+                <button class="btn btn-default edit" data-id="@item.Id"><i class="glyphicon glyphicon-edit"></i></button>
             </td>
-            @*<td>
+            <td>
                 <button class="btn btn-default delete" data-id="@item.Id"><i class="glyphicon glyphicon-trash"></i></button>
-            </td>*@
+            </td>
         </tr>
     }
 
@@ -90,7 +90,8 @@
             $(function () {
                 $(".edit").click(function () {
                     var id = $(this).attr("data-id");
-                    window.location.href = '../../Classificacao/Edit/' + id;
+                    var url = '@Url.Action("Edit", "Classificacao", new { id = "__id__" })';
+                    window.location.href = url.replace('__id__', id);
                 });
             })
         });

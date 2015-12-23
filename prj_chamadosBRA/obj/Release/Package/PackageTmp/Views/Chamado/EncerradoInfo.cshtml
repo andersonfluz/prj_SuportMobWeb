@@ -1,17 +1,17 @@
 ﻿@model prj_chamadosBRA.Models.Chamado
 @{
     Layout = null;
-    ViewBag.Title = "Consulta Chamado";
+    ViewBag.Title = "Consulta Chamado Encerrado";
 }
 
 <div class="modal-dialog" id="modalDetails">
     <div class="modal-content">
-        @using (Html.BeginForm("ChamadoInfo", "Chamado", null, FormMethod.Post))
+        @using (Html.BeginForm("EncerradoInfo", "Chamado", null, FormMethod.Post))
         {
             @Html.HiddenFor(model => model.Id)
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">Consulta do Chamado N. @Model.Id</h4>
+                <h4 class="modal-title">Chamado Encerrado N. @Model.Id</h4>
             </div>
             <div class="modal-body">
                 <div class="panel panel-default">
@@ -124,30 +124,45 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                @Html.Label("Adicionar anexo:", new { @class = "control-label col-md-2" })
-                                <input type="file" id="anexo" name="upload" />
-                                @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
-                                <span id="carregamentoAnexo" class="glyphicon glyphicon-refresh glyphicon-refresh-animate" style="visibility:hidden"></span>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">Informações de Acompanhamento</div>
+                    <div class="panel-heading">Solução do Chamado</div>
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-10">
-                                @Html.Label("Informações Adicionais:")
-                                @Html.TextArea("informacoesAcompanhamento", htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+                                @Html.Label("Responsavel Chamado:")
+                                @Html.DisplayFor(model => model.ResponsavelChamado.Nome)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Classificação:")
+                                @ViewBag.Classificacao
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("SubClassificação:")
+                                @ViewBag.SubClassificacao
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Solução:")
+                                @Html.DisplayFor(model => model.Solucao)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @Html.Label("Data Baixa:")
+                                @Html.DisplayFor(model => model.DataHoraBaixa)
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <input type="submit" value="Atualizar" class="btn btn-default" />
+            <div class="modal-footer">                
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
             </div>
         }
@@ -178,7 +193,7 @@
                         processData: false,
                         data: data,
                         success: function (result) {
-                            alert("Arquivo inserido com sucesso!");                            
+                            alert("Arquivo inserido com sucesso!");
                             $('#carregamentoAnexo').css('visibility', 'hidden');
                             location.reload();
                         },

@@ -84,8 +84,20 @@ namespace prj_chamadosBRA.Repositories
                                    join us in db.UsuarioSetor on o.Obra equals us.Setor.obra
                                    join s in db.Setor on us.Setor equals s
                                    where setorcorporativo.Contains(s.SetorCorporativo) && us.Setor == s && us.Usuario == o.Usuario
-                                   select o);
-            return usuariossetores.ToList();
+                                   group o by new { o.idUsuarioObra, o.Obra, o.Usuario }
+                                   into grp
+                                   select new
+                                   {
+                                       idUsuarioObra = grp.Key.idUsuarioObra,
+                                       Obra = grp.Key.Obra,
+                                       Usuario = grp.Key.Usuario
+                                   }).ToList().Select(c => new UsuarioObra
+                                   {
+                                       idUsuarioObra = c.idUsuarioObra,
+                                       Obra = c.Obra,
+                                       Usuario = c.Usuario
+                                   }).ToList();
+            return usuariossetores;
         }
 
         public List<UsuarioSetor> buscarUsuariosSetores(ApplicationUser user)

@@ -6,6 +6,8 @@
 }
 
 <h2>Chamados Encerrados @ViewBag.NomeObra</h2>
+<div class="modal" id="modal">
+</div>
 @if (Session["PerfilUsuario"].ToString() != "2" || Session["PerfilUsuario"].ToString() != "4")
 {
     using (Html.BeginForm("ChamadosEncerrados", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
@@ -69,6 +71,9 @@ else
         <th>
             @Html.DisplayName("Tipo Chamado")
         </th>
+        <th>
+            @Html.DisplayName("Visualizar")
+        </th>
 
     </tr>
 
@@ -129,6 +134,9 @@ else
                     <p>Indefinido</p>
                 }
             </td>
+            <td align="center">
+                <button class="btn btn-default details" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
+            </td>
 
         </tr>
     }
@@ -140,6 +148,16 @@ else
     new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
     @section scripts{
         <script>
+            jQuery(document).ready(function ($) {
+                $(function () {
+                    $(".details").click(function () {
+                        var id = $(this).attr("data-id");
+                        $("#modal").load("../Chamado/EncerradoInfo/" + id, function () {
+                            $("#modal").modal({ show: true });
+                        })
+                    });
+                });
+            });
             $(document).ready(function () {
                 $('#TipoChamado').change(function () {
                     var url = window.location.href;

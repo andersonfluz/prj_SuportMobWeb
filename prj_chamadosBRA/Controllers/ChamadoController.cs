@@ -99,7 +99,7 @@ namespace prj_chamadosBRA.Controllers
                             return View(new ChamadoDAO(db).BuscarChamadosTecnicoRMTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder).ToPagedList(pageNumber, pageSize));
                         }
                     }
-                    else if (isMatriz && Session["PerfilUsuario"].ToString().Equals("3"))
+                    else if (isMatriz && (Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5")))
                     {
                         ViewBag.NomeObra = "";
                         for (int i = 0; i < obras.Count; i++)
@@ -682,26 +682,53 @@ namespace prj_chamadosBRA.Controllers
             if (chamado.SetorDestino != null)
             {
                 ViewBag.SetorDestino = new SelectList(new SetorDAO(db).BuscarSetoresPorObra(chamado.ObraDestino.IDO), "Id", "Nome", chamado.SetorDestino.Id);
+
+                #region DropDownResponsaveis
+                var user = manager.FindById(User.Identity.GetUserId());
+                var dropdownResponsaveis = new List<SelectListItem>();
+                dropdownResponsaveis.Add(new SelectListItem { Text = "-- Selecione o Responsavel --", Value = "-1" });
+                if (new SetorDAO(db).BuscarSetorId(chamado.SetorDestino.Id).SetorCorporativo == null)
+                {
+                    var usuarios = new ApplicationUserDAO(db).retornarUsuariosSetor(new SetorDAO(db).BuscarSetorId(chamado.SetorDestino.Id), null).ToList();
+                    foreach (var usuario in usuarios)
+                    {
+                        dropdownResponsaveis.Add(new SelectListItem { Text = usuario.Nome, Value = usuario.Id });
+
+                    }
+                }
+                else
+                {
+                    var usuariosObras = new UsuarioSetorDAO(db).buscarUsuarioObradeSetoresCorporativosDoUsuario(user);
+                    foreach (var usuarioObra in usuariosObras)
+                    {
+                        var NomeUsuario = new ApplicationUserDAO(db).retornarUsuario(usuarioObra.Usuario).Nome;
+                        dropdownResponsaveis.Add(new SelectListItem { Text = NomeUsuario + " - " + usuarioObra.Obra.Descricao, Value = usuarioObra.Usuario });
+
+                    }
+                    dropdownResponsaveis = dropdownResponsaveis.OrderBy(e => e.Text).Distinct().ToList();
+                }
+                #endregion
+
                 if (chamado.ResponsavelChamado != null)
                 {
                     if (chamado.TipoChamado == 1)
                     {
-                        ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosTecnicoTotvs(chamado.SetorDestino, null), "Id", "Nome", chamado.ResponsavelChamado.Id);
+                        ViewBag.ddlResponsavelChamado = new SelectList(dropdownResponsaveis, "Value", "Text", chamado.ResponsavelChamado.Id);
                     }
                     else
                     {
-                        ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino, null), "Id", "Nome", chamado.ResponsavelChamado.Id);
+                        ViewBag.ddlResponsavelChamado = new SelectList(dropdownResponsaveis, "Value", "Text", chamado.ResponsavelChamado.Id);
                     }
                 }
                 else
                 {
                     if (chamado.TipoChamado == 1)
                     {
-                        ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosTecnicoTotvs(chamado.SetorDestino, null), "Id", "Nome");
+                        ViewBag.ddlResponsavelChamado = new SelectList(dropdownResponsaveis, "Value", "Text");
                     }
                     else
                     {
-                        ViewBag.ddlResponsavelChamado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(chamado.SetorDestino, null), "Id", "Nome");
+                        ViewBag.ddlResponsavelChamado = new SelectList(dropdownResponsaveis, "Value", "Text");
                     }
                 }
             }

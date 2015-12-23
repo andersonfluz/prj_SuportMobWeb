@@ -34,7 +34,8 @@
         <th>
             @Html.DisplayName("Último Acesso")
         </th>
-        <th></th>
+        <th>Editar</th>
+        @*<th>Eliminar</th>*@
     </tr>
 
     @foreach (var item in Model)
@@ -56,8 +57,13 @@
                 @Html.DisplayFor(modelItem => item.UltimoAcesso)
             </td>
             <th>
-                @Html.ActionLink("Editar", "Edit", "Account", new { id = item.Id }, new { @class = "btn btn-default" })
+                <button class="btn btn-default edit" data-id="@item.Id"><i class="glyphicon glyphicon-edit"></i></button>
+                @*@Html.ActionLink("Editar", "Edit", "Account", new { id = item.Id }, new { @class = "btn btn-default" })*@
             </th>
+            @*<th>
+                <button class="btn btn-default delete" data-id="@item.Id"><i class="glyphicon glyphicon-trash"></i></button>
+                @Html.ActionLink("Editar", "Edit", "Account", new { id = item.Id }, new { @class = "btn btn-default" })
+            </th>*@
         </tr>
     }
 
@@ -88,6 +94,15 @@
 
 @section scripts{
     <script>
+        jQuery(document).ready(function ($) {
+            $(function () {
+                $(".edit").click(function () {
+                    var id = $(this).attr("data-id");
+                    var url = '@Url.Action("Edit", "Account", new { id = "__id__" })';
+                    window.location.href = url.replace('__id__', id);
+                });
+            })
+        });
         $(window).load(function () {
             if ($('#notice').val() != "") {
                 //alert($('#notice').val());

@@ -7,6 +7,7 @@
 @using (Html.BeginForm("Create", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "create" }))
 {
     @Html.AntiForgeryToken()
+    <input type="hidden" value="${ViewData.ModelState.IsValid}" id="validador" name="validador" />
 
     <div class="form-horizontal">
         <hr />
@@ -39,18 +40,22 @@
                 @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
             </div>
         </div>
-        @if ((bool)Session["TipoChamadoVisivel"]){@Html.Partial("_ChamadoTipoChamadoPartial", Model);
+        @if ((bool)Session["TipoChamadoVisivel"])
+        {@Html.Partial("_ChamadoTipoChamadoPartial", Model);
         }
 
-        @if ((bool)Session["ObraVisivel"]){@Html.Partial("_ChamadoObraPartial", Model);
+        @if ((bool)Session["ObraVisivel"])
+        {@Html.Partial("_ChamadoObraPartial", Model);
         }
 
-        @if ((bool)Session["SetorVisivel"]){@Html.Partial("_ChamadoSetorPartial", Model);
+        @if ((bool)Session["SetorVisivel"])
+        {@Html.Partial("_ChamadoSetorPartial", Model);
         }
 
-        @if ((bool)Session["SelecionarResponsavelAbertura"]){@Html.Partial("_ChamadoOutroResponsavelPartial", Model);
+        @if ((bool)Session["SelecionarResponsavelAbertura"])
+        {@Html.Partial("_ChamadoOutroResponsavelPartial", Model);
         }
-        
+
         <p></p>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -58,7 +63,7 @@
             </div>
         </div>
     </div>
-                }
+}
 <div>
     @Html.ActionLink("Voltar para Acompanhamento", "Index")
 </div>
@@ -99,7 +104,7 @@
             $(".hide-btn").click(function () {
                 $("#pnlResponsavelAbertura").collapse('hide');
             });
-        });
+        });        
     </script>
     <script type="text/javascript">
         $(window).load(function () {
@@ -110,6 +115,14 @@
         });
         $(document).ready(function () {
             //Dropdownlist Selectedchange event
+            $('#salvar').click(function () {
+                var isValid = $('#create').valid();
+                if (!isValid) {
+                    waitingDialog.hide();
+                } else {
+                    waitingDialog.show('Salvando Chamado...');
+                }
+            });
             $("#ObraDestino").change(function () {
                 $("#SetorDestino").empty();
                 $("#ResponsavelAberturaChamado").empty();

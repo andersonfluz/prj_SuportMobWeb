@@ -2,9 +2,9 @@
 @using PagedList.Mvc;
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
-    ViewBag.Title = "Acompanhamento de Chamados";
+    ViewBag.Title = "Triagem de Chamados";
 }
-<h2>Acompanhamento de Chamados @ViewBag.NomeObra</h2>
+<h2>Triagem de Chamados @ViewBag.NomeObra</h2>
 <p>
     @Html.ActionLink("Novo Chamado", "Create", null, new { @class = "btn btn-default" })
 </p>
@@ -17,9 +17,9 @@
     <label>&nbsp;</label>
     @Html.DropDownList("TipoChamado", null, new { @class = "form-control" })
     <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-    @Html.CheckBox("Encerrado", (bool)ViewBag.CurrentEncerrado)
+    @Html.Label("Obra:", new { @class = "control-label" })
     <label>&nbsp;</label>
-    @Html.Label("Encerrados", new { @class = "control-label" })
+    @Html.DropDownList("ddlObra", null, new { @class = "form-control" })
     <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
     @Html.Label("Consultar:", new { @class = "control-label" })
     <label>&nbsp;</label>
@@ -28,78 +28,84 @@
 }
 
 @Html.Hidden("pageAtual", Model.PageNumber)
-@Html.Hidden("encerrado",(bool) ViewBag.CurrentEncerrado)
 <label>&nbsp;</label>
 <p>
 </p>
 <table class="table" data-row-style="rowStyle">
     <tr>
         <th>
-            @Html.ActionLink("Chamado N°", "Acompanhamento", new
+            @Html.ActionLink("Chamado N°", "Triagem", new
        {
            sortOrder = "Id",
            pageAtual = Model.PageNumber,
            tipoChamado = ViewBag.CurrentTipoChamado,
-           filtro = ViewBag.CurrentFiltro
+           filtro = ViewBag.CurrentFiltro,
+           obraSelected = ViewBag.CurrentObra
        })
         </th>
         <th>
-            @Html.ActionLink("Abertura", "Acompanhamento", new
+            @Html.ActionLink("Abertura", "Triagem", new
        {
            sortOrder = "dataAbertura",
            pageAtual = Model.PageNumber,
            tipoChamado = ViewBag.CurrentTipoChamado,
-           filtro = ViewBag.CurrentFiltro
+           filtro = ViewBag.CurrentFiltro,
+           obraSelected = ViewBag.CurrentObra
        })
         </th>
         <th>
-            @Html.ActionLink("Solicitante", "Acompanhamento", new
+            @Html.ActionLink("Solicitante", "Triagem", new
        {
            sortOrder = "solicitante",
            pageAtual = Model.PageNumber,
            tipoChamado = ViewBag.CurrentTipoChamado,
-           filtro = ViewBag.CurrentFiltro
+           filtro = ViewBag.CurrentFiltro,
+           obraSelected = ViewBag.CurrentObra
        })
         </th>
         <th>
-            @Html.ActionLink("Assunto", "Acompanhamento", new
+            @Html.ActionLink("Assunto", "Triagem", new
        {
            sortOrder = "assunto",
            pageAtual = Model.PageNumber,
            tipoChamado = ViewBag.CurrentTipoChamado,
-           filtro = ViewBag.CurrentFiltro
+           filtro = ViewBag.CurrentFiltro,
+           obraSelected = ViewBag.CurrentObra
        })
         </th>
         <th>
-            @Html.ActionLink("Responsavel", "Acompanhamento", new
+            @Html.ActionLink("Responsavel", "Triagem", new
        {
            sortOrder = "responsavel",
            pageAtual = Model.PageNumber,
            tipoChamado = ViewBag.CurrentTipoChamado,
-           filtro = ViewBag.CurrentFiltro
+           filtro = ViewBag.CurrentFiltro,
+           obraSelected = ViewBag.CurrentObra
        })
         </th>
         @if ((bool)Session["ObraVisivel"])
         {
             <th>
-                @Html.ActionLink("Obra", "Acompanhamento", new
+                @Html.ActionLink("Obra", "Triagem", new
            {
                sortOrder = "obra",
                pageAtual = Model.PageNumber,
                tipoChamado = ViewBag.CurrentTipoChamado,
-               filtro = ViewBag.CurrentFiltro
+               filtro = ViewBag.CurrentFiltro,
+               obraSelected = ViewBag.CurrentObra
            })
             </th>
         }
         @if ((bool)Session["SetorVisivel"])
         {
             <th>
-                @Html.ActionLink("Setor", "Acompanhamento", new
+                @Html.ActionLink("Setor", "Triagem", new
            {
                sortOrder = "setor",
                pageAtual = Model.PageNumber,
                tipoChamado = ViewBag.CurrentTipoChamado,
-               filtro = ViewBag.CurrentFiltro
+               filtro = ViewBag.CurrentFiltro,
+               obraSelected = ViewBag.CurrentObra
            })
             </th>
         }
@@ -107,7 +113,7 @@
             @Html.DisplayName("Tipo Chamado")
         </th>
         <th>
-            @Html.DisplayName("Visualizar")
+            @Html.DisplayName("Direcionar")
         </th>
 
     </tr>
@@ -162,26 +168,17 @@
                     <p>Indefinido</p>
                 }
             </td>
-            @if (item.StatusChamado != true)
-            {
-                <td align="center">
-                    <button class="btn btn-default details" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
-                </td>
-            }
-            else
-            {
-                <td align="center">
-                    <button class="btn btn-default detailsEncerrado" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
-                </td>
-            }
+            <td align="center">
+                <button class="btn btn-default details" data-id="@item.Id"><i class="glyphicon glyphicon-send"></i></button>
+            </td>
 
         </tr>
     }
 </table>
     Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("Acompanhamento",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, encerrado = ViewBag.CurrentEncerrado, TipoChamado = ViewBag.CurrentTipoChamado }))
+    @Html.PagedListPager(Model, page => Url.Action("Triagem",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, obraSelected = ViewBag.CurrentObra, TipoChamado = ViewBag.CurrentTipoChamado }))
 
     @Html.Hidden("notice", @TempData["notice"])
     @if (TempData["notice"] != null)
@@ -212,37 +209,36 @@
                 $(function () {
                     $(".details").click(function () {
                         var id = $(this).attr("data-id");
-                        $("#modal").load("../Chamado/ChamadoInfo/" + id, function () {
+                        $("#modal").load("../../Chamado/TriagemInfo/" + id, function () {
                             $("#modal").modal({ show: true });
                         })
                     });
                 });
                 $('#TipoChamado').change(function () {
+                    var url = '@Url.Action("Triagem", "Chamado", new { page = "__page__", tipoChamado = "__tipoChamado__", obraSelected = "__obraSelected__" })';
+                    window.location.href = url.replace('__page__&amp;', $('#pageAtual').val() + '&').replace('__tipoChamado__&amp;', $('#TipoChamado').val() + '&').replace('__obraSelected__', $('#ddlObra').val());
+
+
                     //var url = window.location.href;
-
-                    var url = '@Url.Action("Acompanhamento", "Chamado", new { page = "__page__", tipoChamado = "__tipoChamado__", encerrado = "__encerrado__" })';
-                    window.location.href = url.replace('__page__&amp;', $('#pageAtual').val() + '&').replace('__tipoChamado__&amp;', $('#TipoChamado').val() + '&').replace('__encerrado__', $('#Encerrado').is(":checked"));
-
-
-
-
                     //if (url.indexOf("page") > -1) {
-                    //    window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $('#Encerrado').is(":checked");
+                    //    window.location.href = '../../Chamado/Triagem/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&obraselected=' + $('#ddlObra').val() + '&encerrado=' + $('#Encerrado').is(":checked");
                     //} else {
-                    //    window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $('#Encerrado').is(":checked");
+                    //    window.location.href = '../../Chamado/Triagem/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&obraselected=' + $('#ddlObra').val() + '&encerrado=' + $('#Encerrado').is(":checked");
                     //}
                 });
-                $('#Encerrado').change(function () {
-                    var url = '@Url.Action("Acompanhamento", "Chamado", new { page = "__page__", tipoChamado = "__tipoChamado__", encerrado = "__encerrado__" })';
-                    window.location.href = url.replace('__page__&amp;', $('#pageAtual').val() + '&').replace('__tipoChamado__&amp;', $('#TipoChamado').val() + '&').replace('__encerrado__', $('#Encerrado').is(":checked"));
+                $('#ddlObra').change(function () {
 
-                    //window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $(this).is(":checked");
-                });
-                $(function () {
-                    $(".detailsEncerrado").click(function () {
-                        var id = $(this).attr("data-id");
-                        window.location.href = '../Chamado/Encerrado/' + id;
-                    });
+                    var url = '@Url.Action("Triagem", "Chamado", new { page = "__page__", tipoChamado = "__tipoChamado__", obraSelected = "__obraSelected__" })';
+                    window.location.href = url.replace('__page__&amp;', $('#pageAtual').val() + '&').replace('__tipoChamado__&amp;', $('#TipoChamado').val() + '&').replace('__obraSelected__', $('#ddlObra').val());
+
+
+
+                    //var url = window.location.href;
+                    //if (url.indexOf("page") > -1) {
+                    //    window.location.href = '../../Chamado/Triagem/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&obraselected=' + $('#ddlObra').val() + '&encerrado=' + $('#Encerrado').is(":checked");
+                    //} else {
+                    //    window.location.href = '../../Chamado/Triagem/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&obraselected=' + $('#ddlObra').val() + '&encerrado=' + $('#Encerrado').is(":checked");
+                    //}
                 });
             });
             $(window).load(function () {

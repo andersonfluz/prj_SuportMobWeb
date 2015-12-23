@@ -27,29 +27,25 @@
             <div class="form-group">
                 @Html.Label("Obra", new { @class = "col-md-2 control-label" })
                 <div class="col-md-10">
-                    @Html.DropDownList("Obra", new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
+                    @Html.DropDownList("Obra", new SelectList(ViewBag.Obras, "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
                 </div>
             </div>
         }
-        @if (Session["PerfilUsuario"].ToString() != "1" && Session["PerfilUsuario"].ToString() != "6")
+        @if ((bool)Session["SetorVisivel"])
         {
             <div class="form-group">
-                @Html.LabelFor(model => model.ChamadoClassificacao, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.Label("Setor", new { @class = "col-md-2 control-label" })
                 <div class="col-md-10">
-                    @Html.DropDownList("Classificacao", new SelectList(ViewBag.Classificacoes, "Id", "Descricao"), new { @class = "form-control Classificacao" })
+                    @Html.DropDownList("Setor", new SelectList(string.Empty, "IDO", "Descricao"), "-- Aguardando Selecionar a Obra --", new { @class = "form-control" })
                 </div>
             </div>
         }
-        else
-        {
-            <div class="form-group">
-                @Html.LabelFor(model => model.ChamadoClassificacao, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("Classificacao", new SelectList(string.Empty, "Id", "Descricao"), "-- Aguardando Selecionar a Obra --", new { @class = "form-control" })
-                </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ChamadoClassificacao, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("Classificacao", new SelectList(string.Empty, "Id", "Descricao"), "-- Aguardando Selecionar o Setor --", new { @class = "form-control" })
             </div>
-        }
-
+        </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
@@ -98,13 +94,13 @@
     <script>
         $(document).ready(function () {
             //Dropdownlist Selectedchange event
-            $("#Obra").change(function () {
+            $("#Setor").change(function () {
                 $("#Classificacao").empty();
                 $.ajax({
                     type: 'POST',
-                    url: '@Url.Action("RetornaClassificacaoPorObra", "SubClassificacao")',
+                    url: '@Url.Action("RetornaClassificacaoPorSetor", "SubClassificacao")',
                     dataType: 'json',
-                    data: { selectedValue: $("#Obra").val() },
+                    data: { selectedValue: $("#Setor").val() },
                     success: function (classificacoes) {
                         // states contains the JSON formatted list
                         // of states passed from the controller
@@ -113,6 +109,27 @@
                             $("#Classificacao").append('<option value="'
                             + classificacao.Value + '">'
                             + classificacao.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                    }
+                });
+            });
+            $("#Obra").change(function () {
+                $("#Setor").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaSetoresPorObra", "SubClassificacao")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#Obra").val() },
+                    success: function (setores) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $("#Setor").append('<option value="">-- Selecione o Setor --</option>');
+                        $.each(setores, function (i, setor) {
+                            $("#Setor").append('<option value="'
+                            + setor.Value + '">'
+                            + setor.Text + '</option>');
                         });
                     },
                     error: function (ex) {

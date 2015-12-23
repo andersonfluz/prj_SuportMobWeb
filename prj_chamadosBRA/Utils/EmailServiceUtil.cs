@@ -19,7 +19,7 @@ namespace prj_chamadosBRA.Utils
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));
                     if (chamado.SetorDestino == null)
@@ -54,7 +54,7 @@ namespace prj_chamadosBRA.Utils
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
                     if (chamadoHistorico.chamado.ResponsavelChamado != null)
@@ -91,7 +91,7 @@ namespace prj_chamadosBRA.Utils
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
                     if (chamadoHistorico.chamado.ResponsavelChamado != null)
@@ -129,7 +129,7 @@ namespace prj_chamadosBRA.Utils
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));
                     if (chamado.ResponsavelChamado != null)
@@ -154,7 +154,7 @@ namespace prj_chamadosBRA.Utils
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(user.UserName));
                     mail.Subject = "ChamadosBRA - Criação de novo usuario na plataforma";
@@ -175,7 +175,7 @@ namespace prj_chamadosBRA.Utils
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(user.UserName));
                     mail.Subject = "ChamadosBRA - Redefinição de senha do usuario na plataforma";
@@ -197,7 +197,7 @@ namespace prj_chamadosBRA.Utils
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress("chamados@brasilnordeste.org.br");
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
                     if (chamadoHistorico.chamado.ResponsavelChamado != null)

@@ -10,7 +10,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Classificação de Chamado</h4>
         <hr />
@@ -26,6 +26,42 @@
         </div>
 
         <div class="form-group">
+            @Html.Label("Setor Corporativo:", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.CheckBox("SetorCorp")
+                </div>
+            </div>
+        </div>
+
+        <div id="setorCorporativo" style="display: none">
+            <div class="form-group">
+                @Html.Label("Setores Corporativos", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("SetoresDisponiveisCorp", (IEnumerable<SelectListItem>)ViewBag.SetoresCorporativos, "-- Selecione o Setor Corporativo --", new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div id="setorObra">
+            @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("6"))
+            {
+                <div class="form-group">
+                    @Html.Label("Obras", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("ObrasDisponiveis", (IEnumerable<SelectListItem>)ViewBag.ObrasDisponiveis, "-- Selecione a Obra --", new { @class = "form-control" })
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                @Html.Label("Setores", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("SetoresDisponiveis", (IEnumerable<SelectListItem>)ViewBag.SetoresDisponiveis, "-- Selecione a Obra Primeiro --", new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
@@ -34,9 +70,48 @@
 }
 
 <div>
-    @Html.ActionLink("Voltar para Lista", "Index")
+    @Html.ActionLink("Voltar para Lista", "Index", null, new { @class = "btn btn-default" })
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Dropdownlist Selectedchange event
+            $("#ObrasDisponiveis").change(function () {
+                $("#SetoresDisponiveis").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaSetoresPorObra", "Account")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#ObrasDisponiveis").val() },
+                    success: function (setores) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $("#SetoresDisponiveis").append('<option value="">-- Selecione o Setor --</option>');
+                        $.each(setores, function (i, setor) {
+                            $("#SetoresDisponiveis").append('<option value="'
+                            + setor.Value + '">'
+                            + setor.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve setores.' + ex);
+                    }
+                });
+                return false;
+            })
+            $(document).ready(function () {
+                $("#SetorCorp").change(function () {
+                    if ($("#SetorCorp").is(":checked")) {
+                        $("#setorCorporativo").show('fast');
+                        $("#setorObra").hide('fast');
+                    } else {
+                        $("#setorCorporativo").hide('fast');
+                        $("#setorObra").show('fast');
+                    }
+                });
+            });
+        });
+    </script>
 }
