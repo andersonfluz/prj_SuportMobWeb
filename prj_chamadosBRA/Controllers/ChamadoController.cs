@@ -254,11 +254,15 @@ namespace prj_chamadosBRA.Controllers
                     pageNumber = (page ?? 1);
                     if (tipoChamado == null || tipoChamado == "-2")
                     {
-                        return View(new ChamadoDAO(db).BuscarChamadosDeSetores(setores, filtro, chamadosEncerrados, sortOrder).ToPagedList(pageNumber, pageSize));
+                        var chamados = new ChamadoDAO(db).BuscarChamadosDeSetores(setores, filtro, chamadosEncerrados, sortOrder).ToList();
+                        chamados.AddRange(new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, chamadosEncerrados, sortOrder).ToList());
+                        return View(chamados.ToPagedList(pageNumber, pageSize));
                     }
                     else
                     {
-                        return View(new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setores, Convert.ToInt32(tipoChamado), filtro, chamadosEncerrados, sortOrder).ToPagedList(pageNumber, pageSize));
+                        var chamados = new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setores, Convert.ToInt32(tipoChamado), filtro, chamadosEncerrados, sortOrder).ToList();
+                        chamados.AddRange(new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(tipoChamado), filtro, chamadosEncerrados, sortOrder).ToList());
+                        return View(chamados.ToPagedList(pageNumber, pageSize));
                     }
                 }
                 else
@@ -389,7 +393,10 @@ namespace prj_chamadosBRA.Controllers
                 var cDAO = new ChamadoDAO(db);
                 var chamado = cDAO.BuscarChamadoId(id);
                 chamado.ResponsavelChamado = new ApplicationUserDAO(db).retornarUsuario(ddlResponsavelChamado);
-
+                if ((DateTime.Now - chamado.DataHoraAbertura).TotalMinutes < 30)
+                {
+                    new ChamadoLogAcaoDAO(db).removerLogIndevido(chamado.Id, 4);
+                }
                 if (await cGN.atualizarChamadoHistorico(id, "O Chamado foi direcionado para o Usuario " + chamado.ResponsavelChamado.Nome, manager.FindById(User.Identity.GetUserId())))
                 {
                     TempData["notice"] = "Chamado Direcionado Com Sucesso!";
@@ -486,8 +493,17 @@ namespace prj_chamadosBRA.Controllers
             ViewBag.listaChamadoHistorico = new ChamadoHistoricoDAO(db).buscarHistoricosPorIdChamado(id);
             var chamado = new ChamadoDAO(db).BuscarChamadoId(id);
             ViewBag.listaChamadoAnexo = new ChamadoAnexoDAO(db).retornarListaAnexoChamado(id);
-            ViewBag.Classificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(chamado.Classificacao.Value).Descricao;
-            ViewBag.SubClassificacao = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(chamado.SubClassificacao.Value).Descricao;
+            if (!chamado.Cancelado)
+            {
+                ViewBag.Classificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(chamado.Classificacao.Value).Descricao;
+                ViewBag.SubClassificacao = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(chamado.SubClassificacao.Value).Descricao;
+            }
+            else
+            {
+                ViewBag.Classificacao = "Chamado Cancelado";
+                ViewBag.SubClassificacao = "Chamado Cancelado";
+
+            }
             return View(chamado);
         }
 
@@ -498,31 +514,42 @@ namespace prj_chamadosBRA.Controllers
             ViewBag.listaChamadoHistorico = new ChamadoHistoricoDAO(db).buscarHistoricosPorIdChamado(id);
             var chamado = new ChamadoDAO(db).BuscarChamadoId(id);
             ViewBag.listaChamadoAnexo = new ChamadoAnexoDAO(db).retornarListaAnexoChamado(id);
-            return View(chamado);
+            var chamadoInfo = new ChamadoInfoViewModel
+            {
+                Id = chamado.Id,
+                Assunto = chamado.Assunto,
+                Descricao = chamado.Descricao,
+                Observacao = chamado.Observacao,
+                SetorDestino = chamado.SetorDestino,
+                ObraDestino = chamado.ObraDestino,
+                TipoChamado = chamado.TipoChamado,
+                DataHoraAbertura = chamado.DataHoraAbertura
+            };
+            return View(chamadoInfo);
         }
 
         // POST: Chamado/Edit/5
         [HttpPost]
-        public async Task<ActionResult> ChamadoInfo(int id, string informacoesAcompanhamento)
+        public async Task<ActionResult> ChamadoInfo(ChamadoInfoViewModel chamadoInfo)
         {
             try
             {
                 var cGN = new ChamadoGN(db);
-                if (await cGN.atualizarChamadoHistorico(id, informacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
+                if (await cGN.atualizarChamadoHistorico(chamadoInfo.Id, chamadoInfo.InformacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
                 {
                     TempData["notice"] = "Chamado Atualizado Com Sucesso!";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Acompanhamento");
                 }
                 else
                 {
                     TempData["notice"] = "Desculpe, estamos com problemas ao atualizar o chamado.";
-                    return RedirectToAction("Edit", id);
+                    return RedirectToAction("Acompanhamento");
                 }
             }
             catch (Exception)
             {
                 TempData["notice"] = "Desculpe, estamos com problemas ao atualizar o chamado.";
-                return RedirectToAction("Edit", id);
+                return RedirectToAction("Acompanhamento");
             }
         }
 
@@ -607,8 +634,8 @@ namespace prj_chamadosBRA.Controllers
                         Observacao = chamadoVM.Observacao,
                         TipoChamado = chamadoVM.TipoChamado
                     };
-
-                    if (await cGN.registrarChamado(chamado, upload, SetorDestino, ObraDestino, ResponsavelAberturaChamado, manager.FindById(User.Identity.GetUserId())))
+                    var chamadoRegistro = cGN.registrarChamado(chamado, upload, SetorDestino, ObraDestino, ResponsavelAberturaChamado, manager.FindById(User.Identity.GetUserId()));
+                    if (chamadoRegistro != null)
                     {
                         TempData["notice"] = "Chamado Criado com Sucesso!";
                         return RedirectToAction("Index");
@@ -784,14 +811,14 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado/Edit/5
         [HttpPost]
-        public async Task<ActionResult> Edit(int id, Chamado chamado, string SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento)
+        public async Task<ActionResult> Edit(int id, Chamado chamado, string SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento, bool? retornoSolicitante)
         {
             try
             {
                 if (ddlResponsavelChamado != "")
                 {
                     var cGN = new ChamadoGN(db);
-                    if (await cGN.atualizarChamado(id, chamado, SetorDestino, ddlResponsavelChamado, informacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
+                    if (await cGN.atualizarChamado(id, chamado, SetorDestino, ddlResponsavelChamado, informacoesAcompanhamento, manager.FindById(User.Identity.GetUserId()), retornoSolicitante))
                     {
                         TempData["notice"] = "Chamado Atualizado Com Sucesso!";
                         return RedirectToAction("Index");
@@ -836,6 +863,14 @@ namespace prj_chamadosBRA.Controllers
             {
                 model.ResponsavelChamado = manager.FindById(User.Identity.GetUserId());
             }
+            if (chamado.SetorDestino.SetorCorporativo != null)
+            {
+                ViewBag.SetorDestinoClassificacao = new SelectList(new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorSetor(new SetorDAO(db).BuscarSetorId(chamado.SetorDestino.SetorCorporativo.Value)), "Id", "Descricao");
+            }
+            else
+            {
+                ViewBag.SetorDestinoClassificacao = new SelectList(new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorSetor(chamado.SetorDestino), "Id", "Descricao");
+            }
             return View(model);
         }
 
@@ -856,7 +891,12 @@ namespace prj_chamadosBRA.Controllers
                 chamadoOriginal.ResponsavelChamado = manager.FindById(User.Identity.GetUserId());
                 chamadoOriginal.ErroOperacional = chamado.ErroOperacional;
                 new ChamadoDAO(db).encerrarChamado(id, chamadoOriginal);
-                await new EmailServiceUtil().envioEmailEncerramentoChamado(chamadoOriginal);
+                new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                {
+                    InfoEmail = chamadoOriginal.Id.ToString(),
+                    Data = DateTime.Now,
+                    IdTipoEmail = (int)EmailTipo.EmailTipos.EncerramentoChamado
+                });
                 new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao
                 {
                     IdChamado = chamado.Id,
@@ -893,6 +933,74 @@ namespace prj_chamadosBRA.Controllers
                 //return JavaScript(js);
                 TempData["notice"] = "Erro no Encerramento do Chamado, Por favor Verifique os campos.";
                 return Redirect("..\\Edit\\" + id);
+            }
+        }
+
+        // GET: Chamado/Cancelar/5
+        public ActionResult Cancelar(int id)
+        {
+            var chamado = new ChamadoDAO(db).BuscarChamadoId(id);
+            chamado.StatusChamado = true;
+            var model = new CancelamentoChamadoViewModel
+            {
+                Id = chamado.Id,
+                JustificativaCancelamento = chamado.JustificativaCancelamento
+            };
+            return View(model);
+        }
+
+        // POST: Chamado/Cancelar/5
+        [HttpPost]
+        public async Task<ActionResult> Cancelar(int id, CancelamentoChamadoViewModel chamado)
+        {
+            try
+            {
+                var chamadoOriginal = new ChamadoDAO(db).BuscarChamadoId(id);
+                chamadoOriginal.JustificativaCancelamento = chamado.JustificativaCancelamento;
+                chamadoOriginal.ResponsavelCancelamento = manager.FindById(User.Identity.GetUserId());
+                new ChamadoDAO(db).cancelarChamado(id, chamadoOriginal);
+                new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                {
+                    InfoEmail = chamado.Id.ToString(),
+                    Data = DateTime.Now,
+                    IdTipoEmail = (int)EmailTipo.EmailTipos.CancelamentoChamado
+                });
+                new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao
+                {
+                    IdChamado = chamado.Id,
+                    ChamadoAcao = new ChamadoAcaoDAO(db).buscarChamadoAcaoPorId(2),
+                    Texto = "Chamado Cancelado",
+                    DataAcao = DateTime.Now,
+                    UsuarioAcao = manager.FindById(User.Identity.GetUserId())
+
+                });
+                TempData["notice"] = "Chamado Cancelado com Sucesso!";
+                return RedirectToAction("Index");
+            }
+            catch (FormatException)
+            {
+                TempData["notice"] = "Erro no Cancelamento.";
+                return Redirect("..\\Index\\" + id);
+            }
+            catch (DbEntityValidationException ve)
+            {
+                var erro = "";
+                foreach (var eve in ve.EntityValidationErrors)
+                {
+                    foreach (var ev in eve.ValidationErrors)
+                    {
+                        erro = erro + "O campo: " + ev.PropertyName + " deu erro: " + ev.ErrorMessage;
+                    }
+                }
+                TempData["notice"] = "Erro no Cancelamento: " + erro;
+                return Redirect("..\\Index\\" + id);
+            }
+            catch (Exception)
+            {
+                //string js = @"<script>alert('Erro no Encerramento do Chamado, Por favor Verifique os campos');</script>";
+                //return JavaScript(js);
+                TempData["notice"] = "Erro no Cancelamento do Chamado, Por favor Verifique os campos.";
+                return Redirect("..\\Index\\" + id);
             }
         }
 
@@ -1067,7 +1175,30 @@ namespace prj_chamadosBRA.Controllers
             var idChamado = Convert.ToInt32(objCript["id"].ToString());
             var chamado = new ChamadoDAO(db).BuscarChamadoId(idChamado);
 
-            if (chamado.StatusChamado.Value)
+            if (chamado.Cancelado)
+            {
+                var date = DateTime.Now - chamado.DataHoraCancelamento;
+                var dias = date.Value.Days;
+                if (dias <= 7)
+                {
+                    var model = new ReaberturaChamadoViewModel
+                    {
+                        Id = chamado.Id,
+                        StatusChamado = chamado.StatusChamado,
+                        ResponsavelChamado = chamado.ResponsavelChamado,
+                        DataHoraAtendimento = chamado.DataHoraAtendimento,
+                        Assunto = chamado.Assunto,
+                        Solucao = chamado.Solucao
+                    };
+                    return View(model);
+                }
+                else
+                {
+                    TempData["notice"] = "Chamado não pode ser reaberto, pois o período de reabertura expirou.";
+                    return RedirectToAction("Index", "Chamado");
+                }
+            }
+            else if (chamado.StatusChamado.Value)
             {
                 var date = DateTime.Now - chamado.DataHoraBaixa;
                 var dias = date.Value.Days;
@@ -1090,6 +1221,7 @@ namespace prj_chamadosBRA.Controllers
                     return RedirectToAction("Index", "Chamado");
                 }
             }
+
             else
             {
                 TempData["notice"] = "Chamado não pode ser reaberto, pois ele não foi encerrado.";
@@ -1109,5 +1241,6 @@ namespace prj_chamadosBRA.Controllers
             TempData["notice"] = "Chamado Reaberto com Sucesso!";
             return RedirectToAction("Index");
         }
+        
     }
 }

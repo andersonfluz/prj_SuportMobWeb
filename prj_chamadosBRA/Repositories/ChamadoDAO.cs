@@ -258,28 +258,28 @@ namespace prj_chamadosBRA.Repositories
             switch (sortOrder)
             {
                 case "id":
-                    chamados = (List<Chamado>)chamados.OrderByDescending(s => s.Id);
+                    chamados = chamados.OrderByDescending(s => s.Id).ToList();
                     break;
                 case "dataAbertura":
-                    chamados = (List<Chamado>)chamados.OrderByDescending(s => s.DataHoraAbertura);
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura).ToList();
                     break;
                 case "solicitante":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome);
+                    chamados = chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome).ToList();
                     break;
                 case "assunto":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.Assunto);
+                    chamados = chamados.OrderBy(s => s.Assunto).ToList();
                     break;
                 case "responsavel":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.ResponsavelChamado.Nome);
+                    chamados = chamados.OrderBy(s => s.ResponsavelChamado.Nome).ToList();
                     break;
                 case "obra":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.ObraDestino.Descricao);
+                    chamados = chamados.OrderBy(s => s.ObraDestino.Descricao).ToList();
                     break;
                 case "setor":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.SetorDestino.Descricao);
+                    chamados = chamados.OrderBy(s => s.SetorDestino.Descricao).ToList();
                     break;
                 default:
-                    chamados = (List<Chamado>)chamados.OrderByDescending(s => s.DataHoraAbertura);
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura).ToList();
                     break;
             }
             return chamados;
@@ -352,28 +352,28 @@ namespace prj_chamadosBRA.Repositories
             switch (sortOrder)
             {
                 case "id":
-                    chamados = (List<Chamado>)chamados.OrderByDescending(s => s.Id);
+                    chamados = chamados.OrderByDescending(s => s.Id).ToList();
                     break;
                 case "dataAbertura":
-                    chamados = (List<Chamado>)chamados.OrderByDescending(s => s.DataHoraAbertura);
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura).ToList();
                     break;
                 case "solicitante":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome);
+                    chamados = chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome).ToList();
                     break;
                 case "assunto":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.Assunto);
+                    chamados = chamados.OrderBy(s => s.Assunto).ToList();
                     break;
                 case "responsavel":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.ResponsavelChamado.Nome);
+                    chamados = chamados.OrderBy(s => s.ResponsavelChamado.Nome).ToList();
                     break;
                 case "obra":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.ObraDestino.Descricao);
+                    chamados = chamados.OrderBy(s => s.ObraDestino.Descricao).ToList();
                     break;
                 case "setor":
-                    chamados = (List<Chamado>)chamados.OrderBy(s => s.SetorDestino.Descricao);
+                    chamados = chamados.OrderBy(s => s.SetorDestino.Descricao).ToList();
                     break;
                 default:
-                    chamados = (List<Chamado>)chamados.OrderByDescending(s => s.DataHoraAbertura);
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura).ToList();
                     break;
             }
             return chamados;
@@ -646,6 +646,111 @@ namespace prj_chamadosBRA.Repositories
             }
         }
 
+        public List<Chamado> BuscarChamadosSemResponsaveisPorTrintaMinutos()
+        {
+            var chamados = (from e in db.Chamado
+                            join l in db.ChamadoLogAcao on e.Id equals l.IdChamado
+                            where e.StatusChamado == false &&
+                                  e.ResponsavelChamado == null &&
+                                  l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 4 || s.ChamadoAcao.IdAcao == 1)).Id &&
+                                  DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
+                                  DbFunctions.DiffMinutes(e.DataHoraAbertura, DateTime.Now) >= 30
+                            select e).ToList();
+            return chamados;
+        }
+
+        public List<Chamado> BuscarChamadosSemResponsaveisPorUmaHora()
+        {
+            var chamados = (from e in db.Chamado
+                            join l in db.ChamadoLogAcao on e.Id equals l.IdChamado
+                            where e.StatusChamado == false &&
+                                  e.ResponsavelChamado == null &&
+                                  l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 5 || s.ChamadoAcao.IdAcao == 1)).Id &&
+                                  DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
+                                  DbFunctions.DiffMinutes(e.DataHoraAbertura, DateTime.Now) >= 60
+                            select e).ToList();
+            return chamados;
+        }
+
+        public List<Chamado> BuscarChamadosSemResponsaveisPorDuasHoras()
+        {
+            var chamados = (from e in db.Chamado
+                            join l in db.ChamadoLogAcao on e.Id equals l.IdChamado
+                            where e.StatusChamado == false &&
+                                  e.ResponsavelChamado == null &&
+                                  l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 6 || s.ChamadoAcao.IdAcao == 1)).Id &&
+                                  DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
+                                  DbFunctions.DiffMinutes(e.DataHoraAbertura, DateTime.Now) >= 120
+                            select e).ToList();
+            return chamados;
+        }
+
+
+        public List<Chamado> BuscarChamadosSemAtualizaoPorDoisDiasTrintaMinutos()
+        {
+            var chamados = (from e in db.Chamado
+                            join l in db.ChamadoLogAcao on e.Id equals l.IdChamado
+                            join h in db.ChamadoHistorico on e.Id equals h.Chamado.Id
+                            where e.StatusChamado == false &&
+                                  e.ResponsavelChamado != null &&
+                                  l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 7 || s.ChamadoAcao.IdAcao == 1)).Id &&
+                                  h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&
+                                  !h.Questionamento &&
+                                  DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
+                                  DbFunctions.DiffMinutes(h.Data, DateTime.Now) >= 2910
+
+                            select e).ToList();
+            return chamados;
+        }
+
+        public List<Chamado> BuscarChamadosSemAtualizacaoPorDoisDiasUmaHora()
+        {
+            var chamados = (from e in db.Chamado
+                            join l in db.ChamadoLogAcao on e.Id equals l.IdChamado
+                            join h in db.ChamadoHistorico on e.Id equals h.Chamado.Id
+                            where e.StatusChamado == false &&
+                                  e.ResponsavelChamado != null &&
+                                  l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 8 || s.ChamadoAcao.IdAcao == 1)).Id &&
+                                  h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&
+                                  !h.Questionamento &&
+                                  DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
+                                  DbFunctions.DiffDays(h.Data, DateTime.Now) >= 2940
+                            select e).ToList();
+            return chamados;
+        }
+
+        public List<Chamado> BuscarChamadosSemAtualizacaoPorDoisDiasDuasHoras()
+        {
+            var chamados = (from e in db.Chamado
+                            join l in db.ChamadoLogAcao on e.Id equals l.IdChamado
+                            join h in db.ChamadoHistorico on e.Id equals h.Chamado.Id
+                            where e.StatusChamado == false &&
+                                  e.ResponsavelChamado != null &&
+                                  l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 9 || s.ChamadoAcao.IdAcao == 1)).Id &&
+                                  h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&
+                                  !h.Questionamento &&
+                                  DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
+                                  DbFunctions.DiffMinutes(h.Data, DateTime.Now) >= 3000
+                            select e).ToList();
+            return chamados;
+        }
+
+        public List<Chamado> BuscarChamadosSemRetornoPorUmaOuSeisHoras()
+        {
+            var chamados = (from e in db.Chamado
+                            join l in db.ChamadoLogAcao on e.Id equals l.IdChamado
+                            join h in db.ChamadoHistorico on e.Id equals h.Chamado.Id
+                            where e.StatusChamado == false &&
+                                  e.ResponsavelChamado != null &&
+                                  l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 10 || s.ChamadoAcao.IdAcao == 1)).Id &&
+                                  ((DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 60 && l.ChamadoAcao.IdAcao == 1) ||
+                                  (DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 360 && l.ChamadoAcao.IdAcao == 10)) &&
+                                  h.Questionamento &&
+                                  h.ReferenciaQuestionamento == null
+                            select e).ToList();
+            return chamados;
+        }
+
         public Chamado BuscarChamadoId(int id)
         {
             return db.Set<Chamado>().Find(id);
@@ -681,6 +786,17 @@ namespace prj_chamadosBRA.Repositories
             chamadoUpdate.Solucao = chamado.Solucao;
             chamadoUpdate.StatusChamado = true;
             chamadoUpdate.ErroOperacional = chamado.ErroOperacional;
+            db.SaveChanges();
+        }
+
+        public void cancelarChamado(int id, Chamado chamado)
+        {
+            var chamadoUpdate = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
+            chamadoUpdate.Cancelado = true;
+            chamadoUpdate.StatusChamado = true;
+            chamadoUpdate.DataHoraCancelamento = DateTime.Now;
+            chamadoUpdate.JustificativaCancelamento = chamado.JustificativaCancelamento;
+            chamadoUpdate.ResponsavelCancelamento = chamado.ResponsavelCancelamento;
             db.SaveChanges();
         }
     }

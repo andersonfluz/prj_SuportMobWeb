@@ -13,6 +13,8 @@ namespace prj_chamadosBRA
                         "~/Scripts/jquery.maskedinput.js",
                         "~/Scripts/jquery.validate.js",
                         "~/Scripts/jquery.validate.unobtrusive.js",
+                        "~/Scripts/jquery.treegrid.js",
+                        "~/Scripts/jquery.treegrid.bootstrap3.js",
                         "~/Scripts/jquery-ui-1.11.4.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -46,6 +48,7 @@ namespace prj_chamadosBRA
                       "~/Content/bootstrap-datepicker3.css",
                       "~/Content/bootstrap-datetimepicker.min.css",
                       "~/Content/datepicker.css",
+                      "~/Content/jquery.treegrid.css",
                       "~/Content/themes/base/accordion.css",
                       "~/Content/themes/base/all.css",
                       "~/Content/site.css"));

@@ -18,11 +18,36 @@ namespace prj_chamadosBRA.Repositories
         {
             db = new ApplicationDbContext();
         }
+
+        public bool existeLog(int IdChamado, int ChamadoAcao)
+        {
+            var log = (from l in db.ChamadoLogAcao where l.IdChamado == IdChamado && l.ChamadoAcao.IdAcao == ChamadoAcao select l).ToList();
+            if (log.Count == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
         public bool salvar(ChamadoLogAcao chamadoLogAcao)
         {
             db.ChamadoLogAcao.Add(chamadoLogAcao);
             db.SaveChanges();
             return true;
+        }
+
+        public void removerLogIndevido(int IdChamado, int ChamadoAcao)
+        {
+            var log = (from l in db.ChamadoLogAcao where l.IdChamado == IdChamado && l.ChamadoAcao.IdAcao == ChamadoAcao select l).FirstOrDefault();
+            if (log != null)
+            {
+                db.ChamadoLogAcao.Remove(log);
+                db.SaveChanges();
+            }
         }
     }
 }

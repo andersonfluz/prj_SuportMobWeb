@@ -31,8 +31,8 @@
 <label>&nbsp;</label>
 <p>
 </p>
-<table class="table" data-row-style="rowStyle">
-    <tr>
+<table class="table table-condensed table-hover" data-row-style="rowStyle">
+    <tr class="active">
         <th>
             @Html.ActionLink("Chamado N°", "Triagem", new
        {
@@ -116,7 +116,7 @@
             @Html.DisplayName("Direcionar")
         </th>
 
-    </tr>
+    </trclass="active">
     @foreach (var item in Model)
     {
         <tr>
@@ -209,7 +209,7 @@
                 $(function () {
                     $(".details").click(function () {
                         var id = $(this).attr("data-id");
-                        $("#modal").load("../../Chamado/TriagemInfo/" + id, function () {
+                        $("#modal").load("../Chamado/TriagemInfo/" + id, function () {
                             $("#modal").modal({ show: true });
                         })
                     });

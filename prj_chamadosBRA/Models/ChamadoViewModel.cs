@@ -67,4 +67,31 @@ namespace prj_chamadosBRA.Models
         [Display(Name = "Justificativa para Reabertura")]
         public string JustificativaReabertura { get; set; }
     }
+
+    public class CancelamentoChamadoViewModel
+    {
+        public int Id { get; set; }
+        [Required]
+        [Display(Name = "Justificativa")]
+        public string JustificativaCancelamento { get; set; }
+    }
+
+    public class ChamadoInfoViewModel
+    {
+        public int Id { get; set; }
+        public string Assunto { get; set; }
+        [Display(Name = "Descrição")]
+        public string Descricao { get; set; }
+        [Display(Name = "Observação")]
+        public string Observacao { get; set; }
+        [Display(Name = "Setor")]
+        public virtual Setor SetorDestino { get; set; }
+        public virtual Obra ObraDestino { get; set; }
+        [Display(Name = "Tipo do Chamado")]
+        [Required(ErrorMessage = "Informe o Tipo do Chamado")]
+        public int? TipoChamado { get; set; }
+        public DateTime DataHoraAbertura { get; set; }
+        [Required]
+        public string InformacoesAcompanhamento { get; set; }
+    }
 }

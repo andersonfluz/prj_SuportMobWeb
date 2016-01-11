@@ -209,7 +209,7 @@
                 $(function () {
                     $(".details").click(function () {
                         var id = $(this).attr("data-id");
-                        $("#modal").load("../../Chamado/TriagemInfo/" + id, function () {
+                        $("#modal").load("../Chamado/TriagemInfo/" + id, function () {
                             $("#modal").modal({ show: true });
                         })
                     });

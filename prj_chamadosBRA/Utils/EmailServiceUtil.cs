@@ -13,7 +13,9 @@ namespace prj_chamadosBRA.Utils
 {
     public class EmailServiceUtil
     {
-        public async Task envioEmailAberturaChamadoAsync(Chamado chamado)
+        #region Envio de Emails
+
+        public static string envioEmailAberturaChamado(Chamado chamado)
         {
             try
             {
@@ -38,17 +40,18 @@ namespace prj_chamadosBRA.Utils
                     mail.Body = montarCorpoMensagemAbertura(chamado);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
-                    await smtpClient.SendMailAsync(mail);
+                    smtpClient.Send(mail);
+                    return "0";
                 }
             }
             catch (Exception e)
             {
-
+                return e.Message;
             }
 
         }
 
-        public async Task envioEmailDirecionamentoChamadoAsync(ChamadoHistorico chamadoHistorico)
+        public static string envioEmailDirecionamentoChamado(ChamadoHistorico chamadoHistorico)
         {
             try
             {
@@ -56,14 +59,14 @@ namespace prj_chamadosBRA.Utils
                 {
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
-                    mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
-                    if (chamadoHistorico.chamado.ResponsavelChamado != null)
+                    mail.To.Add(new MailAddress(chamadoHistorico.Chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamadoHistorico.Chamado.ResponsavelChamado != null)
                     {
-                        mail.CC.Add(chamadoHistorico.chamado.ResponsavelChamado.UserName);
+                        mail.CC.Add(chamadoHistorico.Chamado.ResponsavelChamado.UserName);
                     }
-                    else if (chamadoHistorico.chamado.SetorDestino == null)
+                    else if (chamadoHistorico.Chamado.SetorDestino == null)
                     {
-                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.Chamado.ObraDestino.IDO);
                         foreach (var setor in setores)
                         {
                             mail.CC.Add(setor.EmailSetor);
@@ -71,21 +74,23 @@ namespace prj_chamadosBRA.Utils
                     }
                     else
                     {
-                        mail.CC.Add(chamadoHistorico.chamado.SetorDestino.EmailSetor);
+                        mail.CC.Add(chamadoHistorico.Chamado.SetorDestino.EmailSetor);
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
+                    mail.Subject = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.Chamado.Id;
                     mail.Body = montarCorpoMensagemAlteracao(chamadoHistorico);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
-                    await smtpClient.SendMailAsync(mail);
+                    smtpClient.Send(mail);
+                    return "0";
                 }
             }
             catch (Exception e)
             {
+                return e.Message;
             }
         }
 
-        public async Task envioEmailAtualizacaoChamadoAsync(ChamadoHistorico chamadoHistorico)
+        public static string envioEmailAtualizacaoChamado(ChamadoHistorico chamadoHistorico)
         {
             try
             {
@@ -93,14 +98,14 @@ namespace prj_chamadosBRA.Utils
                 {
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
-                    mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
-                    if (chamadoHistorico.chamado.ResponsavelChamado != null)
+                    mail.To.Add(new MailAddress(chamadoHistorico.Chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamadoHistorico.Chamado.ResponsavelChamado != null)
                     {
-                        mail.CC.Add(chamadoHistorico.chamado.ResponsavelChamado.UserName);
+                        mail.CC.Add(chamadoHistorico.Chamado.ResponsavelChamado.UserName);
                     }
-                    else if (chamadoHistorico.chamado.SetorDestino == null)
+                    else if (chamadoHistorico.Chamado.SetorDestino == null)
                     {
-                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.Chamado.ObraDestino.IDO);
                         foreach (var setor in setores)
                         {
                             mail.CC.Add(setor.EmailSetor);
@@ -108,22 +113,23 @@ namespace prj_chamadosBRA.Utils
                     }
                     else
                     {
-                        mail.CC.Add(chamadoHistorico.chamado.SetorDestino.EmailSetor);
+                        mail.CC.Add(chamadoHistorico.Chamado.SetorDestino.EmailSetor);
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.chamado.Id;
+                    mail.Subject = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.Chamado.Id;
                     mail.Body = montarCorpoMensagemAlteracao(chamadoHistorico);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
-                    await smtpClient.SendMailAsync(mail);
+                    smtpClient.Send(mail);
+                    return "0";
                 }
             }
             catch (Exception e)
             {
-
+                return e.Message;
             }
         }
 
-        public async Task envioEmailEncerramentoChamado(Chamado chamado)
+        public static string envioEmailEncerramentoChamado(Chamado chamado)
         {
             try
             {
@@ -140,15 +146,44 @@ namespace prj_chamadosBRA.Utils
                     mail.Body = montarCorpoMensagemEncerramento(chamado);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
-                    await smtpClient.SendMailAsync(mail);
+                    smtpClient.Send(mail);
+                    return "0";
                 }
             }
             catch (Exception e)
             {
+                return e.Message;
             }
         }
 
-        public async Task envioEmailCriacaoUsuario(ApplicationUser user)
+        public static string envioEmailCancelamentoChamado(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamado.ResponsavelChamado != null)
+                    {
+                        mail.CC.Add(chamado.ResponsavelChamado.UserName);
+                    }
+                    mail.Subject = "ChamadosBRA - Notificação Cancelamento do Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemCancelamento(chamado);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public static string envioEmailCriacaoUsuario(ApplicationUser user)
         {
             try
             {
@@ -161,15 +196,17 @@ namespace prj_chamadosBRA.Utils
                     mail.Body = montarCorpoMensagemCriacaoUsuario(user);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
-                    await smtpClient.SendMailAsync(mail);
+                    smtpClient.Send(mail);
+                    return "0";
                 }
             }
             catch (Exception e)
             {
+                return e.Message;
             }
         }
 
-        public async Task envioEmailRedefinicaoSenhaUsuario(ApplicationUser user)
+        public static string envioEmailRedefinicaoSenhaUsuario(ApplicationUser user)
         {
             try
             {
@@ -182,16 +219,17 @@ namespace prj_chamadosBRA.Utils
                     mail.Body = montarCorpoMensagemReiniciarSenhaUsuario(user);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
-                    await smtpClient.SendMailAsync(mail);
+                    smtpClient.Send(mail);
+                    return "0";
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                return e.Message;
             }
         }
 
-        public static async Task envioEmailReaberturaChamado(ChamadoHistorico chamadoHistorico)
+        public static string envioEmailReaberturaChamado(ChamadoHistorico chamadoHistorico)
         {
             try
             {
@@ -199,14 +237,14 @@ namespace prj_chamadosBRA.Utils
                 {
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
-                    mail.To.Add(new MailAddress(chamadoHistorico.chamado.ResponsavelAberturaChamado.UserName));
-                    if (chamadoHistorico.chamado.ResponsavelChamado != null)
+                    mail.To.Add(new MailAddress(chamadoHistorico.Chamado.ResponsavelAberturaChamado.UserName));
+                    if (chamadoHistorico.Chamado.ResponsavelChamado != null)
                     {
-                        mail.CC.Add(chamadoHistorico.chamado.ResponsavelChamado.UserName);
+                        mail.CC.Add(chamadoHistorico.Chamado.ResponsavelChamado.UserName);
                     }
-                    else if (chamadoHistorico.chamado.SetorDestino == null)
+                    else if (chamadoHistorico.Chamado.SetorDestino == null)
                     {
-                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.chamado.ObraDestino.IDO);
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamadoHistorico.Chamado.ObraDestino.IDO);
                         foreach (var setor in setores)
                         {
                             mail.CC.Add(setor.EmailSetor);
@@ -214,22 +252,297 @@ namespace prj_chamadosBRA.Utils
                     }
                     else
                     {
-                        mail.CC.Add(chamadoHistorico.chamado.SetorDestino.EmailSetor);
+                        mail.CC.Add(chamadoHistorico.Chamado.SetorDestino.EmailSetor);
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Reabertura Chamado N. " + chamadoHistorico.chamado.Id;
+                    mail.Subject = "ChamadosBRA - Notificação Reabertura Chamado N. " + chamadoHistorico.Chamado.Id;
                     mail.Body = montarCorpoMensagemReabertura(chamadoHistorico);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
-                    await smtpClient.SendMailAsync(mail);
+                    smtpClient.Send(mail);
+                    return "0";
+
                 }
             }
             catch (Exception e)
             {
+                return e.Message;
             }
         }
 
+        public static string envioEmailSemResponsavelTrintaMinutos(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+                    
+                    if (chamado.SetorDestino == null)
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    else
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    mail.Subject = "ChamadosBRA - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "trinta minutos");
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
 
-        private static String montarCorpoMensagemAbertura(Chamado chamado)
+        }
+
+        public static string envioEmailSemResponsavelUmaHora(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    if (chamado.SetorDestino == null)
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    else
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    mail.Subject = "ChamadosBRA - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "uma hora");
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
+        public static string envioEmailSemResponsavelDuasHoras(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    if (chamado.SetorDestino == null)
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    else
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    mail.Subject = "ChamadosBRA - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "duas horas");
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
+        public static string envioEmailSemAtualizacaoDoisDiasTrintaMinutos(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    if (chamado.SetorDestino == null)
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    else
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
+        public static string envioEmailSemAtualizacaoDoisDiasUmaHora(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    if (chamado.SetorDestino == null)
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    else
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
+        public static string envioEmailSemAtualizacaoDoisDiasDuasHoras(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    if (chamado.SetorDestino == null)
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    else
+                    {
+                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
+                        foreach (var usuario in usuarios)
+                        {
+                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                            //mail.To.Add(new MailAddress(usuario.UserName));
+                        }
+                    }
+                    mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
+        public static string envioEmailSemRetornoSolicitanteUmaOuSeisHoras(Chamado chamado)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+                    mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));                    
+                    mail.Subject = "ChamadosBRA - Alerta de chamado sem retorno do solicitante - Chamado N. " + chamado.Id;
+                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "uma hora");
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
+        #endregion
+
+        #region Montagem de Corpo dos Emails
+
+        private static string montarCorpoMensagemAbertura(Chamado chamado)
         {
             var mensagem = "Nova Solicitação N. " + chamado.Id;
             var mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
@@ -349,7 +662,7 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        private static String montarCorpoMensagemEncerramento(Chamado chamado)
+        private static string montarCorpoMensagemEncerramento(Chamado chamado)
         {
             var mensagem = "Encerramento Solicitação N. " + chamado.Id;
             var mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
@@ -514,19 +827,166 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        private static String montarCorpoMensagemAlteracao(ChamadoHistorico chamadoHistorico)
+        private static string montarCorpoMensagemCancelamento(Chamado chamado)
         {
-            var mensagem = "Alteração da Solicitação N. " + chamadoHistorico.chamado.Id;
-            var mensagemSetorObra = chamadoHistorico.chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamadoHistorico.chamado.ObraDestino.Descricao : chamadoHistorico.chamado.SetorDestino.Descricao + " - " + chamadoHistorico.chamado.ObraDestino.Descricao;
-            var assunto = chamadoHistorico.chamado.Assunto;
-            var descricao = chamadoHistorico.chamado.Descricao;
-            var observacao = chamadoHistorico.chamado.Observacao;
-            var obra = chamadoHistorico.chamado.ObraDestino.Descricao;
-            var setorDestino = chamadoHistorico.chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamadoHistorico.chamado.SetorDestino.Descricao;
-            var responsavelAbertura = chamadoHistorico.chamado.ResponsavelAberturaChamado.Nome;
-            var responsavelChamado = chamadoHistorico.chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamadoHistorico.chamado.ResponsavelChamado.Nome;
-            var statusChamado = chamadoHistorico.chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
-            var observacoesInterna = chamadoHistorico.chamado.ObsevacaoInterna == null ? "" : chamadoHistorico.chamado.ObsevacaoInterna;
+            var mensagem = "Cancelamento de Solicitação N. " + chamado.Id;
+            var mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
+            var assunto = chamado.Assunto;
+            var descricao = chamado.Descricao;
+            var observacao = chamado.Observacao;
+            var obra = chamado.ObraDestino.Descricao;
+            var setorDestino = chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamado.SetorDestino.Descricao;
+            var responsavelAbertura = chamado.ResponsavelAberturaChamado.Nome;
+            var responsavelChamado = chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamado.ResponsavelChamado.Nome;
+            var statusChamado = !chamado.Cancelado ? "Chamado Aberto" : "Chamado Cancelado";
+            var dataHoraCancelamento = chamado.DataHoraCancelamento.ToString();
+            var objCript = new Criptografia();
+            objCript["id"] = chamado.Id.ToString();
+            var IdCriptografado = objCript.ToString();
+
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='padding-right:2px; padding-left:2px'>" + mensagemSetorObra + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<em>" + mensagem + "</em></td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Assunto:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + assunto + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Descrição:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + descricao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Observacao:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + observacao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Obra:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + obra + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Setor:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + setorDestino + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solicitante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + responsavelAbertura + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Responsavel Atendimento:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + responsavelChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Status:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + statusChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data/Hora Cancelamento:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + dataHoraCancelamento + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Justificativa de Cancelamento:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + chamado.JustificativaCancelamento + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Informação Importante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Caso não concorde com o encerramento do chamado, poderá solicitar dentro de 7 dias a reabertura do mesmo <a href='http://suporte.ani.org.br/ChamadosBRA/Chamado/ReaberturaChamado/?id=" + IdCriptografado + "'>aqui</a></td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemAlteracao(ChamadoHistorico chamadoHistorico)
+        {
+            var mensagem = "Alteração da Solicitação N. " + chamadoHistorico.Chamado.Id;
+            var mensagemSetorObra = chamadoHistorico.Chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamadoHistorico.Chamado.ObraDestino.Descricao : chamadoHistorico.Chamado.SetorDestino.Descricao + " - " + chamadoHistorico.Chamado.ObraDestino.Descricao;
+            var assunto = chamadoHistorico.Chamado.Assunto;
+            var descricao = chamadoHistorico.Chamado.Descricao;
+            var observacao = chamadoHistorico.Chamado.Observacao;
+            var obra = chamadoHistorico.Chamado.ObraDestino.Descricao;
+            var setorDestino = chamadoHistorico.Chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamadoHistorico.Chamado.SetorDestino.Descricao;
+            var responsavelAbertura = chamadoHistorico.Chamado.ResponsavelAberturaChamado.Nome;
+            var responsavelChamado = chamadoHistorico.Chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamadoHistorico.Chamado.ResponsavelChamado.Nome;
+            var statusChamado = chamadoHistorico.Chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
+            var observacoesInterna = chamadoHistorico.Chamado.ObsevacaoInterna == null ? "" : chamadoHistorico.Chamado.ObsevacaoInterna;
             var historico = chamadoHistorico.Historico;
 
             var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
@@ -651,7 +1111,7 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        private static String montarCorpoMensagemCriacaoUsuario(ApplicationUser user)
+        private static string montarCorpoMensagemCriacaoUsuario(ApplicationUser user)
         {
             var corpoMensagem = "<div>"
                                 + "<table cellspacing='0' cellpadding='0' style='width: 100%'>"
@@ -702,7 +1162,7 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        private static String montarCorpoMensagemReiniciarSenhaUsuario(ApplicationUser user)
+        private static string montarCorpoMensagemReiniciarSenhaUsuario(ApplicationUser user)
         {
             var corpoMensagem = "<div>"
                                 + "<table cellspacing='0' cellpadding='0' style='width: 100%'>"
@@ -753,19 +1213,19 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        private static String montarCorpoMensagemReabertura(ChamadoHistorico chamadoHistorico)
+        private static string montarCorpoMensagemReabertura(ChamadoHistorico chamadoHistorico)
         {
-            var mensagem = "Reabertura da Solicitação N. " + chamadoHistorico.chamado.Id;
-            var mensagemSetorObra = chamadoHistorico.chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamadoHistorico.chamado.ObraDestino.Descricao : chamadoHistorico.chamado.SetorDestino.Descricao + " - " + chamadoHistorico.chamado.ObraDestino.Descricao;
-            var assunto = chamadoHistorico.chamado.Assunto;
-            var descricao = chamadoHistorico.chamado.Descricao;
-            var observacao = chamadoHistorico.chamado.Observacao;
-            var obra = chamadoHistorico.chamado.ObraDestino.Descricao;
-            var setorDestino = chamadoHistorico.chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamadoHistorico.chamado.SetorDestino.Descricao;
-            var responsavelAbertura = chamadoHistorico.chamado.ResponsavelAberturaChamado.Nome;
-            var responsavelChamado = chamadoHistorico.chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamadoHistorico.chamado.ResponsavelChamado.Nome;
-            var statusChamado = chamadoHistorico.chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
-            var observacoesInterna = chamadoHistorico.chamado.ObsevacaoInterna == null ? "" : chamadoHistorico.chamado.ObsevacaoInterna;
+            var mensagem = "Reabertura da Solicitação N. " + chamadoHistorico.Chamado.Id;
+            var mensagemSetorObra = chamadoHistorico.Chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamadoHistorico.Chamado.ObraDestino.Descricao : chamadoHistorico.Chamado.SetorDestino.Descricao + " - " + chamadoHistorico.Chamado.ObraDestino.Descricao;
+            var assunto = chamadoHistorico.Chamado.Assunto;
+            var descricao = chamadoHistorico.Chamado.Descricao;
+            var observacao = chamadoHistorico.Chamado.Observacao;
+            var obra = chamadoHistorico.Chamado.ObraDestino.Descricao;
+            var setorDestino = chamadoHistorico.Chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamadoHistorico.Chamado.SetorDestino.Descricao;
+            var responsavelAbertura = chamadoHistorico.Chamado.ResponsavelAberturaChamado.Nome;
+            var responsavelChamado = chamadoHistorico.Chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamadoHistorico.Chamado.ResponsavelChamado.Nome;
+            var statusChamado = chamadoHistorico.Chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
+            var observacoesInterna = chamadoHistorico.Chamado.ObsevacaoInterna == null ? "" : chamadoHistorico.Chamado.ObsevacaoInterna;
             var historico = chamadoHistorico.Historico;
 
             var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
@@ -889,5 +1349,391 @@ namespace prj_chamadosBRA.Utils
                                    + "</div>";
             return corpoMensagem;
         }
+
+        private static string montarCorpoMensagemAlertaSemResponsavel(Chamado chamado, string tempo)
+        {
+            var mensagem = "Alerta solicitação N. " + chamado.Id + " Sem responsavel para atendimento";
+            var mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
+            var assunto = chamado.Assunto;
+            var descricao = chamado.Descricao;
+            var observacao = chamado.Observacao;
+            var obra = chamado.ObraDestino.Descricao;
+            var setorDestino = chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamado.SetorDestino.Descricao;
+            var responsavelAbertura = chamado.ResponsavelAberturaChamado.Nome;
+            var responsavelChamado = chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamado.ResponsavelChamado.Nome;
+            var statusChamado = chamado.StatusChamado == null || chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
+
+
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='padding-right:2px; padding-left:2px'>" + mensagemSetorObra + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<em>" + mensagem + "</em></td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Mensagem de Alerta:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "A solicitação está sem responsavel a mais de "+ tempo + ", favor verificar e direcionar o chamado.</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Assunto:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + assunto + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Descrição:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + descricao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Observacao:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + observacao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Obra:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + obra + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Setor:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + setorDestino + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solicitante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + responsavelAbertura + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Responsavel Atendimento:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + responsavelChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Status:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + statusChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemAlertaSemAtualizacao(Chamado chamado, string tempo)
+        {
+            var mensagem = "Alerta solicitação N. " + chamado.Id + " sem atualização do andamento";
+            var mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
+            var assunto = chamado.Assunto;
+            var descricao = chamado.Descricao;
+            var observacao = chamado.Observacao;
+            var obra = chamado.ObraDestino.Descricao;
+            var setorDestino = chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamado.SetorDestino.Descricao;
+            var responsavelAbertura = chamado.ResponsavelAberturaChamado.Nome;
+            var responsavelChamado = chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamado.ResponsavelChamado.Nome;
+            var statusChamado = chamado.StatusChamado == null || chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
+
+
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='padding-right:2px; padding-left:2px'>" + mensagemSetorObra + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<em>" + mensagem + "</em></td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Mensagem de Alerta:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "A solicitação está sem atualização a mais de " + tempo + ", favor verificar e dar andamento no chamado.</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Assunto:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + assunto + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Descrição:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + descricao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Observacao:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + observacao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Obra:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + obra + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Setor:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + setorDestino + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solicitante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + responsavelAbertura + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Responsavel Atendimento:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + responsavelChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Status:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + statusChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemAlertaSemRetornoSolicitante(Chamado chamado, string tempo)
+        {
+            var mensagem = "Alerta solicitação N. " + chamado.Id + " sem retorno do solicitante";
+            var mensagemSetorObra = chamado.SetorDestino == null ? "Sem Setor Direcionado - " + chamado.ObraDestino.Descricao : chamado.SetorDestino.Descricao + " - " + chamado.ObraDestino.Descricao;
+            var assunto = chamado.Assunto;
+            var descricao = chamado.Descricao;
+            var observacao = chamado.Observacao;
+            var obra = chamado.ObraDestino.Descricao;
+            var setorDestino = chamado.SetorDestino == null ? "Sem Setor Direcionado" : chamado.SetorDestino.Descricao;
+            var responsavelAbertura = chamado.ResponsavelAberturaChamado.Nome;
+            var responsavelChamado = chamado.ResponsavelChamado == null ? "Sem Responsavel Direcionado" : chamado.ResponsavelChamado.Nome;
+            var statusChamado = chamado.StatusChamado == null || chamado.StatusChamado == false ? "Chamado Aberto" : "Chamado Fechado";
+
+
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='padding-right:2px; padding-left:2px'>" + mensagemSetorObra + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<em>" + mensagem + "</em></td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Mensagem de Alerta:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "A solicitação está sem retorno a mais de " + tempo + ", favor verificar e dar retorno ao chamado.</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Assunto:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + assunto + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Descrição:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + descricao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Observacao:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + observacao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Obra:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + obra + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Setor:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + setorDestino + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solicitante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + responsavelAbertura + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Responsavel Atendimento:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + responsavelChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Status:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + statusChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        #endregion
     }
 }

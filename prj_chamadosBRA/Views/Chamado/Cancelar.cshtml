@@ -1,0 +1,46 @@
+﻿@model prj_chamadosBRA.Models.CancelamentoChamadoViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Cancelar";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">        
+        @using (Html.BeginForm("Cancelar", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "cancelar" }))
+        {
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Cancelar Chamado N. @Model.Id</h4>
+            </div>
+
+            @Html.AntiForgeryToken()
+
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Id)
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.JustificativaCancelamento, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(model => model.JustificativaCancelamento, htmlAttributes: new { @class = "form-control", Style = "max-width:430px" })
+                            @Html.ValidationMessageFor(model => model.JustificativaCancelamento, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Confirmar Cancelamento de Chamado" class="btn btn-default" />
+                            <input type="button" value="Fechar" class="btn btn-default" data-dismiss="modal" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+}

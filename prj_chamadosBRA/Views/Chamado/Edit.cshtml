@@ -156,6 +156,7 @@
                 <div class="col-md-10">
                     @Html.Label("Informações Adicionais:")
                     @Html.TextArea("informacoesAcompanhamento", htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+                    @*@Html.CheckBox("retornoSolicitante") Necessário retorno do solicitante*@
                 </div>
             </div>
         </div>
@@ -165,8 +166,8 @@
         <div class="panel-heading">Histórico do Chamado</div>
         <div class="panel-body tab-pane">
             <div class="row">
-                <div class="col-md-10">
-                    <table class="table" data-row-style="rowStyle">
+                <div class="col-md-12">
+                    <table class="table tree table-hover">
                         <tr>
                             <th>
                                 @Html.DisplayName("Data")
@@ -184,48 +185,92 @@
 
                         @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoHistorico>)ViewBag.listaChamadoHistorico))
                         {
-                            <tr>
-                                <td>
-                                    @item.Data.ToString("dd/MM/yyyy")
-                                </td>
-                                <td>
-                                    @item.Hora.ToString("HH:mm")
-                                </td>
-                                <td>
-                                    @item.Responsavel.Nome
-                                </td>
-                                <td>
-                                    @item.Historico
-                                </td>
-                            </tr>
+                            if (item.ReferenciaQuestionamento == null)
+                            {
+                                <tr>                                    
+                                    <td>
+                                        @item.Data.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td>
+                                        @item.Hora.ToString("HH:mm")
+                                    </td>
+                                    <td>
+                                        @item.Responsavel.Nome
+                                    </td>
+                                    <td>
+                                        @item.Historico
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="treegrid-1">
+                                    <td width="17%">
+                                        @item.Data.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td>
+                                        @item.Hora.ToString("HH:mm")
+                                    </td>
+                                    <td width="17%">
+                                        @item.Responsavel.Nome
+                                    </td>
+                                    <td>
+                                        @item.Historico
+                                    </td>
+                                </tr>
+                                <tr class="treegrid-2 treegrid-parent-1">
+                                    <td width="17%">
+                                        @item.ReferenciaQuestionamento.Data.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td>
+                                        @item.ReferenciaQuestionamento.Hora.ToString("HH:mm")
+                                    </td>
+                                    <td>
+                                        @item.ReferenciaQuestionamento.Responsavel.Nome
+                                    </td>
+                                    <td>
+                                        @item.ReferenciaQuestionamento.Historico
+                                    </td>
+                                </tr>
+                            }
                         }
-
                     </table>
                 </div>
             </div>
         </div>
     </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">Informações Internas</div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-10">
-                            @Html.Label("Obsevação Interna:")
-                            @Html.TextAreaFor(m => m.ObsevacaoInterna, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
-                        </div>
-                    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Informações Internas</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-10">
+                    @Html.Label("Obsevação Interna:")
+                    @Html.TextAreaFor(m => m.ObsevacaoInterna, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
                 </div>
             </div>
-
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
             <div class="form-group">
-                <div class="col-md-2 col-md-10">
-                    <input type="submit" value="Atualizar" class="btn btn-default" />
+                <div class="col-md-12 center-block">
+                    <input type="submit" value="Atualizar Chamado" class="btn btn-default center-block" />
                 </div>
             </div>
+        </div>
+    </div>
 
 }
-<button class="btn btn-default encerrar" id="encerrar" data-toggle="modal" data-id="@Model.Id">Encerrar</button>
+
+
+<div class="form-horizontal">
+    <div class="row">
+        <div class="col-md-2"><button class="btn btn-default encerrar" id="encerrar" data-toggle="modal" data-id="@Model.Id">Encerrar Chamado</button></div>
+        <div class="col-md-4 col-md-offset-6" align="right"><button class="btn btn-default cancelar" id="cancelar" data-toggle="modal" data-id="@Model.Id">Cancelar Chamado</button></div>
+    </div>
+</div>
+
 <p></p>
 <div>
     @Html.ActionLink("Voltar para Acompanhamento", "Index")
@@ -233,7 +278,7 @@
 
 
 @if (TempData["notice"] != null)
-            {
+{
     <div id="modalNotice" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
@@ -272,6 +317,15 @@
                 $("#encerrar").click(function () {
                     var id = $(this).attr("data-id");
                     $("#modal").load("../Encerrar/" + id, function () {
+                        $('#modal').modal({ show: true });
+                    })
+                });
+                $('.tree').treegrid();
+            })
+            $(function () {
+                $("#cancelar").click(function () {
+                    var id = $(this).attr("data-id");
+                    $("#modal").load("../Cancelar/" + id, function () {
                         $('#modal').modal({ show: true });
                     })
                 });

@@ -16,7 +16,8 @@ namespace prj_chamadosBRA.Models
         public string Nome { get; set; }
         public string Contato { get; set; }
         public DateTime? UltimoAcesso { get; set; }
-        
+        public string Chapa { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -41,6 +42,8 @@ namespace prj_chamadosBRA.Models
         public DbSet<ChamadoSubClassificacao> ChamadoSubClassificacao { get; set; }
         public DbSet<ChamadoAcao> ChamadoAcao { get; set; }
         public DbSet<ChamadoLogAcao> ChamadoLogAcao { get; set; }
+        public DbSet<EmailEnvio> EmailEnvio { get; set; }
+        public DbSet<EmailTipo> EmailTipo { get; set; }
 
         public ApplicationDbContext()
             : base("ChamadosBRAConnectionString", throwIfV1Schema: false)

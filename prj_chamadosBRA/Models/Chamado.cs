@@ -13,45 +13,28 @@ namespace prj_chamadosBRA.Models
     {
         [Key]
         public int Id { get; set; }
-        //[Required]
         public string Assunto { get; set; }
-        //[Required]
-        //[DataType(DataType.MultilineText)]
-        //[Display(Name = "Descrição")]
         public string Descricao { get; set; }
-        //[DataType(DataType.MultilineText)]
-        //[Display(Name = "Observação")]
         public string Observacao { get; set; }
-        //[Display(Name = "Setor")]
         public virtual Setor SetorDestino { get; set; }
         public virtual ApplicationUser ResponsavelAberturaChamado { get; set; }
-        //[Display(Name = "Responsavel do Chamado")]
         public virtual ApplicationUser ResponsavelChamado { get; set; }
-        //[Display(Name = "Data Chamado")]
         public DateTime DataHoraAbertura { get; set; }
-        //[Required(ErrorMessage = "Informe a Obra")]
         public virtual Obra ObraDestino { get; set; }
-        //[Display(Name = "Anexo")]
         public virtual ICollection<ChamadoAnexo> Anexos { get; set; }
         public Boolean? StatusChamado { get; set; }
         public string ObsevacaoInterna { get; set; }
         public DateTime? DataHoraBaixa { get; set; }
-        //[Display(Name = "Solução")]
-        //[RequiredIf("StatusChamado", true, ErrorMessage = "Informe a solução do Chamado")]
         public string Solucao { get; set; }
-        //[Display(Name = "Tipo do Chamado")]
-        //[Required(ErrorMessage = "Informe o Tipo do Chamado")]
         public int? TipoChamado { get; set; }
-        //[Display(Name = "Data/Hora de Atendimento")]
-        //[RequiredIf("StatusChamado", true, ErrorMessage = "Informe a Data/Hora de Atendimento")]
         public DateTime? DataHoraAtendimento { get; set; }
-        //[Display(Name = "Classificação do Chamado")]
-        //[RequiredIf("StatusChamado", true, ErrorMessage = "Informe a Classificação do Chamado")]
         public int? Classificacao { get; set; }
-        //[Display(Name = "SubClassificação do Chamado")]
-        //[RequiredIf("StatusChamado", true, ErrorMessage = "Informe a SubClassificação do Chamado")]
         public int? SubClassificacao { get; set; }
         public virtual ApplicationUser ResponsavelCriacaoChamado { get; set; }
         public bool? ErroOperacional { get; set; }
+        public bool Cancelado { get; set; }
+        public string JustificativaCancelamento { get; set; }
+        public DateTime? DataHoraCancelamento { get; set; }
+        public virtual ApplicationUser ResponsavelCancelamento { get; set; }
     }
 }

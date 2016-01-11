@@ -182,7 +182,12 @@ namespace prj_chamadosBRA.Controllers
                 UserManager.AddPassword(id, newPassword);
                 using (var context = new ApplicationDbContext())
                 {
-                    await new EmailServiceUtil().envioEmailRedefinicaoSenhaUsuario(new ApplicationUserDAO(context).retornarUsuario(id));
+                    new EmailEnvioDAO(context).salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = id,
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.RedefinicaoSenhaUsuario
+                    });
                     TempData["notice"] = "Senha do usuário redefinida com Sucesso!";
                     return RedirectToAction("Index");
                 }
@@ -568,7 +573,12 @@ namespace prj_chamadosBRA.Controllers
                                     };
                                     if (new UsuarioSetorDAO(context).salvarUsuarioSetor(usuarioSetor))
                                     {
-                                        await new EmailServiceUtil().envioEmailCriacaoUsuario(user);
+                                        new EmailEnvioDAO(context).salvarEmailEnvio(new EmailEnvio
+                                        {
+                                            InfoEmail = user.Id,
+                                            Data = DateTime.Now,
+                                            IdTipoEmail = (int)EmailTipo.EmailTipos.CriacaoUsuario
+                                        });
                                         TempData["notice"] = "Usuário criado com Sucesso!";
                                         return RedirectToAction("Index");
                                     }

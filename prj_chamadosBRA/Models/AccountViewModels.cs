@@ -76,5 +76,8 @@ namespace prj_chamadosBRA.Models
         [Required]
         [Display(Name = "Contato do Usuario")]
         public string Contato { get; set; }
+        
+        [Display(Name = "Chapa do Usuario")]
+        public string Chapa { get; set; }
     }
 }

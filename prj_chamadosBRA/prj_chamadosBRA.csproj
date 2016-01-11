@@ -204,6 +204,8 @@
     <Compile Include="Models\ChamadoHistorico.cs" />
     <Compile Include="Models\ChamadoLogAcao.cs" />
     <Compile Include="Models\ChamadoSubClassificacao.cs" />
+    <Compile Include="Models\EmailEnvio.cs" />
+    <Compile Include="Models\EmailTipo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ChamadoViewModel.cs" />
     <Compile Include="Models\Obra.cs" />
@@ -221,14 +223,23 @@
     <Compile Include="Repositories\ChamadoHistoricoDAO.cs" />
     <Compile Include="Repositories\ChamadoLogAcaoDAO.cs" />
     <Compile Include="Repositories\ChamadoSubClassificacaoDAO.cs" />
+    <Compile Include="Repositories\EmailEnvioDAO.cs" />
     <Compile Include="Repositories\ObraDAO.cs" />
     <Compile Include="Repositories\PerfilUsuarioDAO.cs" />
     <Compile Include="Repositories\SetorDAO.cs" />
     <Compile Include="Repositories\UsuarioObraDAO.cs" />
     <Compile Include="Repositories\UsuarioSetorDAO.cs" />
+    <Compile Include="Services\AlertaSemRetornoSolicitante.cs" />
+    <Compile Include="Services\EmailEnvioSender.cs" />
+    <Compile Include="Services\ServicoEnvioEmail.cs" />
+    <Compile Include="Services\TimerServicoEnvioEmail.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Services\AlertaSemAtualizacaoInterno.cs" />
+    <Compile Include="Services\AlertaSemResponsavel.cs" />
     <Compile Include="Utils\Criptografia.cs" />
     <Compile Include="Utils\EmailServiceUtil.cs" />
+    <Compile Include="Services\ServicoAlerta.cs" />
+    <Compile Include="Services\TimerServicoAlerta.cs" />
     <Compile Include="Utils\TratamentoListaUtil.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +250,7 @@
     <Content Include="Content\datepicker.css" />
     <Content Include="Content\datepicker3.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\jquery.treegrid.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
@@ -374,8 +386,13 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.min.js" />
+    <Content Include="Scripts\jquery.cookie.js" />
     <Content Include="Scripts\jquery.maskedinput.js" />
     <Content Include="Scripts\jquery.maskedinput.min.js" />
+    <Content Include="Scripts\jquery.treegrid.bootstrap2.js" />
+    <Content Include="Scripts\jquery.treegrid.bootstrap3.js" />
+    <Content Include="Scripts\jquery.treegrid.js" />
+    <Content Include="Scripts\jquery.treegrid.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -520,6 +537,7 @@
     <Content Include="Views\Chamado\Triagem.cshtml" />
     <Content Include="Views\Chamado\TriagemInfo.cshtml" />
     <Content Include="Views\Chamado\EncerradoInfo.cshtml" />
+    <Content Include="Views\Chamado\Cancelar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

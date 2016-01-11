@@ -131,8 +131,16 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-10">
-                                @Html.Label("Responsavel Chamado:")
-                                @Html.DisplayFor(model => model.ResponsavelChamado.Nome)
+                                @if (!Model.Cancelado)
+                                {
+                                    @Html.Label("Responsavel Chamado:")
+                                    @Html.DisplayFor(model => model.ResponsavelChamado.Nome)
+                                }
+                                else
+                                {
+                                    @Html.Label("Responsavel Cancelamento:")
+                                    @Html.DisplayFor(model => model.ResponsavelCancelamento.Nome)
+                                }
                             </div>
                         </div>
                         <div class="row">
@@ -149,20 +157,36 @@
                         </div>
                         <div class="row">
                             <div class="col-md-10">
-                                @Html.Label("Solução:")
-                                @Html.DisplayFor(model => model.Solucao)
+                                @if (!Model.Cancelado)
+                                {
+                                    @Html.Label("Solução:")
+                                    @Html.DisplayFor(model => model.Solucao)
+                                }
+                                else
+                                {
+                                    @Html.Label("Justificativa Cancelamento:")
+                                    @Html.DisplayFor(model => model.JustificativaCancelamento)
+                                }
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-10">
-                                @Html.Label("Data Baixa:")
-                                @Html.DisplayFor(model => model.DataHoraBaixa)
+                                @if (!Model.Cancelado)
+                                {
+                                    @Html.Label("Data Baixa:")
+                                    @Html.DisplayFor(model => model.DataHoraBaixa)
+                                }
+                                else
+                                {
+                                    @Html.Label("Data Cancelamento:")
+                                    @Html.DisplayFor(model => model.DataHoraCancelamento)
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">                
+            <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
             </div>
         }

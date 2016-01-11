@@ -7,7 +7,6 @@
 @using (Html.BeginForm("Create", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "create" }))
 {
     @Html.AntiForgeryToken()
-    <input type="hidden" value="${ViewData.ModelState.IsValid}" id="validador" name="validador" />
 
     <div class="form-horizontal">
         <hr />
