@@ -18,7 +18,7 @@ namespace prj_chamadosBRA.Service
                     {
                         InfoEmail = chamado.Id.ToString(),
                         Data = DateTime.Now,
-                        IdTipoEmail = (int)EmailTipo.EmailTipos.AlertaSemAtualizacaoUmDiaTrintaMinutos
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.AlertaSemAtualizacaoDoisDiasTrintaMinutos
                     });
                     //Alerta de Chamado Um dia e trinta minutos
                     new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao
@@ -44,7 +44,7 @@ namespace prj_chamadosBRA.Service
                     {
                         InfoEmail = chamado.Id.ToString(),
                         Data = DateTime.Now,
-                        IdTipoEmail = (int)EmailTipo.EmailTipos.AlertaSemAtualizacaoUmDiaUmaHora
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.AlertaSemAtualizacaoDoisDiasUmaHora
                     });
                     //Alerta de Chamado de Uma Hora
                     new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao
@@ -70,7 +70,7 @@ namespace prj_chamadosBRA.Service
                     {
                         InfoEmail = chamado.Id.ToString(),
                         Data = DateTime.Now,
-                        IdTipoEmail = (int)EmailTipo.EmailTipos.AlertaSemAtualizacaoUmDiaDuasHoras
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.AlertaSemAtualizacaoDoisDiasDuasHoras
                     });
                     //Alerta de Chamado de Duas Horas
                     new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao

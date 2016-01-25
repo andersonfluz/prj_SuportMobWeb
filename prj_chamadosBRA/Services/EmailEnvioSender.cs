@@ -164,7 +164,6 @@ namespace prj_chamadosBRA.Service
                 }
             }
         }
-
         public static void EnvioEmailRedefinicaoSenhaUsuario()
         {
             using (var db = new ApplicationDbContext())
@@ -172,8 +171,11 @@ namespace prj_chamadosBRA.Service
                 var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.RedefinicaoSenhaUsuario);
                 foreach (var email in emailEnvio)
                 {
-                    var User = new ApplicationUserDAO(db).retornarUsuario(email.InfoEmail);
-                    var retorno = EmailServiceUtil.envioEmailRedefinicaoSenhaUsuario(User);
+                    var user = new ApplicationUserDAO(db).retornarUsuario(email.InfoEmail);
+                    var objCript = new Criptografia();
+                    objCript["id"] = user.Id.ToString();
+                    var IdCriptografado = objCript.ToString();
+                    var retorno = EmailServiceUtil.envioEmailRedefinicaoSenhaUsuario(user, IdCriptografado);
                     if (retorno == "0")
                     {
                         new EmailEnvioDAO(db).eliminarEmailEnvio(email);
@@ -210,7 +212,6 @@ namespace prj_chamadosBRA.Service
                 }
             }
         }
-
         public static void EnvioEmailAlertaSemResponsavelUmaHora()
         {
             using (var db = new ApplicationDbContext())
@@ -233,7 +234,6 @@ namespace prj_chamadosBRA.Service
                 }
             }
         }
-
         public static void EnvioEmailAlertaSemResponsavelDuasHoras()
         {
             using (var db = new ApplicationDbContext())
@@ -256,96 +256,92 @@ namespace prj_chamadosBRA.Service
                 }
             }
         }
-
-        public static void EnvioEmailAlertaSemAtualizacaoUmDiaTrintaMinutos()
+        public static void EnvioEmailAlertaSemAtualizacaoDoisDiasTrintaMinutos()
         {
             using (var db = new ApplicationDbContext())
             {
-                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AlertaSemAtualizacaoUmDiaTrintaMinutos);
-                //foreach (var email in emailEnvio)
-                //{
-                //    var chamado = new ChamadoDAO(db).BuscarChamadoId(Convert.ToInt32(email.InfoEmail));
-                //    var retorno = EmailServiceUtil.envioEmailSemResponsavelDuasHoras(chamado);
-                //    if (retorno == "0")
-                //    {
-                //        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
-                //    }
-                //    else
-                //    {
-                //        email.Tentativas = email.Tentativas + 1;
-                //        email.Erro = retorno;
-                //        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
-                //    }
-                //}
+                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AlertaSemAtualizacaoDoisDiasTrintaMinutos);
+                foreach (var email in emailEnvio)
+                {
+                    var chamado = new ChamadoDAO(db).BuscarChamadoId(Convert.ToInt32(email.InfoEmail));
+                    var retorno = EmailServiceUtil.envioEmailSemAtualizacaoDoisDiasTrintaMinutos(chamado);
+                    if (retorno == "0")
+                    {
+                        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
+                    }
+                    else
+                    {
+                        email.Tentativas = email.Tentativas + 1;
+                        email.Erro = retorno;
+                        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
+                    }
+                }
             }
         }
-
-        public static void EnvioEmailAlertaSemAtualizacaoUmDiaUmaHora()
+        public static void EnvioEmailAlertaSemAtualizacaoDoisDiasUmaHora()
         {
             using (var db = new ApplicationDbContext())
             {
-                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AlertaSemAtualizacaoUmDiaUmaHora);
-                //foreach (var email in emailEnvio)
-                //{
-                //    var chamado = new ChamadoDAO(db).BuscarChamadoId(Convert.ToInt32(email.InfoEmail));
-                //    var retorno = EmailServiceUtil.envioEmailSemResponsavelDuasHoras(chamado);
-                //    if (retorno == "0")
-                //    {
-                //        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
-                //    }
-                //    else
-                //    {
-                //        email.Tentativas = email.Tentativas + 1;
-                //        email.Erro = retorno;
-                //        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
-                //    }
-                //}
+                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AlertaSemAtualizacaoDoisDiasUmaHora);
+                foreach (var email in emailEnvio)
+                {
+                    var chamado = new ChamadoDAO(db).BuscarChamadoId(Convert.ToInt32(email.InfoEmail));
+                    var retorno = EmailServiceUtil.envioEmailSemAtualizacaoDoisDiasUmaHora(chamado);
+                    if (retorno == "0")
+                    {
+                        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
+                    }
+                    else
+                    {
+                        email.Tentativas = email.Tentativas + 1;
+                        email.Erro = retorno;
+                        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
+                    }
+                }
             }
         }
-
-        public static void EnvioEmailAlertaSemAtualizacaoUmDiaDuasHoras()
+        public static void EnvioEmailAlertaSemAtualizacaoDoisDiasDuasHoras()
         {
             using (var db = new ApplicationDbContext())
             {
-                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AlertaSemAtualizacaoUmDiaDuasHoras);
-                //foreach (var email in emailEnvio)
-                //{
-                //    var chamado = new ChamadoDAO(db).BuscarChamadoId(Convert.ToInt32(email.InfoEmail));
-                //    var retorno = EmailServiceUtil.envioEmailSemResponsavelDuasHoras(chamado);
-                //    if (retorno == "0")
-                //    {
-                //        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
-                //    }
-                //    else
-                //    {
-                //        email.Tentativas = email.Tentativas + 1;
-                //        email.Erro = retorno;
-                //        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
-                //    }
-                //}
+                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AlertaSemAtualizacaoDoisDiasDuasHoras);
+                foreach (var email in emailEnvio)
+                {
+                    var chamado = new ChamadoDAO(db).BuscarChamadoId(Convert.ToInt32(email.InfoEmail));
+                    var retorno = EmailServiceUtil.envioEmailSemAtualizacaoDoisDiasDuasHoras(chamado);
+                    if (retorno == "0")
+                    {
+                        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
+                    }
+                    else
+                    {
+                        email.Tentativas = email.Tentativas + 1;
+                        email.Erro = retorno;
+                        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
+                    }
+                }
             }
         }
-
-        public static void EnvioEmailAlertaSemRetornoSolicitanteUmaHora()
+        public static void EnvioEmailAlertaSemRetornoSolicitanteUmaOuSeisHoras()
         {
             using (var db = new ApplicationDbContext())
             {
-                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AlertaSemAtualizacaoUmDiaDuasHoras);
-                //foreach (var email in emailEnvio)
-                //{
-                //    var chamado = new ChamadoDAO(db).BuscarChamadoId(Convert.ToInt32(email.InfoEmail));
-                //    var retorno = EmailServiceUtil.envioEmailSemResponsavelDuasHoras(chamado);
-                //    if (retorno == "0")
-                //    {
-                //        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
-                //    }
-                //    else
-                //    {
-                //        email.Tentativas = email.Tentativas + 1;
-                //        email.Erro = retorno;
-                //        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
-                //    }
-                //}
+                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AlertaSemRetornoSolicitanteUmaOuSeisHoras);
+                foreach (var email in emailEnvio)
+                {
+                    var chamado = new ChamadoDAO(db).BuscarChamadoId(Convert.ToInt32(email.InfoEmail));
+                    var retorno = EmailServiceUtil.envioEmailSemRetornoSolicitanteUmaOuSeisHoras(chamado);
+                    if (retorno == "0")
+                    {
+                        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
+                    }
+                    else
+                    {
+                        email.Tentativas = email.Tentativas + 1;
+                        email.Erro = retorno;
+                        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
+                    }
+                }
             }
         }
     }

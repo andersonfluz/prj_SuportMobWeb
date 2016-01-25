@@ -19,8 +19,5 @@ namespace prj_chamadosBRA.Models
         public DateTime Hora { get; set; }
         public virtual ApplicationUser Responsavel { get; set; }
         public string Historico { get; set; }
-        public bool Questionamento { get; set; }
-        public virtual ChamadoHistorico ReferenciaQuestionamento { get; set; }
-        public bool RetornoQuestionamento { get; set; }
     }
 }

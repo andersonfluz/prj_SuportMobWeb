@@ -80,4 +80,36 @@ namespace prj_chamadosBRA.Models
         [Display(Name = "Chapa do Usuario")]
         public string Chapa { get; set; }
     }
+
+    public class RecoveryInitalViewModel
+    {
+
+        [Required]
+        [Display(Name = "Usuario")]
+        public string UserName { get; set; }
+
+    }
+
+    public class RecoveryViewModel
+    {
+        [Required]
+        [Display(Name = "Id")]
+        public string Id { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "A {0} tem que ter no minimo {2} caracteres.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Senha")]
+        public string Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirmação de Senha")]
+        [Compare("Password", ErrorMessage = "A senha e a confirmação da senha não batem.")]
+        public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "Nome do Usuario")]
+        public string Nome { get; set; }
+
+    }
 }

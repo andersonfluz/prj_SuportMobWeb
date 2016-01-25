@@ -694,8 +694,7 @@ namespace prj_chamadosBRA.Repositories
                             where e.StatusChamado == false &&
                                   e.ResponsavelChamado != null &&
                                   l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 7 || s.ChamadoAcao.IdAcao == 1)).Id &&
-                                  h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&
-                                  !h.Questionamento &&
+                                  h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&                                  
                                   DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
                                   DbFunctions.DiffMinutes(h.Data, DateTime.Now) >= 2910
 
@@ -712,7 +711,6 @@ namespace prj_chamadosBRA.Repositories
                                   e.ResponsavelChamado != null &&
                                   l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 8 || s.ChamadoAcao.IdAcao == 1)).Id &&
                                   h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&
-                                  !h.Questionamento &&
                                   DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
                                   DbFunctions.DiffDays(h.Data, DateTime.Now) >= 2940
                             select e).ToList();
@@ -728,7 +726,6 @@ namespace prj_chamadosBRA.Repositories
                                   e.ResponsavelChamado != null &&
                                   l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 9 || s.ChamadoAcao.IdAcao == 1)).Id &&
                                   h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&
-                                  !h.Questionamento &&
                                   DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
                                   DbFunctions.DiffMinutes(h.Data, DateTime.Now) >= 3000
                             select e).ToList();
@@ -744,9 +741,7 @@ namespace prj_chamadosBRA.Repositories
                                   e.ResponsavelChamado != null &&
                                   l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 10 || s.ChamadoAcao.IdAcao == 1)).Id &&
                                   ((DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 60 && l.ChamadoAcao.IdAcao == 1) ||
-                                  (DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 360 && l.ChamadoAcao.IdAcao == 10)) &&
-                                  h.Questionamento &&
-                                  h.ReferenciaQuestionamento == null
+                                  (DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 360 && l.ChamadoAcao.IdAcao == 10))                                 
                             select e).ToList();
             return chamados;
         }

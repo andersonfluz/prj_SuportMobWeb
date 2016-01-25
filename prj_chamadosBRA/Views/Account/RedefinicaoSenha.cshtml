@@ -1,0 +1,49 @@
+﻿@model prj_chamadosBRA.Models.RecoveryViewModel
+
+@{
+    ViewBag.Title = "RedefinicaoSenha";
+}
+
+<h2>Redefinicao de Senha</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h4>Recupere a sua conta.</h4>
+    <hr />
+    @Html.ValidationSummary()
+    @Html.HiddenFor(model => model.Id)
+    @Html.Label(Model.Nome)
+    <br>
+    <br>
+    @Html.Label("Informe abaixo a nova senha para acesso ao portal")
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.Label("Nova Senha", new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Confirmar Nova Senha", new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-default" value="Salvar Nova Senha" />
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

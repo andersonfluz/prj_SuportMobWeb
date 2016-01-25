@@ -34,7 +34,19 @@ namespace prj_chamadosBRA.Utils
                     }
                     else
                     {
-                        mail.CC.Add(chamado.SetorDestino.EmailSetor);
+                        if(chamado.SetorDestino.SetorCorporativo != null)
+                        {
+                            var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(new SetorDAO().BuscarSetorId(chamado.SetorDestino.SetorCorporativo.Value), null);
+                            foreach(var usuario in usuarios)
+                            {
+                                mail.CC.Add(usuario.UserName);
+                            }
+
+                        }else
+                        {
+                            mail.CC.Add(chamado.SetorDestino.EmailSetor);
+                        }
+
                     }
                     mail.Subject = "ChamadosBRA - Notificação Abertura Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAbertura(chamado);
@@ -206,7 +218,7 @@ namespace prj_chamadosBRA.Utils
             }
         }
 
-        public static string envioEmailRedefinicaoSenhaUsuario(ApplicationUser user)
+        public static string envioEmailRedefinicaoSenhaUsuario(ApplicationUser user, string IdCriptografado)
         {
             try
             {
@@ -216,7 +228,7 @@ namespace prj_chamadosBRA.Utils
 
                     mail.To.Add(new MailAddress(user.UserName));
                     mail.Subject = "ChamadosBRA - Redefinição de senha do usuario na plataforma";
-                    mail.Body = montarCorpoMensagemReiniciarSenhaUsuario(user);
+                    mail.Body = montarCorpoMensagemReiniciarSenhaUsuario(user, IdCriptografado);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
                     smtpClient.Send(mail);
@@ -320,21 +332,17 @@ namespace prj_chamadosBRA.Utils
 
                     if (chamado.SetorDestino == null)
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
-                        foreach (var usuario in usuarios)
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
+                        foreach (var setor in setores)
                         {
                             mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
+                            //mail.To.Add(new MailAddress(setor.EmailResponsavel));
                         }
                     }
                     else
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
-                        foreach (var usuario in usuarios)
-                        {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
-                        }
+                        mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                        //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
                     }
                     mail.Subject = "ChamadosBRA - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "uma hora");
@@ -361,21 +369,17 @@ namespace prj_chamadosBRA.Utils
 
                     if (chamado.SetorDestino == null)
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
-                        foreach (var usuario in usuarios)
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
+                        foreach (var setor in setores)
                         {
                             mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
+                            //mail.To.Add(new MailAddress(setor.EmailResponsavel));
                         }
                     }
                     else
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
-                        foreach (var usuario in usuarios)
-                        {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
-                        }
+                        mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                        //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
                     }
                     mail.Subject = "ChamadosBRA - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "duas horas");
@@ -399,25 +403,8 @@ namespace prj_chamadosBRA.Utils
                 using (var mail = new MailMessage())
                 {
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
-
-                    if (chamado.SetorDestino == null)
-                    {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
-                        foreach (var usuario in usuarios)
-                        {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
-                        }
-                    }
-                    else
-                    {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
-                        foreach (var usuario in usuarios)
-                        {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
-                        }
-                    }
+                    mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                    //mail.To.Add(new MailAddress(chamado.ResponsavelChamado.UserName));
                     mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
                     mail.IsBodyHtml = true;
@@ -443,21 +430,17 @@ namespace prj_chamadosBRA.Utils
 
                     if (chamado.SetorDestino == null)
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
-                        foreach (var usuario in usuarios)
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
+                        foreach (var setor in setores)
                         {
                             mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
+                            //mail.To.Add(new MailAddress(setor.EmailResponsavel));
                         }
                     }
                     else
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
-                        foreach (var usuario in usuarios)
-                        {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
-                        }
+                        mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                        //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
                     }
                     mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
@@ -484,21 +467,17 @@ namespace prj_chamadosBRA.Utils
 
                     if (chamado.SetorDestino == null)
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
-                        foreach (var usuario in usuarios)
+                        var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
+                        foreach (var setor in setores)
                         {
                             mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
+                            //mail.To.Add(new MailAddress(setor.EmailResponsavel));
                         }
                     }
                     else
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
-                        foreach (var usuario in usuarios)
-                        {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
-                        }
+                        mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                        //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
                     }
                     mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
@@ -522,9 +501,10 @@ namespace prj_chamadosBRA.Utils
                 using (var mail = new MailMessage())
                 {
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
-                    mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));                    
+                    //mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));                    
+                    mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
                     mail.Subject = "ChamadosBRA - Alerta de chamado sem retorno do solicitante - Chamado N. " + chamado.Id;
-                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "uma hora");
+                    mail.Body = montarCorpoMensagemAlertaSemRetornoSolicitante(chamado, "uma hora");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
                     smtpClient.Send(mail);
@@ -1000,7 +980,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<em>" + mensagem + "</em></td>"
+                                   + "<em style='color:red;'>" + mensagem + "</em></td>"
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
@@ -1079,20 +1059,12 @@ namespace prj_chamadosBRA.Utils
                                    + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
                                    + "&nbsp;</td>"
                                    + "</tr>"
-                                   + "<tr>"
-                                   + "<tr>"
-                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
-                                   + "Observações Internas:</td>"
-                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
-                                   + observacoesInterna + "</td>"
-                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
-                                   + "&nbsp;</td>"
-                                   + "</tr>"
+                                   + "<tr>"                                   
                                    + "<tr>"
                                    + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
                                    + "Historico de Alteração:</td>"
-                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
-                                   + historico + "</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top; color:red'><b>"
+                                   + historico + "</b></td>"
                                    + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
                                    + "&nbsp;</td>"
                                    + "</tr>"
@@ -1162,7 +1134,7 @@ namespace prj_chamadosBRA.Utils
             return corpoMensagem;
         }
 
-        private static string montarCorpoMensagemReiniciarSenhaUsuario(ApplicationUser user)
+        private static string montarCorpoMensagemReiniciarSenhaUsuario(ApplicationUser user, string IdCriptografado)
         {
             var corpoMensagem = "<div>"
                                 + "<table cellspacing='0' cellpadding='0' style='width: 100%'>"
@@ -1174,7 +1146,7 @@ namespace prj_chamadosBRA.Utils
                                 + "<tr>"
                                 + "<td style='padding-right: 2px; padding-left: 2px'>"
                                 + "ChamadosBRA - "
-                                + "Criação de Usuario"
+                                + "Redefinição de Senha do Usuario"
                                 + "</td>"
                                 + "</tr>"
                                 + "</tbody>"
@@ -1189,17 +1161,18 @@ namespace prj_chamadosBRA.Utils
                                 + "<td colspan='3'>"
                                 + "Prezado " + user.Nome + " ! <br />"
                                 + "<br />"
-                                + "Sua senha foi redefinida com sucesso: "
-                                + "instruções abaixo: <br />"
+                                + "Conforme solicitação clique no botão abaixo para recuperar sua senha: "
                                 + "<br />"
-                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. Abra seu navegador de internet e digite o endereço: "
-                                + "<a href='http://portal.colegioantoniovieira.com.br/ChamadosBRA/'>http://portal.colegioantoniovieira.com.br/ChamadosBRA/</a>"
                                 + "<br />"
-                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. No campo usuário digite seu email: " + user.UserName + "  <br />"
-                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. E utilize a senha: 123456 <br />"
                                 + "<br />"
-                                + "Pronto! Já poderá voltar a utilizar a ferramenta. Sugerimos que altere imediatamente sua "
-                                + "senha."
+                                + "<a href='http://suporte.ani.org.br/ChamadosBRA/Account/RedefinicaoSenha/?idCript=" + IdCriptografado + "' style='background: #B7181D;background-image: -webkit-linear-gradient(top, #B7181D, #c26e71);  background-image: -moz-linear-gradient(top, #B7181D, #c26e71);  background-image: -ms-linear-gradient(top, #B7181D, #c26e71);  background-image: -o-linear-gradient(top, #B7181D, #c26e71);  background-image: linear-gradient(to bottom, #B7181D, #c26e71);  -webkit-border-radius: 28;  -moz-border-radius: 28; border-radius: 28px;  font-family: Arial; color: #ffffff; font-size: 20px;  padding: 10px 20px 10px 20px;  text-decoration: none;'>Recupere sua Senha!</a>"
+                                + "<br />"
+                                + "<br />"
+                                + "<br />"
+                                + "Ou Copie o link Abaixo e cole no seu navegador: "
+                                + "<br />"
+                                + "http://suporte.ani.org.br/ChamadosBRA/Account/RedefinicaoSenha/?idCript=" + IdCriptografado
+                                + "<br />"
                                 + "<br />"
                                 + "<br />"
                                 + "Equipe de suporte CAS.<br />"
@@ -1208,7 +1181,7 @@ namespace prj_chamadosBRA.Utils
                                 + "</tbody>"
                                 + "</table>"
                                 + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                + "</br><p>&copy;" + @DateTime.Now.Year + " - ChamadosBRA</p>"
                                 + "</div>";
             return corpoMensagem;
         }

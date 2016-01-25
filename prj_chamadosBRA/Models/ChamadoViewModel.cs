@@ -34,12 +34,11 @@ namespace prj_chamadosBRA.Models
     {
         [Key]
         public int Id { get; set; }
-        public Boolean? StatusChamado { get; set; }
+        public bool? StatusChamado { get; set; }
         [Display(Name = "Solução")]
         [Required(ErrorMessage = "Informe a solução do Chamado")]
         public string Solucao { get; set; }
         [Display(Name = "Data/Hora de Atendimento")]
-        [Required(ErrorMessage = "Informe a Data/Hora de Atendimento")]
         public DateTime? DataHoraAtendimento { get; set; }
         [Display(Name = "Classificação do Chamado")]
         [Required(ErrorMessage = "Informe a Classificação do Chamado")]

@@ -115,7 +115,7 @@ namespace prj_chamadosBRA.GN
             }
         }
 
-        public ChamadoHistorico registrarHistorico(DateTime dataHora, ApplicationUser responsavel, String Historico, Chamado chamado, bool? retornoSolicitante = false)
+        public ChamadoHistorico registrarHistorico(DateTime dataHora, ApplicationUser responsavel, String Historico, Chamado chamado)
         {
             try
             {
@@ -125,8 +125,7 @@ namespace prj_chamadosBRA.GN
                     Data = dataHora,
                     Hora = dataHora,
                     Responsavel = responsavel,
-                    Historico = Historico,
-                    Questionamento = retornoSolicitante != null ? retornoSolicitante.Value : false
+                    Historico = Historico
                 };
                 new ChamadoHistoricoDAO(db).salvarHistorico(ch);
                 return ch;
@@ -156,7 +155,7 @@ namespace prj_chamadosBRA.GN
             }
         }
 
-        public async Task<bool> atualizarChamado(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento, ApplicationUser responsavel, bool? retornoSolicitante)
+        public async Task<bool> atualizarChamado(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento, ApplicationUser responsavel)
         {
             var cDAO = new ChamadoDAO(db);
             var cGN = new ChamadoGN(db);
@@ -254,7 +253,7 @@ namespace prj_chamadosBRA.GN
 
             if (informacoesAcompanhamento == null || informacoesAcompanhamento != "")
             {
-                chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, informacoesAcompanhamento, chamadoOrigem, retornoSolicitante);
+                chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, informacoesAcompanhamento, chamadoOrigem);
                 new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
                 {
                     InfoEmail = chamadoHistorico.idChamadoHistorico.ToString(),

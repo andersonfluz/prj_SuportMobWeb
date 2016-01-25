@@ -211,6 +211,7 @@
     <Compile Include="Models\Obra.cs" />
     <Compile Include="Models\PerfilUsuario.cs" />
     <Compile Include="Models\Setor.cs" />
+    <Compile Include="Models\Tarefa.cs" />
     <Compile Include="Models\UsuarioObra.cs" />
     <Compile Include="Models\UsuarioSetor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Repositories\ObraDAO.cs" />
     <Compile Include="Repositories\PerfilUsuarioDAO.cs" />
     <Compile Include="Repositories\SetorDAO.cs" />
+    <Compile Include="Repositories\TarefaDAO.cs" />
     <Compile Include="Repositories\UsuarioObraDAO.cs" />
     <Compile Include="Repositories\UsuarioSetorDAO.cs" />
     <Compile Include="Services\AlertaSemRetornoSolicitante.cs" />
@@ -538,6 +540,8 @@
     <Content Include="Views\Chamado\TriagemInfo.cshtml" />
     <Content Include="Views\Chamado\EncerradoInfo.cshtml" />
     <Content Include="Views\Chamado\Cancelar.cshtml" />
+    <Content Include="Views\Account\EsqueceuSenha.cshtml" />
+    <Content Include="Views\Account\RedefinicaoSenha.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

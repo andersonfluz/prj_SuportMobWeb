@@ -26,10 +26,10 @@ namespace prj_chamadosBRA.Models
             AlertaSemResponsavelTrintaMinutos = 9,
             AlertaSemResponsavelUmaHora = 10,
             AlertaSemResponsavelDuasHoras = 11,
-            AlertaSemAtualizacaoUmDiaTrintaMinutos = 12,
-            AlertaSemAtualizacaoUmDiaUmaHora = 13,
-            AlertaSemAtualizacaoUmDiaDuasHoras = 14,
-            AlertaSemRetornoSolicitanteUmaHora = 15
+            AlertaSemAtualizacaoDoisDiasTrintaMinutos = 12,
+            AlertaSemAtualizacaoDoisDiasUmaHora = 13,
+            AlertaSemAtualizacaoDoisDiasDuasHoras = 14,
+            AlertaSemRetornoSolicitanteUmaOuSeisHoras = 15
         }
     }
 }

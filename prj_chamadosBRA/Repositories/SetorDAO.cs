@@ -58,9 +58,9 @@ namespace prj_chamadosBRA.Repositories
             return setor;
         }
 
-        public Boolean salvarSetor(Setor setor)
+        public bool salvarSetor(Setor setor)
         {
-
+            setor.Ativo = true;
             db.Setor.Add(setor);
             db.SaveChanges();
             return true;

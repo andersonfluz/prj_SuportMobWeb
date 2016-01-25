@@ -19,7 +19,7 @@ namespace prj_chamadosBRA
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            TimerServicoAlerta.Start();
+            //TimerServicoAlerta.Start();
             TimerServicoEnvioEmail.Start();
         }
     }

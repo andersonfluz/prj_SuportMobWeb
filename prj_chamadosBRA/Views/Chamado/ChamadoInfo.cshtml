@@ -72,75 +72,25 @@
                                         <th>
                                             @Html.DisplayName("Histórico")
                                         </th>
-                                        <th>
-                                            @Html.DisplayName("Responder")
-                                        </th>
                                     </tr>
 
                                     @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoHistorico>)ViewBag.listaChamadoHistorico))
                                     {
-                                        if (item.ReferenciaQuestionamento == null)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    @item.Data.ToString("dd/MM/yyyy")
-                                                </td>
-                                                <td>
-                                                    @item.Hora.ToString("HH:mm")
-                                                </td>
-                                                <td width="17%">
-                                                    @item.Responsavel.Nome
-                                                </td>
-                                                <td>
-                                                    @item.Historico
-                                                </td>
-                                                <td align="center">
-                                                    @if (item.Questionamento)
-                                                    {
-                                                        <a href="#" class="btn btn-primary" id="message" data-id="@item.idChamadoHistorico" id="myFavoriteFormSubmitButton">
-                                                            <i class="glyphicon glyphicon-envelope"></i>
-                                                        </a>
-                                                            <!--<input type="submit" name="btn" id="message" data-id="@item.idChamadoHistorico" class="glyphicon glyphicon-envelope"/>
-                                                            <input type="button" class="btn btn-default mensage" data-id="@item.idChamadoHistorico"><i class="glyphicon glyphicon-envelope"></i></input>-->
-                                                    }
-                                                </td>
-                                            </tr>
-                                        }
-                                        else
-                                        {
-                                            <tr class="treegrid-1">
-                                                <td width="15%">
-                                                    @item.Data.ToString("dd/MM/yyyy")
-                                                </td>
-                                                <td>
-                                                    @item.Hora.ToString("HH:mm")
-                                                </td>
-                                                <td width="17%">
-                                                    @item.Responsavel.Nome
-                                                </td>
-                                                <td>
-                                                    @item.Historico
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                                <tr class="treegrid-2 treegrid-parent-1">
-                                                    <td width="17%">
-                                                        @item.ReferenciaQuestionamento.Data.ToString("dd/MM/yyyy")
-                                                    </td>
-                                                    <td>
-                                                        @item.ReferenciaQuestionamento.Hora.ToString("HH:mm")
-                                                    </td>
-                                                    <td>
-                                                        @item.ReferenciaQuestionamento.Responsavel.Nome
-                                                    </td>
-                                                    <td>
-                                                        @item.ReferenciaQuestionamento.Historico
-                                                    </td>
-                                                    <td></td>
-                                                </tr>
-                                        }
+                                        <tr>
+                                            <td>
+                                                @item.Data.ToString("dd/MM/yyyy")
+                                            </td>
+                                            <td>
+                                                @item.Hora.ToString("HH:mm")
+                                            </td>
+                                            <td width="17%">
+                                                @item.Responsavel.Nome
+                                            </td>
+                                            <td>
+                                                @item.Historico
+                                            </td>
+                                        </tr>
                                     }
-
                                 </table>
                             </div>
                         </div>

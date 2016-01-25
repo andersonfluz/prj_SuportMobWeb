@@ -156,6 +156,7 @@
                 <div class="col-md-10">
                     @Html.Label("Informações Adicionais:")
                     @Html.TextArea("informacoesAcompanhamento", htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+
                 </div>
             </div>
         </div>
@@ -165,8 +166,8 @@
         <div class="panel-heading">Histórico do Chamado</div>
         <div class="panel-body tab-pane">
             <div class="row">
-                <div class="col-md-10">
-                    <table class="table" data-row-style="rowStyle">
+                <div class="col-md-12">
+                    <table class="table tree table-hover">
                         <tr>
                             <th>
                                 @Html.DisplayName("Data")
@@ -199,7 +200,6 @@
                                 </td>
                             </tr>
                         }
-
                     </table>
                 </div>
             </div>
@@ -221,7 +221,7 @@
         <div class="panel-body">
             <div class="form-group">
                 <div class="col-md-12 center-block">
-                    <input type="submit" value="Atualizar Chamado" class="btn btn-default center-block" />
+                    <input type="submit" id="atualizar" value="Atualizar Chamado" class="btn btn-default center-block" />
                 </div>
             </div>
         </div>
@@ -286,6 +286,7 @@
                         $('#modal').modal({ show: true });
                     })
                 });
+                $('.tree').treegrid();
             })
             $(function () {
                 $("#cancelar").click(function () {
@@ -295,6 +296,9 @@
                     })
                 });
             })
+            $('#atualizar').click(function () {
+                waitingDialog.show('Atualizando Chamado...');
+            });
         });
     </script>
 

@@ -14,7 +14,7 @@ using prj_chamadosBRA.GN;
 
 namespace prj_chamadosBRA.Controllers
 {
-    [Authorize]
+
     public class AccountController : Controller
     {
         #region Construtor Antigo
@@ -83,7 +83,7 @@ namespace prj_chamadosBRA.Controllers
 
         //
         // GET: /Account/Index
-        [AllowAnonymous]
+        [Authorize]
         public ActionResult Index(string filtro)
         {
             try
@@ -135,7 +135,7 @@ namespace prj_chamadosBRA.Controllers
                 //montagem de perfil
                 var perfils = new SelectList(PerfilUsuarioDAO.BuscarPerfisParaAdmObra(), "IdPerfil", "Descricao", user.PerfilUsuario);
                 ViewBag.PerfilUsuario = perfils;
-                
+
                 //montagem de obra
                 var obrasUsuario = new UsuarioObraDAO().buscarUsuariosObras(user);
                 ViewBag.ObrasUsuario = obrasUsuario;
@@ -165,12 +165,83 @@ namespace prj_chamadosBRA.Controllers
                 userOrigem.UserName = user.UserName;
                 userOrigem.PerfilUsuario = Convert.ToInt32(PerfilUsuario);
                 userOrigem.Contato = user.Contato;
+                userOrigem.Chapa = user.Chapa;
                 appDAO.atualizarApplicationUser(user.Id, userOrigem);
             }
             TempData["notice"] = "Dados alterados com sucesso!";
             return RedirectToAction("Index");
-
         }
+
+        // GET: /Account/EsqueceuSenha/5
+        public ActionResult EsqueceuSenha()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult EsqueceuSenha(RecoveryInitalViewModel usuario)
+        {
+            try
+            {
+                var user = new ApplicationUserDAO().retornarUsuarioPorUsername(usuario.UserName);
+                if (user != null)
+                {
+                    new EmailEnvioDAO().salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = user.Id,
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.RedefinicaoSenhaUsuario
+                    });
+                    TempData["notice"] = "Email de recuperação de senha foi enviado com sucesso, verifique seu email.";
+                    return RedirectToAction("Login", "Account");
+                }
+                else
+                {
+                    TempData["notice"] = "Usuario não encontrado.";
+                    return RedirectToAction("Login", "Account");
+                }
+            }
+            catch (NullReferenceException)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
+        // GET: /Account/RedefinicaoSenha/5
+        public ActionResult RedefinicaoSenha(string idCript)
+        {
+            var objCript = new Criptografia(idCript);
+            var idUser = objCript["id"].ToString();
+            var user = UserManager.FindById(idUser);
+            var userRecovery = new RecoveryViewModel
+            {
+                Id = user.Id,
+                Nome = user.Nome
+            };
+            return View(userRecovery);
+        }
+
+
+        [HttpPost]
+        public ActionResult RedefinicaoSenha(RecoveryViewModel user, string password)
+        {
+            try
+            {
+                UserManager.RemovePassword(user.Id);
+                UserManager.AddPassword(user.Id, password);
+                TempData["notice"] = "Senha alterada com sucesso!";
+                return RedirectToAction("Login", "Account");
+
+            }
+            catch (NullReferenceException)
+            {
+                TempData["notice"] = "Problemas ao Alterar a senha!";
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
+
 
         [Authorize]
         public async Task<ActionResult> ReiniciarSenha(string id)
@@ -459,7 +530,7 @@ namespace prj_chamadosBRA.Controllers
                             Session["TipoChamadoVisivel"] = true;
                             break;
                     }
-                    if(new UsuarioSetorDAO().buscarSetoresCorporativosDoUsuario(user).Count > 0)
+                    if (new UsuarioSetorDAO().buscarSetoresCorporativosDoUsuario(user).Count > 0)
                     {
                         Session["UsuarioSetorCorporativo"] = true;
                     }
@@ -503,7 +574,7 @@ namespace prj_chamadosBRA.Controllers
 
         //
         // GET: /Account/Register
-        [AllowAnonymous]
+        [Authorize]
         public ActionResult Register()
         {
             var obras = new ObraDAO().BuscarObrasPorUsuario(User.Identity.GetUserId());
@@ -549,7 +620,7 @@ namespace prj_chamadosBRA.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        var user = new ApplicationUser { UserName = model.UserName, PerfilUsuario = model.perfil, Nome = model.Nome, Contato = model.Contato };
+                        var user = new ApplicationUser { UserName = model.UserName, PerfilUsuario = model.perfil, Nome = model.Nome, Contato = model.Contato, Email = model.UserName, Chapa = model.Chapa };
                         var result = UserManager.Create(user, model.Password);
                         if (result.Succeeded)
                         {
@@ -659,6 +730,7 @@ namespace prj_chamadosBRA.Controllers
 
         //
         // GET: /Account/Manage
+        [Authorize]
         public ActionResult Manage(ManageMessageId? message)
         {
             ViewBag.StatusMessage =

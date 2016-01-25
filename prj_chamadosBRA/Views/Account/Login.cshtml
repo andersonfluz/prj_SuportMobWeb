@@ -1,9 +1,7 @@
 ﻿@model prj_chamadosBRA.Models.LoginViewModel
-
 @{
     ViewBag.Title = "Acesso";
 }
-
 <h2>@ViewBag.Title.</h2>
 <div class="row">
     <div class="col-md-8">
@@ -41,15 +39,57 @@
                         <input type="submit" value="Acessar" class="btn btn-default" />
                     </div>
                 </div>
+
             }
+            <div class="form-horizontal">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            @Html.ActionLink("Esqueceu a senha?", "EsqueceuSenha", "Account")
+                            @Html.ValidationMessageFor(m => m.UserName)
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
     <div class="col-md-4">
         @*<section id="socialLoginForm">
-            @Html.Partial("_ExternalLoginsListPartial", new { Action = "ExternalLogin", ReturnUrl = ViewBag.ReturnUrl })
-        </section>*@
+                @Html.Partial("_ExternalLoginsListPartial", new { Action = "ExternalLogin", ReturnUrl = ViewBag.ReturnUrl })
+            </section>*@
     </div>
 </div>
+@Html.Hidden("notice", @TempData["notice"])
+@if (TempData["notice"] != null)
+{
+    <div id="modalNotice" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mensagem</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-success"><strong>@TempData["notice"]</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(window).load(function () {
+            if ($('#notice').val() != "") {
+                //alert($('#notice').val());
+                $('#modalNotice').modal({ show: true });
+            }
+        });
+    </script>
 }

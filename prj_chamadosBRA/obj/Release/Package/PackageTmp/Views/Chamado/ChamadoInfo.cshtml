@@ -1,4 +1,4 @@
-﻿@model prj_chamadosBRA.Models.Chamado
+﻿@model prj_chamadosBRA.Models.ChamadoInfoViewModel
 @{
     Layout = null;
     ViewBag.Title = "Consulta Chamado";
@@ -9,12 +9,14 @@
         @using (Html.BeginForm("ChamadoInfo", "Chamado", null, FormMethod.Post))
         {
             @Html.HiddenFor(model => model.Id)
+            @Html.AntiForgeryToken()
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
                 <h4 class="modal-title">Consulta do Chamado N. @Model.Id</h4>
             </div>
             <div class="modal-body">
                 <div class="panel panel-default">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     <div class="panel-heading">Dados do Chamado</div>
                     <div class="panel-body">
                         <div class="row">
@@ -56,7 +58,7 @@
                     <div class="panel-body tab-pane">
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table" data-row-style="rowStyle">
+                                <table class="table tree table-hover" data-row-style="rowStyle">
                                     <tr>
                                         <th>
                                             @Html.DisplayName("Data")
@@ -81,7 +83,7 @@
                                             <td>
                                                 @item.Hora.ToString("HH:mm")
                                             </td>
-                                            <td>
+                                            <td width="17%">
                                                 @item.Responsavel.Nome
                                             </td>
                                             <td>
@@ -89,7 +91,6 @@
                                             </td>
                                         </tr>
                                     }
-
                                 </table>
                             </div>
                         </div>
@@ -140,18 +141,22 @@
                         <div class="row">
                             <div class="col-md-10">
                                 @Html.Label("Informações Adicionais:")
-                                @Html.TextArea("informacoesAcompanhamento", htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+                                @Html.TextAreaFor(m => m.InformacoesAcompanhamento, htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
+                                @Html.ValidationMessageFor(model => model.InformacoesAcompanhamento, "", new { @class = "text-danger" })
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <input type="submit" value="Atualizar" class="btn btn-default" />
+                <input type="submit" id="salvar" value="Atualizar" class="btn btn-default" />
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
             </div>
         }
     </div>
+</div>
+<div class="modal" id="modal2">
+    Teste
 </div>
 
 <style>
@@ -178,7 +183,7 @@
                         processData: false,
                         data: data,
                         success: function (result) {
-                            alert("Arquivo inserido com sucesso!");                            
+                            alert("Arquivo inserido com sucesso!");
                             $('#carregamentoAnexo').css('visibility', 'hidden');
                             location.reload();
                         },
@@ -194,5 +199,23 @@
                 }
             }
         })
+        $(function () {
+            $("#message").bind('click', function (event) {
+                var id = $(this).attr("data-id");
+                //$("#modal").load("../RespostaQuestionamento/" + idhistorico, function () {
+                $(document).on('show.bs.modal', '.modal', function (event) {
+                    var zIndex = 1040 + (10 * $('.modal:visible').length);
+                    $(this).css('z-index', zIndex);
+                    setTimeout(function () {
+                        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                    }, 0);
+                });
+            })
+        });
+        $('.tree').treegrid();
     });
 </script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+}

@@ -6,7 +6,7 @@
 }
 
 <div class="modal-dialog">
-    <div class="modal-content">        
+    <div class="modal-content">
         @using (Html.BeginForm("Encerrar", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "encerrar" }))
         {
             <div class="modal-header">
@@ -46,7 +46,7 @@
                     <div class="form-group">
                         @Html.Label("Classificação", new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(m => m.Classificacao,(SelectList) ViewBag.SetorDestinoClassificacao, "-- Selecione a Classificação --", new { @class = "form-control Classificacao" })
+                            @Html.DropDownListFor(m => m.Classificacao, (SelectList)ViewBag.SetorDestinoClassificacao, "-- Selecione a Classificação --", new { @class = "form-control Classificacao" })
                             @Html.ValidationMessageFor(m => m.Classificacao, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -123,14 +123,12 @@
         });
     </script>
     @*<script type="text/javascript">
-        $(".timepicker").datetimepicker({
-            pickDate: false
-        });
-    </script>*@
+            $(".timepicker").datetimepicker({
+                pickDate: false
+            });
+        </script>*@
 
-    @*<script src="~/Scripts/mvcfoolproof.unobtrusive.min.js"></script>
-        <script src="~/Scripts/MvcFoolproofJQueryValidation.min.js"></script>
-        <script src="~/Scripts/MvcFoolproofValidation.min.js"></script>*@
+    @*<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
 
 </div>
 @section Scripts {

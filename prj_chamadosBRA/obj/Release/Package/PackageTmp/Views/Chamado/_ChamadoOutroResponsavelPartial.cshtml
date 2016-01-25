@@ -13,7 +13,7 @@
                 <div class="form-group">
                     @Html.Label("Selecione Usuario:", new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO().retornarUsuariosObra(ViewBag.SetorDestino, null), "Id", "Nome"), "-- Selecione o usuário --", new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.ResponsavelAberturaChamado, new SelectList(new prj_chamadosBRA.Repositories.ApplicationUserDAO().retornarUsuariosObra(ViewBag.ObraDestino, null), "Id", "Nome"), "-- Selecione o usuário --", new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.ResponsavelAberturaChamado, "", new { @class = "text-danger" })
                     </div>
                 </div>

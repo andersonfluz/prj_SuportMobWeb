@@ -13,13 +13,19 @@ namespace prj_chamadosBRA.Service
                 var chamadosSemRetorno = new ChamadoDAO(db).BuscarChamadosSemRetornoPorUmaOuSeisHoras();
                 foreach (var chamado in chamadosSemRetorno)
                 {
-                    //Enviar email de alerta
+                    //Enfileirar email de alerta
+                    new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = chamado.Id.ToString(),
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.AlertaSemRetornoSolicitanteUmaOuSeisHoras
+                    });
                     //Alerta de Chamado de Uma Hora
                     new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao
                     {
                         IdChamado = chamado.Id,
                         ChamadoAcao = new ChamadoAcaoDAO(db).buscarChamadoAcaoPorId(10),
-                        Texto = "Alerta de Chamado Sem Retorno Uma Hora",
+                        Texto = "Alerta de Chamado Sem Retorno Uma ou Seis Horas",
                         DataAcao = DateTime.Now,
                         UsuarioAcao = new ApplicationUserDAO(db).retornarUsuario("49d2a731-bcf5-429a-bd1b-c973963d87da")
                     });

@@ -44,6 +44,7 @@ namespace prj_chamadosBRA.Models
         public DbSet<ChamadoLogAcao> ChamadoLogAcao { get; set; }
         public DbSet<EmailEnvio> EmailEnvio { get; set; }
         public DbSet<EmailTipo> EmailTipo { get; set; }
+        //public DbSet<Tarefa> Tarefa { get; set; }
 
         public ApplicationDbContext()
             : base("ChamadosBRAConnectionString", throwIfV1Schema: false)
@@ -56,7 +57,8 @@ namespace prj_chamadosBRA.Models
             return new ApplicationDbContext();
         }
 
-        public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ReaberturaChamadoViewModel> ReaberturaChamadoViewModels { get; set; }
+        //public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ReaberturaChamadoViewModel> ReaberturaChamadoViewModels { get; set; }
+        //public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ApplicationUser> ApplicationUsers { get; set; }
         //public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ApplicationUser> ApplicationUsers { get; set; }
 
         //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)

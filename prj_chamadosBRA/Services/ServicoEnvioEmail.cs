@@ -44,6 +44,13 @@ namespace prj_chamadosBRA.Service
                     EmailEnvioSender.EnvioEmailReaberturaChamados();
                     EmailEnvioSender.EnvioEmailCriacaoUsuario();
                     EmailEnvioSender.EnvioEmailRedefinicaoSenhaUsuario();
+                    EmailEnvioSender.EnvioEmailAlertaSemResponsavelTrintaMinutos();
+                    EmailEnvioSender.EnvioEmailAlertaSemResponsavelUmaHora();
+                    EmailEnvioSender.EnvioEmailAlertaSemResponsavelDuasHoras();
+                    EmailEnvioSender.EnvioEmailAlertaSemAtualizacaoDoisDiasTrintaMinutos();
+                    EmailEnvioSender.EnvioEmailAlertaSemAtualizacaoDoisDiasUmaHora();
+                    EmailEnvioSender.EnvioEmailAlertaSemAtualizacaoDoisDiasDuasHoras();
+                    EmailEnvioSender.EnvioEmailAlertaSemRetornoSolicitanteUmaOuSeisHoras();
                 }
                 Thread.Sleep(60000);
             }

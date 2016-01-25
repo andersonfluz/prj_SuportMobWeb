@@ -2,7 +2,7 @@
 <div class="form-group">
     @Html.Label("Obra Destino", new { @class = "col-md-2 control-label" })
     <div class="col-md-10">
-        @Html.DropDownListFor(m => m.ObraDestino, new SelectList(new prj_chamadosBRA.Repositories.ObraDAO().BuscarObrasPorUsuario(ViewBag.UserId), "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
+        @Html.DropDownListFor(m => m.ObraDestino, new SelectList(ViewBag.ObraDestino, "IDO", "Descricao"), "-- Selecione a Obra --", new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.ObraDestino, "", new { @class = "text-danger" })
     </div>
 </div>

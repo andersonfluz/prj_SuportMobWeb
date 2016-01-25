@@ -35,6 +35,12 @@ namespace prj_chamadosBRA.Repositories
             return user;
         }
 
+        public ApplicationUser retornarUsuarioPorUsername(string Username)
+        {
+            var user = (from e in db.Users where e.UserName == Username select e).SingleOrDefault();
+            return user;
+        }
+
         public List<ApplicationUser> retornarUsuarios(string filtro)
         {
             var users = (from e in db.Users select e).ToList();

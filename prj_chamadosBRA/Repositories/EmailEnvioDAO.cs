@@ -14,6 +14,11 @@ namespace prj_chamadosBRA.Repositories
             this.db = db;
         }
 
+        public EmailEnvioDAO()
+        {
+            this.db = new ApplicationDbContext();
+        }
+
         public EmailEnvio BuscarEmailEnvioId(int Id)
         {
 
