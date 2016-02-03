@@ -86,30 +86,24 @@ else
            filtro = ViewBag.CurrentFiltro
        })
         </th>
-        @if ((bool)Session["ObraVisivel"])
-        {
-            <th>
-                @Html.ActionLink("Obra", "Index", new
+        <th>
+            @Html.ActionLink("Obra", "Index", new
            {
                sortOrder = "obra",
                pageAtual = Model.PageNumber,
                tipoChamado = ViewBag.CurrentTipoChamado,
                filtro = ViewBag.CurrentFiltro
            })
-            </th>
-        }
-        @if ((bool)Session["SetorVisivel"])
-        {
-            <th>
-                @Html.ActionLink("Setor", "Index", new
+        </th>
+        <th>
+            @Html.ActionLink("Setor", "Index", new
            {
                sortOrder = "setor",
                pageAtual = Model.PageNumber,
                tipoChamado = ViewBag.CurrentTipoChamado,
                filtro = ViewBag.CurrentFiltro
            })
-            </th>
-        }
+        </th>
         <th>
             @Html.DisplayName("Tipo Chamado")
         </th>
@@ -133,25 +127,19 @@ else
             <td>
                 @Html.DisplayFor(modelItem => item.ResponsavelChamado.Nome)
             </td>
-            @if ((bool)Session["ObraVisivel"])
-            {
-                <td>
-                    @Html.DisplayFor(modelItem => item.ObraDestino.Descricao)
-                </td>
-            }
-            @if ((bool)Session["SetorVisivel"])
-            {
-                <td>
-                    @if (item.SetorDestino != null)
-                    {
-                        @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
-                    }
-                    else
-                    {
-                        @Html.Label("Setor Indefinido")
-                    }
-                </td>
-            }
+            <td>
+                @Html.DisplayFor(modelItem => item.ObraDestino.Descricao)
+            </td>
+            <td>
+                @if (item.SetorDestino != null)
+                {
+                    @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
+                }
+                else
+                {
+                    @Html.Label("Setor Indefinido")
+                }
+            </td>
             <td>
                 @if (item.TipoChamado == 1)
                 {

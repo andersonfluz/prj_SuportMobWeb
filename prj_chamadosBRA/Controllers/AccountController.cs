@@ -34,44 +34,7 @@ namespace prj_chamadosBRA.Controllers
 
         public UserManager<ApplicationUser> UserManager { get; private set; }
         #endregion
-
-        //private ApplicationSignInManager _signInManager;
-        //private ApplicationUserManager _userManager;
-
-        //public AccountController()
-        //{
-        //}
-
-        //public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
-        //{
-        //    UserManager = userManager;
-        //    SignInManager = signInManager;
-        //}
-
-        //public ApplicationSignInManager SignInManager
-        //{
-        //    get
-        //    {
-        //        return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-        //    }
-        //    private set
-        //    {
-        //        _signInManager = value;
-        //    }
-        //}
-
-        //public ApplicationUserManager UserManager
-        //{
-        //    get
-        //    {
-        //        return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-        //    }
-        //    private set
-        //    {
-        //        _userManager = value;
-        //    }
-        //}
-
+        
         //
         // GET: /Account/Login
         [AllowAnonymous]
@@ -221,8 +184,7 @@ namespace prj_chamadosBRA.Controllers
             };
             return View(userRecovery);
         }
-
-
+        
         [HttpPost]
         public ActionResult RedefinicaoSenha(RecoveryViewModel user, string password)
         {
@@ -240,11 +202,9 @@ namespace prj_chamadosBRA.Controllers
                 return RedirectToAction("Login", "Account");
             }
         }
-
-
-
+        
         [Authorize]
-        public async Task<ActionResult> ReiniciarSenha(string id)
+        public ActionResult ReiniciarSenha(string id)
         {
             try
             {
@@ -271,7 +231,7 @@ namespace prj_chamadosBRA.Controllers
         }
 
         [Authorize]
-        public async Task<ActionResult> AdicionarObraSetorUsuario(string idUser, string obra, string setor)
+        public ActionResult AdicionarObraSetorUsuario(string idUser, string obra, string setor)
         {
             try
             {
@@ -320,7 +280,7 @@ namespace prj_chamadosBRA.Controllers
         }
 
         [Authorize]
-        public async Task<ActionResult> EliminarUsuarioObra(string id)
+        public ActionResult EliminarUsuarioObra(string id)
         {
             try
             {
@@ -348,7 +308,7 @@ namespace prj_chamadosBRA.Controllers
         }
 
         [Authorize]
-        public async Task<ActionResult> EliminarUsuarioSetor(string id)
+        public ActionResult EliminarUsuarioSetor(string id)
         {
             try
             {
@@ -374,96 +334,7 @@ namespace prj_chamadosBRA.Controllers
                 return RedirectToAction("Index");
             }
         }
-
-        #region loginProposto
-        ////
-        //// POST: /Account/Login
-        //[HttpPost]
-        //[AllowAnonymous]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(model);
-        //    }
-
-        //    // This doesn't count login failures towards account lockout
-        //    // To enable password failures to trigger account lockout, change to shouldLockout: true
-        //    model.Email = model.UserName;
-        //    var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-        //    switch (result)
-        //    {
-        //        case SignInStatus.Success:
-        //            var user = await UserManager.FindAsync(model.UserName, model.Password);
-        //            Session["UserId"] = user.Id;
-        //            Session["PerfilUsuario"] = user.PerfilUsuario;
-        //            switch (Session["PerfilUsuario"].ToString())
-        //            {
-        //                case "1": //Administrador
-        //                    Session["SetorVisivel"] = true;
-        //                    Session["ObraVisivel"] = true;
-        //                    Session["TipoChamadoVisivel"] = true;
-        //                    Session["SelecionarResponsavelAbertura"] = true;
-        //                    break;
-        //                case "2": //SuperiorBRA
-        //                    Session["SetorVisivel"] = false;
-        //                    Session["ObraVisivel"] = true;
-        //                    Session["TipoChamadoVisivel"] = false;
-        //                    Session["SelecionarResponsavelAbertura"] = false;
-        //                    break;
-        //                case "3": //Tecnico
-        //                    Session["SetorVisivel"] = true;
-        //                    Session["ObraVisivel"] = false;
-        //                    Session["TipoChamadoVisivel"] = true;
-        //                    Session["SelecionarResponsavelAbertura"] = true;
-        //                    break;
-        //                case "4": //Usuário
-        //                    Session["SetorVisivel"] = true;
-        //                    Session["ObraVisivel"] = false;
-        //                    Session["TipoChamadoVisivel"] = false;
-        //                    Session["SelecionarResponsavelAbertura"] = false;
-        //                    break;
-        //                case "5": //Gestor
-        //                    Session["SetorVisivel"] = true;
-        //                    Session["ObraVisivel"] = false;
-        //                    Session["TipoChamadoVisivel"] = true;
-        //                    Session["SelecionarResponsavelAbertura"] = true;
-        //                    break;
-        //                case "6": //Administrador da Obra
-        //                    Session["SetorVisivel"] = true;
-        //                    Session["ObraVisivel"] = false;
-        //                    Session["TipoChamadoVisivel"] = true;
-        //                    Session["SelecionarResponsavelAbertura"] = true;
-        //                    break;
-        //                default:
-        //                    Session["SetorVisivel"] = true;
-        //                    Session["ObraVisivel"] = false;
-        //                    Session["TipoChamadoVisivel"] = true;
-        //                    break;
-        //            }                    
-        //            if (user.PerfilUsuario == 1 || user.PerfilUsuario == 6)
-        //            {
-        //                return RedirectToAction("Index", "Home");
-        //            }
-        //            else
-        //            {
-        //                return RedirectToAction("Index", "Chamado");
-        //            }
-        //        case SignInStatus.LockedOut:
-        //            return View("Lockout");
-        //        case SignInStatus.RequiresVerification:
-        //            return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-        //        case SignInStatus.Failure:
-        //        default:
-        //            ModelState.AddModelError("", "Invalid login attempt.");
-        //            return View(model);
-        //    }
-        //}
-        #endregion
-
-
-        #region Login Antigo
+        
         //
         // POST: /Account/Login
         [HttpPost]
@@ -532,13 +403,23 @@ namespace prj_chamadosBRA.Controllers
                     }
                     if (new UsuarioSetorDAO().buscarSetoresCorporativosDoUsuario(user).Count > 0)
                     {
-                        Session["UsuarioSetorCorporativo"] = true;
+                        var cookie = new HttpCookie("UsuarioSetorCorporativo")
+                        {
+                            Value = "true"
+                        };
+                        ControllerContext.HttpContext.Response.Cookies.Add(cookie);
+                        //Session["UsuarioSetorCorporativo"] = true;
                     }
                     else
                     {
-                        Session["UsuarioSetorCorporativo"] = false;
-                    }
-
+                        var cookie = new HttpCookie("UsuarioSetorCorporativo")
+                        {
+                            Value = "false"
+                        };
+                        ControllerContext.HttpContext.Response.Cookies.Add(cookie);
+                        //Session["UsuarioSetorCorporativo"] = false;
+                    }                   
+                    
                     await SignInAsync(user, model.RememberMe);
                     if (returnUrl == null)
                     {
@@ -570,7 +451,6 @@ namespace prj_chamadosBRA.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
-        #endregion
 
         //
         // GET: /Account/Register
@@ -910,6 +790,11 @@ namespace prj_chamadosBRA.Controllers
         {
             AuthenticationManager.SignOut();
             Session.Abandon();
+            var myCookies = Request.Cookies.AllKeys;
+            foreach (string cookie in myCookies)
+            {
+                Response.Cookies[cookie].Expires = DateTime.Now.AddDays(-1);
+            }
             return RedirectToAction("Login", "Account");
         }
 

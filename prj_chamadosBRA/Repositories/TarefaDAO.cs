@@ -20,5 +20,14 @@ namespace prj_chamadosBRA.Repositories
             return db.Set<Tarefa>().Find(id);
         }
 
+        public List<Tarefa> BuscarTarefasPorChamado(int IdChamado)
+        {
+            return db.Set<Tarefa>().Where(c=>c.Chamado.Id == IdChamado).ToList();
+        }
+
+        public List<Tarefa> BuscarTarefasPorResponsavel(ApplicationUser user)
+        {
+            return db.Set<Tarefa>().Where(c => c.Responsavel.Id == user.Id).ToList();
+        }
     }
 }

@@ -188,6 +188,7 @@
     <Compile Include="Controllers\ObraController.cs" />
     <Compile Include="Controllers\SetorController.cs" />
     <Compile Include="Controllers\SubClassificacaoController.cs" />
+    <Compile Include="Controllers\TarefaController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -195,6 +196,7 @@
     <Compile Include="GN\ChamadoGN.cs" />
     <Compile Include="GN\ObraGN.cs" />
     <Compile Include="GN\SetorGN.cs" />
+    <Compile Include="GN\TarefaGN.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CentroAdministrativo.cs" />
     <Compile Include="Models\Chamado.cs" />
@@ -212,6 +214,7 @@
     <Compile Include="Models\PerfilUsuario.cs" />
     <Compile Include="Models\Setor.cs" />
     <Compile Include="Models\Tarefa.cs" />
+    <Compile Include="Models\TarefaViewModel.cs" />
     <Compile Include="Models\UsuarioObra.cs" />
     <Compile Include="Models\UsuarioSetor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -542,6 +545,11 @@
     <Content Include="Views\Chamado\Cancelar.cshtml" />
     <Content Include="Views\Account\EsqueceuSenha.cshtml" />
     <Content Include="Views\Account\RedefinicaoSenha.cshtml" />
+    <Content Include="Views\Tarefa\Create.cshtml" />
+    <Content Include="Views\Tarefa\Delete.cshtml" />
+    <Content Include="Views\Tarefa\Details.cshtml" />
+    <Content Include="Views\Tarefa\Edit.cshtml" />
+    <Content Include="Views\Tarefa\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

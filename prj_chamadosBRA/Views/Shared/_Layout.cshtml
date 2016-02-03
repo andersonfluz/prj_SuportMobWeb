@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Chamados BRA</title>
+    <title>@ViewBag.Title - HelpMe!</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
@@ -24,7 +24,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="../Home/Index"><img src="~/Images/logo_Web.png" width="50" height="50" /></a>
+                <a href="@Url.Action("Index", "Home")"><img src="~/Images/logo_Web.png" width="50" height="50" /></a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 @if (Session["PerfilUsuario"] != null)
@@ -38,7 +38,8 @@
                                 <li role="separator" class="divider"></li>
                                 @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7"))
                                 {
-                                    if ((bool)Session["UsuarioSetorCorporativo"])
+                                    if (Convert.ToBoolean(Request.Cookies["UsuarioSetorCorporativo"].Value))
+                                        //(bool)Session["UsuarioSetorCorporativo"])
                                     {
                                         <li>@Html.ActionLink("Triagem", "Triagem", "Chamado", null, new { title = "Triagem das solicitações" })</li>
                                     }
@@ -88,7 +89,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Chamados BRA</p>
+            <p>&copy; @DateTime.Now.Year - HelpMe!</p>
         </footer>
     </div>
 

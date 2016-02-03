@@ -45,6 +45,12 @@ namespace prj_chamadosBRA.Repositories
             return setor;
         }
 
+        public Setor BuscarSetorPorIdSetorIdObra(int idsetor, int idObra)
+        {
+            var setor = (from e in db.Setor where e.Id == idsetor && e.obra.IDO == idObra && e.Ativo select e).SingleOrDefault();
+            return setor;
+        }
+
         public List<Setor> BuscarSetoresNome(string nome)
         {
 

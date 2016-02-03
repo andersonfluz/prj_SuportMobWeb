@@ -30,5 +30,10 @@ namespace prj_chamadosBRA.GN
             }
             return listObra;
         }
+
+        public List<Obra> retornarObrasSetorCorporativo(ApplicationUser user)
+        {
+            return new ObraDAO(db).BuscarObrasSetoresCorporativos(new UsuarioSetorDAO(db).buscarSetoresCorporativosDoUsuario(user)[0]);
+        }
     }
 }

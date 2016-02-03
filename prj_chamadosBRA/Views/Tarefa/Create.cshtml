@@ -1,0 +1,110 @@
+﻿@model prj_chamadosBRA.Models.TarefaViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Create";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        @using (Html.BeginForm())
+        {
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Nova Tarefa do Chamado N. @Model.Chamado.Id</h4>
+            </div>
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Assunto, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Assunto, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Assunto, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("Responsavel:", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.Responsavel, (SelectList)ViewBag.ddlResponsavelChamado, "-- Selecione o Responsavel --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Responsavel, "", new { @class = "text-danger" })                       
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("Natureza", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.Natureza, (SelectList)ViewBag.SetorDestinoClassificacao, "-- Selecione a Natureza --", new { @class = "form-control Natureza" })
+                            @Html.ValidationMessageFor(m => m.Natureza, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("SubNatureza", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.SubNatureza, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione a Natureza primeiro --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.SubNatureza, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Salvar" class="btn btn-default" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script type="text/javascript">
+    //Dropdownlist Selectedchange event
+    $(".Natureza").change(function () {
+        $("#SubNatureza").empty();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("RetornaSubClassPorClass", "Chamado")',
+            dataType: 'json',
+            data: { selectedValue: $(".Natureza").val() },
+            success: function (subclasses) {
+                // states contains the JSON formatted list
+                // of states passed from the controller
+                $("#SubNatureza").append('<option value="">-- Selecione a SubNatureza --</option>');
+                $.each(subclasses, function (i, subclass) {
+                    $("#SubNatureza").append('<option value="'
+                    + subclass.Value + '">'
+                    + subclass.Text + '</option>');
+                });
+            },
+            error: function (ex) {
+                alert('Failed to retrieve SubNatureza.' + ex);
+            }
+        });
+        return false;
+    });
+
+    $('.datepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        language: 'pt-BR',
+        autoclose: true
+    }); //Initialise any date pickers
+
+    $('#Hora').focusin(function () {
+        $('#Hora').mask("99:99");
+    });
+</script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

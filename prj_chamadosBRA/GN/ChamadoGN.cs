@@ -1,9 +1,7 @@
 ﻿using prj_chamadosBRA.Models;
 using prj_chamadosBRA.Repositories;
-using prj_chamadosBRA.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -19,9 +17,287 @@ namespace prj_chamadosBRA.GN
             this.db = db;
         }
 
+        public Chamado buscarChamadoId(int Id)
+        {
+            return new ChamadoDAO(db).BuscarChamadoId(Id);
+        }
+
         public static List<Setor> RetornarSetoresPorObra(string idObra)
         {
             return new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(idObra));
+        }
+
+        public List<Chamado> GestaoChamados(string tipoChamado, string filtro, string sortOrder, ApplicationUser user)
+        {
+            //var user = manager.FindById(User.Identity.GetUserId());
+            //Usuario com permissão de Gestão
+            if (user.PerfilUsuario == 1
+                || user.PerfilUsuario == 3
+                || user.PerfilUsuario == 5
+                || user.PerfilUsuario == 6
+                || user.PerfilUsuario == 7)
+            {
+                //Usuario Vinculado a Obras
+                var obras = new UsuarioObraDAO(db).buscarObrasDoUsuario(user);
+                var setores = new UsuarioSetorDAO(db).buscarSetoresCorporativosDoUsuario(user);
+                if (setores.Count > 0)
+                {
+                    obras = new List<Obra>();
+                    foreach (var setor in setores)
+                    {
+                        obras.AddRange(obras = new ObraDAO(db).BuscarObrasSetoresCorporativos(setor));
+                    }
+                }
+                var isMatriz = false;
+                foreach (var obra in obras)
+                {
+                    if (obra.Matriz)
+                    {
+                        isMatriz = true;
+                    }
+                }
+                if (isMatriz && user.PerfilUsuario == 1)
+                {
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamados(filtro, false, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
+                    }
+
+                }
+                else if (isMatriz && user.PerfilUsuario == 7)
+                {
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosTecnicoRM(obras, filtro, false, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosTecnicoRMTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
+                            //.ToPagedList(pageNumber, pageSize);
+                    }
+                }
+                else if (isMatriz && (user.PerfilUsuario == 3 || user.PerfilUsuario == 5))
+                {
+                    var setoresUsuario = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeSetores(setoresUsuario, filtro, false, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setoresUsuario, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
+                    }
+                }
+                else
+                {
+                    
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, false, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
+                    }
+                }
+
+            }
+            else
+            {               
+                if (tipoChamado == null || tipoChamado == "-2")
+                {
+                    return new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, false, sortOrder);
+                }
+                else
+                {
+                    return new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
+                }
+
+            }
+        }
+
+        public List<Chamado> AcompanhamentoChamados(string tipoChamado, string filtro, bool chamadosEncerrados, string sortOrder, ApplicationUser user)
+        {
+            //var user = manager.FindById(User.Identity.GetUserId());
+            //Usuario para Gestao
+
+            //Usuario Vinculado a Obras
+            var obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
+            var isMatriz = false;
+            foreach (var obra in obras)
+            {
+                if (obra.Matriz)
+                {
+                    isMatriz = true;
+                }
+            }
+            if (isMatriz && user.PerfilUsuario == 1)
+            {
+                if (tipoChamado == null || tipoChamado == "-2")
+                {
+                    return new ChamadoDAO(db).BuscarChamados(filtro, chamadosEncerrados, sortOrder);
+                }
+                else
+                {
+                    return new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(tipoChamado), filtro, chamadosEncerrados, sortOrder);
+                }
+
+            }
+            else if (user.PerfilUsuario == 2 || user.PerfilUsuario == 3 || user.PerfilUsuario == 4 || user.PerfilUsuario == 7)
+            {
+                if (tipoChamado == null || tipoChamado == "-2")
+                {
+                    return new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, chamadosEncerrados, sortOrder);
+                }
+                else
+                {
+                    return new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(tipoChamado), filtro, chamadosEncerrados, sortOrder);
+                }
+            }
+            else if (user.PerfilUsuario == 5)
+            {
+                var setores = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                if (tipoChamado == null || tipoChamado == "-2")
+                {
+                    var chamados = new ChamadoDAO(db).BuscarChamadosDeSetores(setores, filtro, chamadosEncerrados, sortOrder);
+                    chamados.AddRange(new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, chamadosEncerrados, sortOrder));
+                    return chamados;
+                }
+                else
+                {
+                    var chamados = new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setores, Convert.ToInt32(tipoChamado), filtro, chamadosEncerrados, sortOrder);
+                    chamados.AddRange(new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(tipoChamado), filtro, chamadosEncerrados, sortOrder));
+                    return chamados;
+                }
+            }
+            else
+            {
+                if (tipoChamado == null || tipoChamado == "-2")
+                {
+                    return new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, chamadosEncerrados, sortOrder);
+                }
+                else
+                {
+                    return new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, chamadosEncerrados, sortOrder);
+                }
+            }
+        }
+
+        public List<Chamado> TriagemChamados(string tipoChamado, string filtro, string obraSelected, string sortOrder, ApplicationUser user)
+        {
+            var setores = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+            var isSetorCorporativo = false;
+            foreach (var setor in setores)
+            {
+                if (setor.SetorCorporativo != null)
+                {
+                    isSetorCorporativo = true;
+                }
+            }
+            if (isSetorCorporativo)
+            {
+                if (obraSelected == null || obraSelected == "-1")
+                {
+                    return new ChamadoDAO(db).BuscarChamadosSemResponsaveis(filtro, sortOrder, Convert.ToInt32(tipoChamado));
+                }
+                else
+                {
+                    return new ChamadoDAO(db).BuscarChamadosSemResponsaveisPorObra(Convert.ToInt32(obraSelected), Convert.ToInt32(tipoChamado), filtro, sortOrder);
+                }
+
+            }
+            else
+            {
+                //lista vazia pois se o usuario sem setorCorporativo chegou aqui é por que teve alguma falha de permissão
+                var listEmpty = new List<Chamado>();
+                return listEmpty;
+            }
+        }
+
+        public List<Chamado> ChamadosEncerrados(string tipoChamado, string filtro, string sortOrder, ApplicationUser user)
+        {
+            //Usuario Administrador
+            if (user.PerfilUsuario == 1
+                || user.PerfilUsuario == 3
+                || user.PerfilUsuario == 5
+                || user.PerfilUsuario == 6
+                || user.PerfilUsuario == 7)
+            {
+                //Usuario Vinculado a Obras
+                var obras = new UsuarioObraDAO().buscarObrasDoUsuario(user);
+                var isMatriz = false;
+                foreach (var obra in obras)
+                {
+                    if (obra.Matriz)
+                    {
+                        isMatriz = true;
+                    }
+                }
+                if (isMatriz && user.PerfilUsuario == 1)
+                {
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamados(filtro, true, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosTipoChamado(Convert.ToInt32(tipoChamado), filtro, true, sortOrder);
+                    }
+
+                }
+                else if (isMatriz && user.PerfilUsuario == 7)
+                {
+                    
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosTecnicoRM(obras, filtro, true, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosTecnicoRMTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, true, sortOrder);
+                    }
+                }
+                else if (isMatriz && user.PerfilUsuario == 3)
+                {
+                    var setoresUsuario = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeSetores(setoresUsuario, filtro, true, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setoresUsuario, Convert.ToInt32(tipoChamado), filtro, true, sortOrder);
+                    }
+                }
+                else
+                {
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, true, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, true, sortOrder);
+                    }
+                }
+
+            }
+            else
+            {
+                if (tipoChamado == null || tipoChamado == "-2")
+                {
+                    return new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, true, sortOrder);
+                }
+                else
+                {
+                    return new ChamadoDAO(db).BuscarChamadosDoUsuarioTipoChamado(user, Convert.ToInt32(tipoChamado), filtro, true, sortOrder);
+                }
+
+            }
         }
 
         public Chamado registrarChamado(Chamado chamado, HttpPostedFileBase upload, String SetorDestino, String ObraDestino, String ResponsavelAberturaChamado, ApplicationUser user)
@@ -62,7 +338,7 @@ namespace prj_chamadosBRA.GN
                 }
                 if (SetorDestino != null)
                 {
-                    setor = sDAO.BuscarSetorId(Int32.Parse(SetorDestino));
+                    setor = sDAO.BuscarSetorPorIdSetorIdObra(Int32.Parse(SetorDestino), Int32.Parse(ObraDestino));
                     chamado.SetorDestino = setor;
                 }
 
@@ -136,7 +412,7 @@ namespace prj_chamadosBRA.GN
             }
         }
 
-        public async Task<bool> atualizarChamadoHistorico(int id, string informacoesAcompanhamento, ApplicationUser responsavel)
+        public bool atualizarChamadoHistorico(int id, string informacoesAcompanhamento, ApplicationUser responsavel)
         {
             try
             {
@@ -155,7 +431,7 @@ namespace prj_chamadosBRA.GN
             }
         }
 
-        public async Task<bool> atualizarChamado(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento, ApplicationUser responsavel)
+        public bool atualizarChamado(int id, Chamado chamado, String SetorDestino, String ddlResponsavelChamado, string informacoesAcompanhamento, ApplicationUser responsavel)
         {
             var cDAO = new ChamadoDAO(db);
             var cGN = new ChamadoGN(db);
@@ -177,6 +453,14 @@ namespace prj_chamadosBRA.GN
                 {
                     chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Tipo de Chamado foi alterado para Outros", chamadoOrigem);
                 }
+
+                //Reenviar email de abertura para os responsaveis corretos (tipo do chamado)
+                new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                {
+                    InfoEmail = chamado.Id.ToString(),
+                    Data = DateTime.Now,
+                    IdTipoEmail = (int)EmailTipo.EmailTipos.AberturaChamado
+                });
             }
 
             //Atualização de Setor
@@ -269,7 +553,7 @@ namespace prj_chamadosBRA.GN
             return true;
         }
 
-        public async Task<bool> reaberturaChamado(int id, string justificativaReabertura, ApplicationUser responsavel)
+        public bool reaberturaChamado(int id, string justificativaReabertura, ApplicationUser responsavel)
         {
             try
             {

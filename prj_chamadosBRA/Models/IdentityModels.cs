@@ -17,6 +17,8 @@ namespace prj_chamadosBRA.Models
         public string Contato { get; set; }
         public DateTime? UltimoAcesso { get; set; }
         public string Chapa { get; set; }
+        public ApplicationUser Superior { get; set;}
+        public bool? EnvioEmailSuperior { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -44,7 +46,7 @@ namespace prj_chamadosBRA.Models
         public DbSet<ChamadoLogAcao> ChamadoLogAcao { get; set; }
         public DbSet<EmailEnvio> EmailEnvio { get; set; }
         public DbSet<EmailTipo> EmailTipo { get; set; }
-        //public DbSet<Tarefa> Tarefa { get; set; }
+        public DbSet<Tarefa> Tarefa { get; set; }
 
         public ApplicationDbContext()
             : base("ChamadosBRAConnectionString", throwIfV1Schema: false)
@@ -56,24 +58,5 @@ namespace prj_chamadosBRA.Models
         {
             return new ApplicationDbContext();
         }
-
-        //public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ReaberturaChamadoViewModel> ReaberturaChamadoViewModels { get; set; }
-        //public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ApplicationUser> ApplicationUsers { get; set; }
-        //public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ApplicationUser> ApplicationUsers { get; set; }
-
-        //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)
-        //{
-        //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-        //    dbModelBuilder.Entity<ApplicationUser>().HasMany<Setor>(user => user.setores)
-        //                                   .WithMany(setor => setor.usuarios).Map(c =>
-        //                                             {
-        //                                                 c.MapLeftKey("Usuario_Id");
-        //                                                    c.MapRightKey("idSetor");
-        //                                                    c.ToTable("UsuarioSetor");
-        //                                                });
-        //    base.OnModelCreating(dbModelBuilder);
-        //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-        //}
-
     }
 }

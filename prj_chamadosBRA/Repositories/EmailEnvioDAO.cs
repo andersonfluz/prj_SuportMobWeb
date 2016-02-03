@@ -28,8 +28,13 @@ namespace prj_chamadosBRA.Repositories
 
         public List<EmailEnvio> BuscarEmailEnvioTipo(int EmailTipo)
         {
+            var envioEmail = (from e in db.EmailEnvio where e.IdTipoEmail == EmailTipo && e.Tentativas >= 3 select e).ToList();
+            return envioEmail;
+        }
 
-            var envioEmail = (from e in db.EmailEnvio where e.IdTipoEmail == EmailTipo select e).ToList();
+        public List<EmailEnvio> BuscarEmailsTravados()
+        {
+            var envioEmail = (from e in db.EmailEnvio where e.Tentativas < 3 select e).ToList();
             return envioEmail;
         }
 

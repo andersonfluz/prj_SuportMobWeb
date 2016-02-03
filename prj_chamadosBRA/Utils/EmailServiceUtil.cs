@@ -24,6 +24,7 @@ namespace prj_chamadosBRA.Utils
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));
+
                     if (chamado.SetorDestino == null)
                     {
                         var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
@@ -36,8 +37,9 @@ namespace prj_chamadosBRA.Utils
                     {
                         if(chamado.SetorDestino.SetorCorporativo != null)
                         {
-                            var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(new SetorDAO().BuscarSetorId(chamado.SetorDestino.SetorCorporativo.Value), null);
-                            foreach(var usuario in usuarios)
+                            var usuarios = new ApplicationUserDAO().retornarUsuariosSetorTipoChamado(new SetorDAO().BuscarSetorId(chamado.SetorDestino.SetorCorporativo.Value),chamado.TipoChamado.Value);
+
+                            foreach (var usuario in usuarios)
                             {
                                 mail.CC.Add(usuario.UserName);
                             }
@@ -46,9 +48,8 @@ namespace prj_chamadosBRA.Utils
                         {
                             mail.CC.Add(chamado.SetorDestino.EmailSetor);
                         }
-
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Abertura Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Notificação Abertura Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAbertura(chamado);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -88,7 +89,7 @@ namespace prj_chamadosBRA.Utils
                     {
                         mail.CC.Add(chamadoHistorico.Chamado.SetorDestino.EmailSetor);
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.Chamado.Id;
+                    mail.Subject = "HelpMe! - Notificação Alteracao Chamado N. " + chamadoHistorico.Chamado.Id;
                     mail.Body = montarCorpoMensagemAlteracao(chamadoHistorico);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -127,7 +128,7 @@ namespace prj_chamadosBRA.Utils
                     {
                         mail.CC.Add(chamadoHistorico.Chamado.SetorDestino.EmailSetor);
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Alteracao Chamado N. " + chamadoHistorico.Chamado.Id;
+                    mail.Subject = "HelpMe! - Notificação Alteracao Chamado N. " + chamadoHistorico.Chamado.Id;
                     mail.Body = montarCorpoMensagemAlteracao(chamadoHistorico);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -154,7 +155,7 @@ namespace prj_chamadosBRA.Utils
                     {
                         mail.CC.Add(chamado.ResponsavelChamado.UserName);
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Encerramento do Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Notificação Encerramento do Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemEncerramento(chamado);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -181,7 +182,7 @@ namespace prj_chamadosBRA.Utils
                     {
                         mail.CC.Add(chamado.ResponsavelChamado.UserName);
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Cancelamento do Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Notificação Cancelamento do Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemCancelamento(chamado);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -204,7 +205,7 @@ namespace prj_chamadosBRA.Utils
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(user.UserName));
-                    mail.Subject = "ChamadosBRA - Criação de novo usuario na plataforma";
+                    mail.Subject = "HelpMe! - Criação de novo usuario na plataforma";
                     mail.Body = montarCorpoMensagemCriacaoUsuario(user);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -227,7 +228,7 @@ namespace prj_chamadosBRA.Utils
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(user.UserName));
-                    mail.Subject = "ChamadosBRA - Redefinição de senha do usuario na plataforma";
+                    mail.Subject = "HelpMe! - Redefinição de senha do usuario na plataforma";
                     mail.Body = montarCorpoMensagemReiniciarSenhaUsuario(user, IdCriptografado);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -266,7 +267,7 @@ namespace prj_chamadosBRA.Utils
                     {
                         mail.CC.Add(chamadoHistorico.Chamado.SetorDestino.EmailSetor);
                     }
-                    mail.Subject = "ChamadosBRA - Notificação Reabertura Chamado N. " + chamadoHistorico.Chamado.Id;
+                    mail.Subject = "HelpMe! - Notificação Reabertura Chamado N. " + chamadoHistorico.Chamado.Id;
                     mail.Body = montarCorpoMensagemReabertura(chamadoHistorico);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -307,7 +308,7 @@ namespace prj_chamadosBRA.Utils
                             //mail.To.Add(new MailAddress(usuario.UserName));
                         }
                     }
-                    mail.Subject = "ChamadosBRA - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "trinta minutos");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -344,7 +345,7 @@ namespace prj_chamadosBRA.Utils
                         mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
                         //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
                     }
-                    mail.Subject = "ChamadosBRA - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "uma hora");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -381,7 +382,7 @@ namespace prj_chamadosBRA.Utils
                         mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
                         //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
                     }
-                    mail.Subject = "ChamadosBRA - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "duas horas");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -405,7 +406,7 @@ namespace prj_chamadosBRA.Utils
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
                     mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
                     //mail.To.Add(new MailAddress(chamado.ResponsavelChamado.UserName));
-                    mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -442,7 +443,7 @@ namespace prj_chamadosBRA.Utils
                         mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
                         //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
                     }
-                    mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -479,7 +480,7 @@ namespace prj_chamadosBRA.Utils
                         mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
                         //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
                     }
-                    mail.Subject = "ChamadosBRA - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -503,7 +504,7 @@ namespace prj_chamadosBRA.Utils
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
                     //mail.To.Add(new MailAddress(chamado.ResponsavelAberturaChamado.UserName));                    
                     mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                    mail.Subject = "ChamadosBRA - Alerta de chamado sem retorno do solicitante - Chamado N. " + chamado.Id;
+                    mail.Subject = "HelpMe! - Alerta de chamado sem retorno do solicitante - Chamado N. " + chamado.Id;
                     mail.Body = montarCorpoMensagemAlertaSemRetornoSolicitante(chamado, "uma hora");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
@@ -517,6 +518,30 @@ namespace prj_chamadosBRA.Utils
             }
 
         }
+
+        public static string envioEmailTravados(List<EmailEnvio> emailsTravados)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+                    mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                    mail.Subject = "HelpMe! - Alerta de emails travados";
+                    mail.Body = montarCorpoMensagemEmailsTravados();
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+
 
         #endregion
 
@@ -637,7 +662,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -802,7 +827,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -949,7 +974,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -1078,7 +1103,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -1129,7 +1154,7 @@ namespace prj_chamadosBRA.Utils
                                 + "</tbody>"
                                 + "</table>"
                                 + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                 + "</div>";
             return corpoMensagem;
         }
@@ -1181,7 +1206,7 @@ namespace prj_chamadosBRA.Utils
                                 + "</tbody>"
                                 + "</table>"
                                 + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                + "</br><p>&copy;" + @DateTime.Now.Year + " - ChamadosBRA</p>"
+                                + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                 + "</div>";
             return corpoMensagem;
         }
@@ -1318,7 +1343,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -1446,7 +1471,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -1574,7 +1599,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
         }
@@ -1702,7 +1727,51 @@ namespace prj_chamadosBRA.Utils
                                    + "</tbody>"
                                    + "</table>"
                                    + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
-                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - Chamados BRA</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemEmailsTravados()
+        {
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Mensagem de Alerta:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Algum(ns) Email(s) estão travados no envio, favor verificar.</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
         }
