@@ -1,8 +1,8 @@
-﻿@model prj_chamadosBRA.Models.DetalhesTarefaViewModel
+﻿@model prj_chamadosBRA.Models.EncerramentoTarefaViewModel
 
 @{
     Layout = null;
-    ViewBag.Title = "Informações Tarefa N. " + Model.Id;
+    ViewBag.Title = "Entrega da Tarefa N. " + Model.Id;
 }
 <div class="modal-dialog">
     <div class="modal-content">
@@ -10,7 +10,7 @@
         {
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">Informações da Tarefa do Chamado N. @Model.Chamado.Id</h4>
+                <h4 class="modal-title">Entrega da Tarefa do Chamado N. @Model.Chamado.Id</h4>
             </div>
             @Html.AntiForgeryToken()
             <div class="modal-body">
@@ -40,13 +40,6 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.DataPrevisaoEntrega, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.DisplayTextFor(model => model.DataPrevisaoEntrega)
-                        </div>
-                    </div>
-
-                    <div class="form-group">
                         @Html.LabelFor(model => model.Solicitante, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
                             @Html.DisplayTextFor(model => model.Solicitante.Nome)
@@ -61,21 +54,31 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.Label("Natureza", new { @class = "col-md-2 control-label" })
+                        @Html.LabelFor(model => model.DataEntrega, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.DisplayTextFor(m => m.Natureza.Descricao)
+                            @Html.EditorFor(model => model.DataEntrega, new { htmlAttributes = new { @class = "form-control datepicker", Style = "max-width:100px" } })
+                            @Html.ValidationMessageFor(model => model.DataEntrega, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.Label("SubNatureza", new { @class = "col-md-2 control-label" })
+                        @Html.Label("Hora da Entrega", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10 date" id='timepicker'>
+                            @Html.Editor("hora", new { htmlAttributes = new { @class = "form-control timepicker", Style = "max-width:70px" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Solucao, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.DisplayTextFor(m => m.SubNatureza.Descricao)
+                            @Html.EditorFor(model => model.Solucao, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Solucao, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Salvar" class="btn btn-default" />
                             <input type="button" value="Fechar" class="btn btn-default" data-dismiss="modal" />
                         </div>
                     </div>
@@ -88,42 +91,15 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 <script type="text/javascript">
-    //Dropdownlist Selectedchange event
-    $(".Natureza").change(function () {
-        $("#SubNatureza").empty();
-        $.ajax({
-            type: 'POST',
-            url: '@Url.Action("RetornaSubClassPorClass", "Chamado")',
-            dataType: 'json',
-            data: { selectedValue: $(".Natureza").val() },
-            success: function (subclasses) {
-                // states contains the JSON formatted list
-                // of states passed from the controller
-                $("#SubNatureza").append('<option value="">-- Selecione a SubNatureza --</option>');
-                $.each(subclasses, function (i, subclass) {
-                    $("#SubNatureza").append('<option value="'
-                    + subclass.Value + '">'
-                    + subclass.Text + '</option>');
-                });
-            },
-            error: function (ex) {
-                alert('Failed to retrieve SubNatureza.' + ex);
-            }
-        });
-        return false;
-    });
-
     $('.datepicker').datepicker({
         format: 'dd/mm/yyyy',
         language: 'pt-BR',
-        autoclose: true
-    }); //Initialise any date pickers
-
-    $('#Hora').focusin(function () {
-        $('#Hora').mask("99:99");
+        autoclose: true        
+    });
+    $('#hora').focusin(function () {
+        $('#hora').mask("99:99");
     });
 </script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+
+

@@ -79,6 +79,12 @@ namespace prj_chamadosBRA.Models
         
         [Display(Name = "Chapa do Usuario")]
         public string Chapa { get; set; }
+        
+        [Display(Name = "Superior do Usuario")]
+        public string Superior { get; set; }
+
+        [Display(Name = "Enviar Email para Superior?")]
+        public bool EnvioEmailSuperior { get; set; }
     }
 
     public class RecoveryInitalViewModel

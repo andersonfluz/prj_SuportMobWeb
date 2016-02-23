@@ -67,6 +67,25 @@
                 @Html.ValidationMessageFor(model => model.PerfilUsuario, "", new { @class = "text-danger" })
             </div>
         </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(m => m.Superior, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownList("Superior", new SelectList(string.Empty, "Id", "Nome"), Model.Superior == null ? "-- Selecione o setor do usuario --" : (string)ViewBag.SuperiorSelecionado, new { @class = "form-control" })                
+                <div style="color:gray">@("Para alterar o superior selecione obra e setor.")</div>
+                @Html.ValidationMessageFor(model => model.Superior, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.EnvioEmailSuperior, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.CheckBoxFor(m => m.EnvioEmailSuperior.Value, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EnvioEmailSuperior, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
         @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("6"))
         {
             <div class="form-group">
@@ -81,7 +100,6 @@
                     @Html.DropDownList("SetoresDisponiveis", (IEnumerable<SelectListItem>)ViewBag.SetoresDisponiveis, "-- Selecione a Obra Primeiro --", new { @class = "form-control" })
                 </div>
             </div>
-
             <div class="form-group">
                 @Html.Label(" ", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -227,6 +245,32 @@
                     var url = '@Url.Action("AdicionarObraSetorUsuario", "Account", new { idUser = "__id__", obra = "__obra__", setor = "__setor__" })';
                     window.location.href = url.replace('__id__&amp;', id + '&').replace('__obra__&amp;', obra + '&').replace('__setor__', setor);
                 });
+            })
+            $("#SetoresDisponiveis").change(function () {
+                $("#Superior").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RetornaSuperioresPorSetor", "Account")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#SetoresDisponiveis").val() },
+                    success: function (superiores) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $("#Superior").append('<option value="">-- Selecione o Superior --</option>');
+                        $.each(superiores, function (i, superior) {
+                            $("#Superior").append('<option value="'
+                            + superior.Value + '">'
+                            + superior.Text + '</option>');
+                        });
+                        if("@Model.Superior" != null){
+                            $("#Superior").val("@Model.Superior");
+                        }
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve setores.' + ex);
+                    }
+                });
+                return false;
             })
         });
         $(window).load(function () {

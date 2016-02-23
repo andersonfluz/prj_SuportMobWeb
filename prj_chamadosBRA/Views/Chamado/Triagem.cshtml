@@ -34,7 +34,7 @@
 <table class="table table-condensed table-hover" data-row-style="rowStyle">
     <tr class="active">
         <th>
-            @Html.ActionLink("Chamado N°", "Triagem", new
+            @Html.ActionLink("#", "Triagem", new
        {
            sortOrder = "Id",
            pageAtual = Model.PageNumber,
@@ -116,7 +116,7 @@
             @Html.DisplayName("Direcionar")
         </th>
 
-    </trclass="active">
+    </tr>
     @foreach (var item in Model)
     {
         <tr>

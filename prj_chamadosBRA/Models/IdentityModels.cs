@@ -17,7 +17,7 @@ namespace prj_chamadosBRA.Models
         public string Contato { get; set; }
         public DateTime? UltimoAcesso { get; set; }
         public string Chapa { get; set; }
-        public ApplicationUser Superior { get; set;}
+        public string Superior { get; set;}
         public bool? EnvioEmailSuperior { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -58,5 +58,13 @@ namespace prj_chamadosBRA.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<prj_chamadosBRA.Models.PrevisaoTarefaViewModel> PrevisaoTarefaViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<prj_chamadosBRA.Models.EncerramentoTarefaViewModel> EncerramentoTarefaViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ListaTarefaViewModel> ListaTarefaViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<prj_chamadosBRA.Models.DetalhesTarefaViewModel> DetalhesTarefaViewModels { get; set; }
     }
 }

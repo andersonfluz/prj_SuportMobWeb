@@ -21,20 +21,20 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Setor> BuscarSetores()
         {
-            var setores = (from e in db.Setor where e.Ativo select e ).ToList();
+            var setores = (from e in db.Setor where e.Ativo orderby e.Descricao select e ).ToList();
             return setores;
         }
 
         public List<Setor> BuscarSetoresPorObra(int idObra)
         {
-            var setores = (from e in db.Setor where e.obra.IDO == idObra && e.Ativo select e).ToList();
+            var setores = (from e in db.Setor where e.obra.IDO == idObra && e.Ativo orderby e.Descricao select e).ToList();
             return setores;
         }
 
         public List<Setor> BuscarSetoresPorObras(List<Obra> obras)
         {
             var idObras = (from e in obras select e.IDO).ToList();
-            var setores = (from e in db.Setor where idObras.Contains(e.obra.IDO) && e.Ativo select e).ToList();
+            var setores = (from e in db.Setor where idObras.Contains(e.obra.IDO) && e.Ativo orderby e.Descricao select e).ToList();
             return setores;
         }
 
@@ -54,7 +54,7 @@ namespace prj_chamadosBRA.Repositories
         public List<Setor> BuscarSetoresNome(string nome)
         {
 
-            var setores = (from e in db.Setor where e.Nome == nome && e.Ativo select e).ToList();
+            var setores = (from e in db.Setor where e.Nome == nome && e.Ativo orderby e.Descricao select e).ToList();
             return setores;
         }
 
@@ -62,6 +62,26 @@ namespace prj_chamadosBRA.Repositories
         {
             var setor = (from e in db.Setor where e.Id == id && e.Ativo select e).SingleOrDefault();
             return setor;
+        }
+
+        public List<Setor> BuscarSetoresCoorporativoPorId(int idSetorCoorporativo)
+        {
+
+            var setor = (from e in db.Setor where e.SetorCorporativo == idSetorCoorporativo && e.Ativo orderby e.Descricao select e).ToList();
+            return setor;
+        }
+
+        public bool isCorporativo(Int32 idSetor)
+        {
+            var setor = (from e in db.Setor where e.Id == idSetor && e.SetorCorporativo != null select e).SingleOrDefault();
+            if (setor != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool salvarSetor(Setor setor)

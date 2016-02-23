@@ -2,9 +2,7 @@
 using prj_chamadosBRA.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Web;
-using System.Web.Mvc;
 
 namespace prj_chamadosBRA.GN
 {
@@ -39,11 +37,11 @@ namespace prj_chamadosBRA.GN
             {
                 //Usuario Vinculado a Obras
                 var obras = new UsuarioObraDAO(db).buscarObrasDoUsuario(user);
-                var setores = new UsuarioSetorDAO(db).buscarSetoresCorporativosDoUsuario(user);
-                if (setores.Count > 0)
+                var setoresCorporativos = new UsuarioSetorDAO(db).buscarSetoresCorporativosDoUsuario(user);
+                if (setoresCorporativos.Count > 0)
                 {
                     obras = new List<Obra>();
-                    foreach (var setor in setores)
+                    foreach (var setor in setoresCorporativos)
                     {
                         obras.AddRange(obras = new ObraDAO(db).BuscarObrasSetoresCorporativos(setor));
                     }
@@ -77,24 +75,32 @@ namespace prj_chamadosBRA.GN
                     else
                     {
                         return new ChamadoDAO(db).BuscarChamadosTecnicoRMTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
-                            //.ToPagedList(pageNumber, pageSize);
+                        //.ToPagedList(pageNumber, pageSize);
                     }
                 }
                 else if (isMatriz && (user.PerfilUsuario == 3 || user.PerfilUsuario == 5))
                 {
-                    var setoresUsuario = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
-                    if (tipoChamado == null || tipoChamado == "-2")
+                    List<Setor> setores;
+                    if (Convert.ToBoolean(HttpContext.Current.Request.Cookies["UsuarioSetorCorporativo"].Value))
                     {
-                        return new ChamadoDAO(db).BuscarChamadosDeSetores(setoresUsuario, filtro, false, sortOrder);
+                        setores = new SetorDAO(db).BuscarSetoresCoorporativoPorId(setoresCorporativos[0].SetorCorporativo.Value);
                     }
                     else
                     {
-                        return new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setoresUsuario, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
+                        setores = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                    }
+                    if (tipoChamado == null || tipoChamado == "-2")
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeSetores(setores, filtro, false, sortOrder);
+                    }
+                    else
+                    {
+                        return new ChamadoDAO(db).BuscarChamadosDeSetoresTipoChamado(setores, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
                     }
                 }
                 else
                 {
-                    
+
                     if (tipoChamado == null || tipoChamado == "-2")
                     {
                         return new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, false, sortOrder);
@@ -107,7 +113,7 @@ namespace prj_chamadosBRA.GN
 
             }
             else
-            {               
+            {
                 if (tipoChamado == null || tipoChamado == "-2")
                 {
                     return new ChamadoDAO(db).BuscarChamadosDoUsuario(user, filtro, false, sortOrder);
@@ -187,6 +193,11 @@ namespace prj_chamadosBRA.GN
             }
         }
 
+        public List<Chamado> MeusChamados(string filtro, string sortOrder, ApplicationUser user)
+        {
+            return new ChamadoDAO(db).BuscarChamadosDoResponsavel(user, filtro, sortOrder);
+        }
+
         public List<Chamado> TriagemChamados(string tipoChamado, string filtro, string obraSelected, string sortOrder, ApplicationUser user)
         {
             var setores = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
@@ -251,7 +262,7 @@ namespace prj_chamadosBRA.GN
                 }
                 else if (isMatriz && user.PerfilUsuario == 7)
                 {
-                    
+
                     if (tipoChamado == null || tipoChamado == "-2")
                     {
                         return new ChamadoDAO(db).BuscarChamadosTecnicoRM(obras, filtro, true, sortOrder);
@@ -385,7 +396,7 @@ namespace prj_chamadosBRA.GN
                 });
                 return chamado;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }
@@ -509,15 +520,16 @@ namespace prj_chamadosBRA.GN
                     {
                         var user = aDAO.retornarUsuario(ddlResponsavelChamado);
                         chamadoOrigem.ResponsavelChamado = user;
-                        cDAO.atualizarChamado(id, chamadoOrigem);
-                        chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
-                        new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                        if (cDAO.atualizarChamado(id, chamadoOrigem))
                         {
-                            InfoEmail = chamadoHistorico.idChamadoHistorico.ToString(),
-                            Data = DateTime.Now,
-                            IdTipoEmail = (int)EmailTipo.EmailTipos.DirecionamentoChamado
-                        });
-
+                            chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
+                            new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                            {
+                                InfoEmail = chamadoHistorico.idChamadoHistorico.ToString(),
+                                Data = DateTime.Now,
+                                IdTipoEmail = (int)EmailTipo.EmailTipos.DirecionamentoChamado
+                            });
+                        }
                     }
                 }
             }
@@ -525,14 +537,16 @@ namespace prj_chamadosBRA.GN
             {
                 var user = aDAO.retornarUsuario(ddlResponsavelChamado);
                 chamadoOrigem.ResponsavelChamado = user;
-                cDAO.atualizarChamado(id, chamadoOrigem);
-                chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
-                new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                if (cDAO.atualizarChamado(id, chamadoOrigem))
                 {
-                    InfoEmail = chamadoHistorico.idChamadoHistorico.ToString(),
-                    Data = DateTime.Now,
-                    IdTipoEmail = (int)EmailTipo.EmailTipos.DirecionamentoChamado
-                });
+                    chamadoHistorico = cGN.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Usuario " + user.Nome, chamadoOrigem);
+                    new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = chamadoHistorico.idChamadoHistorico.ToString(),
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.DirecionamentoChamado
+                    });
+                }
             }
 
             if (informacoesAcompanhamento == null || informacoesAcompanhamento != "")
@@ -553,6 +567,41 @@ namespace prj_chamadosBRA.GN
             return true;
         }
 
+        public bool redirecionarSetorChamado(int id, string SetorDestino, ApplicationUser responsavel)
+        {
+            try
+            {
+                var sDAO = new SetorDAO(db);
+                var cDAO = new ChamadoDAO(db);
+                var chamadoOrigem = cDAO.BuscarChamadoId(id);
+                ChamadoHistorico chamadoHistorico;
+                if (chamadoOrigem.SetorDestino.Id != Convert.ToInt32(SetorDestino))
+                {
+                    var setor = sDAO.BuscarSetorId(Convert.ToInt32(SetorDestino));
+                    chamadoOrigem.SetorDestino = setor;
+                    chamadoOrigem.ResponsavelChamado = null;
+                    cDAO.atualizarChamado(id, chamadoOrigem);
+                    chamadoHistorico = this.registrarHistorico(DateTime.Now, responsavel, "O Chamado foi direcionado para o Setor " + setor.Descricao, chamadoOrigem);
+                    new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = chamadoHistorico.Chamado.Id.ToString(),
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.AberturaChamado
+                    });
+                    new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = chamadoHistorico.idChamadoHistorico.ToString(),
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.DirecionamentoChamado
+                    });
+                }
+                return true;
+            }catch(Exception e)
+            {
+                return false;
+            }
+        }
+
         public bool reaberturaChamado(int id, string justificativaReabertura, ApplicationUser responsavel)
         {
             try
@@ -561,7 +610,7 @@ namespace prj_chamadosBRA.GN
                 chamado.StatusChamado = false;
                 chamado.Cancelado = false;
                 new ChamadoDAO(db).atualizarChamado(id, chamado);
-                justificativaReabertura = "O chamado encerrado em: "+ chamado.DataHoraBaixa.ToString() + " foi reaberto. Justificativa: " + justificativaReabertura;
+                justificativaReabertura = "O chamado encerrado em: " + chamado.DataHoraBaixa.ToString() + " foi reaberto. Justificativa: " + justificativaReabertura;
                 var chamadoHistorico = new ChamadoGN(db).registrarHistorico(DateTime.Now, responsavel, justificativaReabertura, new ChamadoDAO(db).BuscarChamadoId(id));
                 new ChamadoLogAcaoDAO(db).salvar(new ChamadoLogAcao
                 {

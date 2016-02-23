@@ -2,25 +2,14 @@
 @using PagedList.Mvc;
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
-    ViewBag.Title = "Acompanhamento de Chamados";
+    ViewBag.Title = "Meus Chamados";
 }
-<h2>Acompanhamento de Chamados @ViewBag.NomeObra</h2>
-<p>
-    @Html.ActionLink("Novo Chamado", "Create", null, new { @class = "btn btn-default" })
-</p>
+<h2>Meus Chamados @ViewBag.NomeObra</h2>
 <div class="modal" id="modal">
 </div>
-@using (Html.BeginForm("Acompanhamento", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
+@using (Html.BeginForm("MeusChamados", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
 {
 
-    @Html.Label("Tipo Chamado:", new { @class = "control-label" })
-    <label>&nbsp;</label>
-    @Html.DropDownList("TipoChamado", null, new { @class = "form-control" })
-    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-    @Html.CheckBox("Encerrado", (bool)ViewBag.CurrentEncerrado)
-    <label>&nbsp;</label>
-    @Html.Label("Encerrados", new { @class = "control-label" })
-    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
     @Html.Label("Consultar:", new { @class = "control-label" })
     <label>&nbsp;</label>
     @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
@@ -28,14 +17,13 @@
 }
 
 @Html.Hidden("pageAtual", Model.PageNumber)
-@Html.Hidden("encerrado", (bool)ViewBag.CurrentEncerrado)
 <label>&nbsp;</label>
 <p>
 </p>
 <table class="table table-condensed table-hover" data-row-style="rowStyle">
     <tr class="active">
         <th>
-            @Html.ActionLink("#", "Acompanhamento", new
+            @Html.ActionLink("#", "MeusChamados", new
        {
            sortOrder = "Id",
            pageAtual = Model.PageNumber,
@@ -44,7 +32,7 @@
        })
         </th>
         <th>
-            @Html.ActionLink("Abertura", "Acompanhamento", new
+            @Html.ActionLink("Abertura", "MeusChamados", new
        {
            sortOrder = "dataAbertura",
            pageAtual = Model.PageNumber,
@@ -53,7 +41,7 @@
        })
         </th>
         <th>
-            @Html.ActionLink("Solicitante", "Acompanhamento", new
+            @Html.ActionLink("Solicitante", "MeusChamados", new
        {
            sortOrder = "solicitante",
            pageAtual = Model.PageNumber,
@@ -62,7 +50,7 @@
        })
         </th>
         <th>
-            @Html.ActionLink("Assunto", "Acompanhamento", new
+            @Html.ActionLink("Assunto", "MeusChamados", new
        {
            sortOrder = "assunto",
            pageAtual = Model.PageNumber,
@@ -71,7 +59,7 @@
        })
         </th>
         <th>
-            @Html.ActionLink("Responsavel", "Acompanhamento", new
+            @Html.ActionLink("Responsavel", "MeusChamados", new
        {
            sortOrder = "responsavel",
            pageAtual = Model.PageNumber,
@@ -82,7 +70,7 @@
         @if ((bool)Session["ObraVisivel"])
         {
             <th>
-                @Html.ActionLink("Obra", "Acompanhamento", new
+                @Html.ActionLink("Obra", "MeusChamados", new
            {
                sortOrder = "obra",
                pageAtual = Model.PageNumber,
@@ -94,7 +82,7 @@
         @if ((bool)Session["SetorVisivel"])
         {
             <th>
-                @Html.ActionLink("Setor", "Acompanhamento", new
+                @Html.ActionLink("Setor", "MeusChamados", new
            {
                sortOrder = "setor",
                pageAtual = Model.PageNumber,
@@ -180,7 +168,7 @@
 </table>
     Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("Acompanhamento",
+    @Html.PagedListPager(Model, page => Url.Action("MeusChamados",
     new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, encerrado = ViewBag.CurrentEncerrado, TipoChamado = ViewBag.CurrentTipoChamado }))
 
     @Html.Hidden("notice", @TempData["notice"])
@@ -216,34 +204,7 @@
                             $("#modal").modal({ show: true });
                         })
                     });
-                });
-                $('#TipoChamado').change(function () {
-                    //var url = window.location.href;
-
-                    var url = '@Url.Action("Acompanhamento", "Chamado", new { page = "__page__", tipoChamado = "__tipoChamado__", encerrado = "__encerrado__" })';
-                    window.location.href = url.replace('__page__&amp;', $('#pageAtual').val() + '&').replace('__tipoChamado__&amp;', $('#TipoChamado').val() + '&').replace('__encerrado__', $('#Encerrado').is(":checked"));
-
-
-
-
-                    //if (url.indexOf("page") > -1) {
-                    //    window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $('#Encerrado').is(":checked");
-                    //} else {
-                    //    window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $('#Encerrado').is(":checked");
-                    //}
-                });
-                $('#Encerrado').change(function () {
-                    var url = '@Url.Action("Acompanhamento", "Chamado", new { page = "__page__", tipoChamado = "__tipoChamado__", encerrado = "__encerrado__" })';
-                    window.location.href = url.replace('__page__&amp;', $('#pageAtual').val() + '&').replace('__tipoChamado__&amp;', $('#TipoChamado').val() + '&').replace('__encerrado__', $('#Encerrado').is(":checked"));
-
-                    //window.location.href = '../../Chamado/Acompanhamento/?page=' + $('#pageAtual').val() + '&tipochamado=' + $('#TipoChamado').val() + '&encerrado=' + $(this).is(":checked");
-                });
-                $(function () {
-                    $(".detailsEncerrado").click(function () {
-                        var id = $(this).attr("data-id");
-                        window.location.href = '../Chamado/Encerrado/' + id;
-                    });
-                });
+                });               
             });
             $(window).load(function () {
                 if ($('#notice').val() != "") {

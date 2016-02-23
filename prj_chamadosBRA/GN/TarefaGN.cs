@@ -15,9 +15,45 @@ namespace prj_chamadosBRA.GN
             this.db = db;
         }
 
-        public List<Tarefa> BuscarTarefasPorResponsavel(ApplicationUser user)
+        public List<Tarefa> BuscarTarefasPorResponsavelOuTerceirizado(ApplicationUser user)
         {
-            return new TarefaDAO(db).BuscarTarefasPorResponsavel(user);
+            return new TarefaDAO(db).BuscarTarefasPorResponsavelOuTerceirizado(user);
+        }
+
+        public List<Tarefa> BuscarTarefasPorResponsavelOuTerceirizadoEncerrados(ApplicationUser user)
+        {
+            return new TarefaDAO(db).BuscarTarefasPorResponsavelOuTerceirizadoEncerrados(user);
+        }
+
+        public Tarefa BuscarTarefasPorId(int id)
+        {
+            return new TarefaDAO(db).BuscarTarefaId(id);
+        }
+
+        public bool gerarTarefa(Tarefa tarefa)
+        {
+            try
+            {
+                new TarefaDAO(db).salvarTarefa(tarefa);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public bool atualizarTarefa(Tarefa tarefa)
+        {
+            try
+            {
+                new TarefaDAO(db).atualizarTarefa(tarefa);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
     }
 }

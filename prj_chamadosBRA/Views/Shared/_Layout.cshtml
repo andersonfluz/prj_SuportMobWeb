@@ -39,13 +39,14 @@
                                 @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7"))
                                 {
                                     if (Convert.ToBoolean(Request.Cookies["UsuarioSetorCorporativo"].Value))
-                                        //(bool)Session["UsuarioSetorCorporativo"])
+                                    //(bool)Session["UsuarioSetorCorporativo"])
                                     {
                                         <li>@Html.ActionLink("Triagem", "Triagem", "Chamado", null, new { title = "Triagem das solicitações" })</li>
                                     }
                                     <li>@Html.ActionLink("Gestão", "Index", "Chamado", null, new { title = "Gerencie as solicitações do seu setor" })</li>
                                 }
                                 <li>@Html.ActionLink("Acompanhamento", "Acompanhamento", "Chamado", null, new { title = "Acompanhe suas solicitações" })</li>
+                                
                                 @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7"))
                                 {
                                     <li role="separator" class="divider"></li>
@@ -53,6 +54,19 @@
                                 }
                             </ul>
                         </li>
+                        @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7"))
+                        {
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Minhas Atividades <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Meus Chamados", "MeusChamados", "Chamado", null, new { title = "Gerencie os chamados em sua responsabilidade" })</li>
+                                    <li role="separator" class="divider"></li>
+                                    <li>@Html.ActionLink("Minhas Tarefas", "Index", "Tarefa", null, new { title = "Gerencie as tarefas em sua responsabilidade" })</li>                                    
+                                    <li>@Html.ActionLink("Minhas Tarefas Entregues", "Encerrados", "Tarefa", null, new { title = "Tarefas Encerrados em sua responsabilidade" })</li>                                    
+                                </ul>
+                            </li>
+                        }
+
                         @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5")
                         {
                             <li class="dropdown">

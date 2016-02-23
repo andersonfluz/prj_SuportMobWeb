@@ -41,12 +41,19 @@ namespace prj_chamadosBRA.Utils
 
                             foreach (var usuario in usuarios)
                             {
-                                mail.CC.Add(usuario.UserName);
+                                mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                                //mail.CC.Add(usuario.UserName);
                             }
 
                         }else
                         {
-                            mail.CC.Add(chamado.SetorDestino.EmailSetor);
+                            var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
+
+                            foreach (var usuario in usuarios)
+                            {
+                                mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                                //mail.CC.Add(usuario.UserName);
+                            }
                         }
                     }
                     mail.Subject = "HelpMe! - Notificação Abertura Chamado N. " + chamado.Id;
@@ -301,11 +308,26 @@ namespace prj_chamadosBRA.Utils
                     }
                     else
                     {
-                        var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
-                        foreach (var usuario in usuarios)
+                        if (chamado.SetorDestino.SetorCorporativo != null)
                         {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(usuario.UserName));
+                            var usuarios = new ApplicationUserDAO().retornarUsuariosSetorTipoChamado(new SetorDAO().BuscarSetorId(chamado.SetorDestino.SetorCorporativo.Value), chamado.TipoChamado.Value);
+
+                            foreach (var usuario in usuarios)
+                            {
+                                mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                                //mail.CC.Add(usuario.UserName);
+                            }
+
+                        }
+                        else
+                        {
+                            var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
+
+                            foreach (var usuario in usuarios)
+                            {
+                                mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                                //mail.CC.Add(usuario.UserName);
+                            }
                         }
                     }
                     mail.Subject = "HelpMe! - Alerta de chamado sem responsavel - Chamado N. " + chamado.Id;

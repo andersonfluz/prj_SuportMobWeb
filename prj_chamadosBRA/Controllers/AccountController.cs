@@ -69,6 +69,14 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult Edit(string id)
         {
             var user = new ApplicationUserDAO().retornarUsuario(id);
+            if(user.EnvioEmailSuperior == null)
+            {
+                user.EnvioEmailSuperior = false;
+            }
+            if (user.Superior != null)
+            {
+                ViewBag.SuperiorSelecionado = new ApplicationUserDAO().retornarUsuario(user.Superior).Nome;
+            }
             if (Session["PerfilUsuario"].ToString().Equals("1"))
             {
                 //montagem de perfil
@@ -118,7 +126,7 @@ namespace prj_chamadosBRA.Controllers
         // POST: /Account/Edit/5
         [Authorize]
         [HttpPost]
-        public ActionResult Edit(ApplicationUser user, string PerfilUsuario)
+        public ActionResult Edit(ApplicationUser user, string PerfilUsuario, string Superior)
         {
             using (var context = new ApplicationDbContext())
             {
@@ -129,6 +137,8 @@ namespace prj_chamadosBRA.Controllers
                 userOrigem.PerfilUsuario = Convert.ToInt32(PerfilUsuario);
                 userOrigem.Contato = user.Contato;
                 userOrigem.Chapa = user.Chapa;
+                userOrigem.Superior = Superior;
+                userOrigem.EnvioEmailSuperior = user.EnvioEmailSuperior;
                 appDAO.atualizarApplicationUser(user.Id, userOrigem);
             }
             TempData["notice"] = "Dados alterados com sucesso!";
@@ -367,14 +377,14 @@ namespace prj_chamadosBRA.Controllers
                             break;
                         case "3": //Tecnico
                             Session["SetorVisivel"] = true;
-                            Session["ObraVisivel"] = false;
+                            Session["ObraVisivel"] = true;
                             Session["TipoChamadoVisivel"] = true;
                             Session["SelecionarResponsavelAbertura"] = true;
                             break;
                         case "4": //Usuário
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = false;
-                            Session["TipoChamadoVisivel"] = false;
+                            Session["TipoChamadoVisivel"] = true;
                             Session["SelecionarResponsavelAbertura"] = false;
                             break;
                         case "5": //Gestor
@@ -469,6 +479,7 @@ namespace prj_chamadosBRA.Controllers
             {
                 ViewBag.SetorDestino = new SelectList(new SetorDAO().BuscarSetores(), "Id", "Nome");
             }
+            //ViewBag.Superiores = new SelectList(new ApplicationUserDAO().retornarUsuariosObras(obras, null), "Id", "Nome","-- Selecione o superior do usuario --");
 
             if (Session["PerfilUsuario"].ToString().Equals("1"))
             {
@@ -500,7 +511,7 @@ namespace prj_chamadosBRA.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        var user = new ApplicationUser { UserName = model.UserName, PerfilUsuario = model.perfil, Nome = model.Nome, Contato = model.Contato, Email = model.UserName, Chapa = model.Chapa };
+                        var user = new ApplicationUser { UserName = model.UserName, PerfilUsuario = model.perfil, Nome = model.Nome, Contato = model.Contato, Email = model.UserName, Chapa = model.Chapa, Superior = model.Superior, EnvioEmailSuperior = model.EnvioEmailSuperior };
                         var result = UserManager.Create(user, model.Password);
                         if (result.Succeeded)
                         {
@@ -585,6 +596,34 @@ namespace prj_chamadosBRA.Controllers
             {
                 var setores = new List<Setor>();
                 ActionResult json = Json(new SelectList(setores, "Id", "Nome"));
+                return json;
+            }
+        }
+
+        public ActionResult RetornaSuperioresPorSetor(string selectedValue)
+        {
+            if (selectedValue != "")
+            {
+                if (new SetorDAO().isCorporativo(Convert.ToInt32(selectedValue)))
+                {
+                    var setor = new SetorDAO().BuscarSetorId(Convert.ToInt32(selectedValue));
+                    var setores = new SetorDAO().BuscarSetoresCoorporativoPorId(setor.SetorCorporativo.Value);
+                    var superiores = new ApplicationUserDAO().retornarUsuariosSetores(setores, null);
+                    ActionResult json = Json(new SelectList(superiores, "Id", "Nome"));
+                    return json;
+                }
+                else
+                {
+                    var superiores = new ApplicationUserDAO().retornarUsuariosSetor(new SetorDAO().BuscarSetorId(Convert.ToInt32(selectedValue)), null);
+                    ActionResult json = Json(new SelectList(superiores, "Id", "Nome"));
+                    return json;
+                }
+                
+            }
+            else
+            {
+                var superiores = new List<ApplicationUser>();
+                ActionResult json = Json(new SelectList(superiores, "Id", "Nome"));
                 return json;
             }
         }

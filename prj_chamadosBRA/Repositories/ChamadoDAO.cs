@@ -646,6 +646,49 @@ namespace prj_chamadosBRA.Repositories
             }
         }
 
+        public List<Chamado> BuscarChamadosDoResponsavel(ApplicationUser user, string filtro, string sortOrder)
+        {
+            var chamados = (from e in db.Chamado where e.ResponsavelChamado.Id == user.Id && e.StatusChamado == false select e);
+            if (filtro != null)
+            {
+                chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
+                                                           || s.Assunto.ToLower().Contains(filtro.ToLower())
+                                                           || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
+                                                           || s.Descricao.ToLower().Contains(filtro.ToLower())
+                                                           || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower()))
+                                                           || (s.ResponsavelChamado != null && s.ResponsavelChamado.Nome.ToLower().Contains(filtro.ToLower())));
+            }
+            switch (sortOrder)
+            {
+                case "id":
+                    chamados = chamados.OrderByDescending(s => s.Id);
+                    break;
+                case "dataAbertura":
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
+                    break;
+                case "solicitante":
+                    chamados = chamados.OrderBy(s => s.ResponsavelAberturaChamado.Nome);
+                    break;
+                case "assunto":
+                    chamados = chamados.OrderBy(s => s.Assunto);
+                    break;
+                case "responsavel":
+                    chamados = chamados.OrderBy(s => s.ResponsavelChamado.Nome);
+                    break;
+                case "obra":
+                    chamados = chamados.OrderBy(s => s.ObraDestino.Descricao);
+                    break;
+                case "setor":
+                    chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
+                    break;
+                default:
+                    chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
+                    break;
+            }
+
+            return chamados.ToList();
+        }
+
         public List<Chamado> BuscarChamadosSemResponsaveisPorTrintaMinutos()
         {
             var chamados = (from e in db.Chamado
@@ -684,8 +727,7 @@ namespace prj_chamadosBRA.Repositories
                             select e).ToList();
             return chamados;
         }
-
-
+        
         public List<Chamado> BuscarChamadosSemAtualizaoPorDoisDiasTrintaMinutos()
         {
             var chamados = (from e in db.Chamado
@@ -694,7 +736,7 @@ namespace prj_chamadosBRA.Repositories
                             where e.StatusChamado == false &&
                                   e.ResponsavelChamado != null &&
                                   l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 7 || s.ChamadoAcao.IdAcao == 1)).Id &&
-                                  h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&                                  
+                                  h.idChamadoHistorico == db.ChamadoHistorico.OrderByDescending(s => s.Data).FirstOrDefault(s => s.Chamado.Id == h.Chamado.Id).idChamadoHistorico &&
                                   DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 30 &&
                                   DbFunctions.DiffMinutes(h.Data, DateTime.Now) >= 2910
 
@@ -741,7 +783,7 @@ namespace prj_chamadosBRA.Repositories
                                   e.ResponsavelChamado != null &&
                                   l.Id == db.ChamadoLogAcao.OrderByDescending(s => s.DataAcao).FirstOrDefault(s => s.IdChamado == l.IdChamado && (s.ChamadoAcao.IdAcao == 10 || s.ChamadoAcao.IdAcao == 1)).Id &&
                                   ((DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 60 && l.ChamadoAcao.IdAcao == 1) ||
-                                  (DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 360 && l.ChamadoAcao.IdAcao == 10))                                 
+                                  (DbFunctions.DiffMinutes(l.DataAcao, DateTime.Now) >= 360 && l.ChamadoAcao.IdAcao == 10))
                             select e).ToList();
             return chamados;
         }
@@ -758,16 +800,23 @@ namespace prj_chamadosBRA.Repositories
             return true;
         }
 
-        public void atualizarChamado(int id, Chamado chamado)
+        public bool atualizarChamado(int id, Chamado chamado)
         {
-            var chamadoUpdate = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
-            chamadoUpdate.ObsevacaoInterna = chamado.ObsevacaoInterna;
-            chamadoUpdate.SetorDestino = chamado.SetorDestino;
-            chamadoUpdate.ObraDestino = chamado.ObraDestino;
-            chamadoUpdate.ResponsavelChamado = chamado.ResponsavelChamado;
-            chamadoUpdate.TipoChamado = chamado.TipoChamado;
-            //db.Entry(chamado).State = EntityState.Modified;
-            db.SaveChanges();
+            try
+            {
+                var chamadoUpdate = (from e in db.Chamado where e.Id == id select e).SingleOrDefault();
+                chamadoUpdate.ObsevacaoInterna = chamado.ObsevacaoInterna;
+                chamadoUpdate.SetorDestino = chamado.SetorDestino;
+                chamadoUpdate.ObraDestino = chamado.ObraDestino;
+                chamadoUpdate.ResponsavelChamado = chamado.ResponsavelChamado;
+                chamadoUpdate.TipoChamado = chamado.TipoChamado;
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
         public void encerrarChamado(int id, Chamado chamado)

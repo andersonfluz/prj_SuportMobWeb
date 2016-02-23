@@ -25,9 +25,27 @@ namespace prj_chamadosBRA.Repositories
             return db.Set<Tarefa>().Where(c=>c.Chamado.Id == IdChamado).ToList();
         }
 
-        public List<Tarefa> BuscarTarefasPorResponsavel(ApplicationUser user)
+        public List<Tarefa> BuscarTarefasPorResponsavelOuTerceirizado(ApplicationUser user)
         {
-            return db.Set<Tarefa>().Where(c => c.Responsavel.Id == user.Id).ToList();
+            return db.Set<Tarefa>().Where(c => !c.StatusTarefa && ((c.Terceirizado && c.Solicitante.Id == user.Id) || (c.Responsavel.Id == user.Id))).ToList();
+        }
+
+        public List<Tarefa> BuscarTarefasPorResponsavelOuTerceirizadoEncerrados(ApplicationUser user)
+        {
+            return db.Set<Tarefa>().Where(c => c.StatusTarefa && ((c.Terceirizado && c.Solicitante.Id == user.Id) || (c.Responsavel.Id == user.Id))).ToList();
+        }
+
+        public void salvarTarefa(Tarefa tarefa)
+        {
+            db.Tarefa.Add(tarefa);
+            db.SaveChanges();
+        }
+
+        public void atualizarTarefa(Tarefa tarefa)
+        {
+            db.Tarefa.Attach(tarefa);
+            db.Entry(tarefa).State = System.Data.Entity.EntityState.Modified;
+            db.SaveChanges();
         }
     }
 }

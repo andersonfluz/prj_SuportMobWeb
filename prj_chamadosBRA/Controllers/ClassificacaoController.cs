@@ -128,8 +128,7 @@ namespace prj_chamadosBRA.Controllers
                 return View();
             }
         }
-
-
+        
         public ActionResult RetornaSetoresPorObra(string selectedValue)
         {
             if (selectedValue != "")

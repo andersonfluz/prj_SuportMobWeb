@@ -178,7 +178,7 @@
 
                     $.ajax({
                         type: "POST",
-                        url: '/Chamado/AdicionarAnexo?id=' + $("#Id").val(),
+                        url: '@Url.Action("AdicionarAnexo", "Chamado")/?id=' + $("#Id").val(),
                         contentType: false,
                         processData: false,
                         data: data,

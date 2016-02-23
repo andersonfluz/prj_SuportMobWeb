@@ -550,6 +550,11 @@
     <Content Include="Views\Tarefa\Details.cshtml" />
     <Content Include="Views\Tarefa\Edit.cshtml" />
     <Content Include="Views\Tarefa\Index.cshtml" />
+    <Content Include="Views\Chamado\MeusChamados.cshtml" />
+    <Content Include="Views\Tarefa\PrevisaoEntrega.cshtml" />
+    <Content Include="Views\Tarefa\Encerrar.cshtml" />
+    <Content Include="Views\Tarefa\Encerrados.cshtml" />
+    <Content Include="Views\Tarefa\EncerradoInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

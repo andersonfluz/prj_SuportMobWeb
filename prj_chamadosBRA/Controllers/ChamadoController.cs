@@ -26,7 +26,6 @@ namespace prj_chamadosBRA.Controllers
             manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
         }
 
-
         // GET: Chamado
         [Authorize]
         public ActionResult Index(int? page, string tipoChamado, string filtro, string sortOrder)
@@ -298,6 +297,32 @@ namespace prj_chamadosBRA.Controllers
                 //    }
                 //}
                 #endregion
+            }
+            catch (NullReferenceException)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
+        // GET: Chamado
+        [Authorize]
+        public ActionResult MeusChamados(int? page, string tipoChamado, string filtro, string sortOrder)
+        {
+            try
+            {
+                ViewBag.CurrentFiltro = filtro;
+                ViewBag.CurrentSort = sortOrder;
+                //Criação da lista de tipos de chamados
+                var dropdownItems = new List<SelectListItem>();
+                dropdownItems.AddRange(new[]{
+                                                new SelectListItem { Text = "Todos", Value = "-2" },
+                                                new SelectListItem { Text = "Totvs RM", Value = "1" },
+                                                new SelectListItem { Text = "Outros", Value = "2" }
+                                            });
+                ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", tipoChamado);
+
+                return View(new ChamadoGN(db).MeusChamados(filtro, sortOrder, manager.FindById(User.Identity.GetUserId())).ToPagedList(page ?? 1, 7));
+                
             }
             catch (NullReferenceException)
             {
@@ -859,6 +884,24 @@ namespace prj_chamadosBRA.Controllers
                 return Json("Problemas no carregamento do aquivo.");
             }
             return Json("Arquivo Carregado com sucesso!");
+        }
+
+        public ActionResult DirecionarSetor(int id, string setor)
+        {
+            var cGN = new ChamadoGN(db);
+            //TempData["notice"] = "Chamado Atualizado Com Sucesso!";
+            //return RedirectToAction("Index");
+
+            if (cGN.redirecionarSetorChamado(id, setor, manager.FindById(User.Identity.GetUserId())))
+            {
+                TempData["notice"] = "Setor do Chamado Redirecionado Com Sucesso!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["notice"] = "Desculpe, estamos com problemas ao atualizar o chamado.";
+                return RedirectToAction("Edit", id);
+            }
         }
 
         // POST: Chamado/Edit/5

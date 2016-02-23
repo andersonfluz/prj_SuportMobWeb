@@ -1,4 +1,4 @@
-﻿@model prj_chamadosBRA.Models.TarefaViewModel
+﻿@model prj_chamadosBRA.Models.NovaTarefaViewModel
 
 @{
     Layout = null;
@@ -17,6 +17,9 @@
             <div class="modal-body">
                 <div class="form-horizontal">
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Chamado.Id)
+                    @Html.HiddenFor(model => model.Terceirizado)
+                    @Html.HiddenFor(model => model.Especialista)
                     <div class="form-group">
                         @Html.LabelFor(model => model.Assunto, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
@@ -34,10 +37,28 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.Label("Responsavel:", new { @class = "col-md-2 control-label" })
+                        @Html.Label("Tipo de Chamado:", new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(m => m.Responsavel, (SelectList)ViewBag.ddlResponsavelChamado, "-- Selecione o Responsavel --", new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Responsavel, "", new { @class = "text-danger" })                       
+                            @Html.RadioButtonFor(m => m.TipoTarefa, "1")<label>&nbsp;Questionamento</label>
+                            <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                            @Html.RadioButtonFor(m => m.TipoTarefa, "2")<label>&nbsp;Aprovação</label>             
+                            <p>@Html.ValidationMessageFor(m => m.TipoTarefa, "", new { @class = "text-danger" })</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("Tarefa para:", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.RadioButtonFor(m => m.TipoResponsavel, "1")<label>&nbsp;Solicitante</label>
+                            <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                            @Html.RadioButtonFor(m => m.TipoResponsavel, "2")<label>&nbsp;Especialista</label>
+                            <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                            @Html.RadioButtonFor(m => m.TipoResponsavel, "3")<label>&nbsp;Terceiros</label>
+                            <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                            @Html.RadioButtonFor(m => m.TipoResponsavel, "4")<label>&nbsp;Superior do Solicitante</label>
+                            @Html.DropDownListFor(m => m.Responsavel, (SelectList)ViewBag.ddlResponsavelChamado, new { @class = "form-control" })
+                            @Html.DropDownListFor(m => m.ResponsavelTerceiros, (SelectList)ViewBag.ddlResponsavelTerceirizado, "-- Selecione o Terceirizado --", new { @class = "form-control" })                                                                                                          
+                            <p>@Html.ValidationMessageFor(m => m.TipoResponsavel, "", new { @class = "text-danger" })</p>
                         </div>
                     </div>
 
@@ -102,6 +123,35 @@
 
     $('#Hora').focusin(function () {
         $('#Hora').mask("99:99");
+    });
+    $(document).ready(function () {
+        $("#Responsavel").hide('fast');
+        $("#ResponsavelTerceiros").hide('fast');
+        $("input[name='TipoResponsavel']").change(function () {
+            if ($("input[name='TipoResponsavel']:checked").val() == "1") {
+                $("#Responsavel").hide('fast');
+                $("#Terceirizado").val(false);
+                $("#Especialista").val(false);
+                $("#ResponsavelTerceiros").hide('fast');                
+                $("#Responsavel").val("@Model.Chamado.ResponsavelAberturaChamado.Id.ToString()");
+            } else if ($("input[name='TipoResponsavel']:checked").val() == "2") {
+                $("#ResponsavelTerceiros").hide('fast');
+                $("#Responsavel").show('fast');
+                $("#Terceirizado").val(false);
+                $("#Especialista").val(true);
+                $("#Responsavel").val("-1");
+            } else if ($("input[name='TipoResponsavel']:checked").val() == "3") {
+                $("#ResponsavelTerceiros").show('fast');
+                $("#Terceirizado").val(true);
+                $("#Especialista").val(false);
+                $("#Responsavel").hide('fast');
+            } else if ($("input[name='TipoResponsavel']:checked").val() == "4") {
+                $("#ResponsavelTerceiros").hide('fast');
+                $("#Terceirizado").val(false);
+                $("#Especialista").val(false);
+                $("#Responsavel").hide('fast');
+            }
+        });
     });
 </script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>

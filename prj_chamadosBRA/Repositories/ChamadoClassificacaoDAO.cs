@@ -27,7 +27,7 @@ namespace prj_chamadosBRA.Repositories
 
         public List<ChamadoClassificacao> BuscarClassificacoes()
         {
-            var classificacoes = (from e in db.ChamadoClassificacao select e).ToList();
+            var classificacoes = (from e in db.ChamadoClassificacao select e).OrderBy(s => s.Descricao).ToList();
             return classificacoes;
         }
 
@@ -39,21 +39,21 @@ namespace prj_chamadosBRA.Repositories
 
         public List<ChamadoClassificacao> BuscarClassificacoesPorSetor(Setor setor)
         {
-            var classificacoes = (from e in db.ChamadoClassificacao where e.Setor.Id == setor.Id select e).ToList();
+            var classificacoes = (from e in db.ChamadoClassificacao where e.Setor.Id == setor.Id select e).OrderBy(s => s.Descricao).ToList();
             return classificacoes;
         }
 
         public List<ChamadoClassificacao> BuscarClassificacoesPorObras(List<Obra> obras)
         {
             var idObras = (from e in obras select e.IDO).ToList();
-            var classificacoes = (from e in db.ChamadoClassificacao where idObras.Contains(e.Setor.obra.IDO) select e).ToList();
+            var classificacoes = (from e in db.ChamadoClassificacao where idObras.Contains(e.Setor.obra.IDO) select e).OrderBy(s => s.Descricao).ToList();
             return classificacoes;
         }
 
         public List<ChamadoClassificacao> BuscarClassificacoesPorSetores(List<Setor> setores)
         {
             var idSetores = (from e in setores select e.Id).ToList();
-            var classificacoes = (from e in db.ChamadoClassificacao where idSetores.Contains(e.Setor.Id) select e).ToList();
+            var classificacoes = (from e in db.ChamadoClassificacao where idSetores.Contains(e.Setor.Id) select e).OrderBy(s => s.Descricao).ToList();
             return classificacoes;
         }
 

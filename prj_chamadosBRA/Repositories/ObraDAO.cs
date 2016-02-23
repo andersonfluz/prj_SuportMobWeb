@@ -22,7 +22,7 @@ namespace prj_chamadosBRA.Repositories
         public List<Obra> BuscarObras()
         {
 
-            var obras = (from e in db.Obra where e.Ativo select e).ToList();
+            var obras = (from e in db.Obra where e.Ativo orderby e.Descricao select e).ToList();
             return obras;
         }
 
@@ -35,13 +35,13 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Obra> BuscarObrasPorUsuario(String userId)
         {
-            var Obras = (from e in db.UsuarioObra where e.Usuario == userId select e.Obra).Where(e => e.Ativo).ToList();            
+            var Obras = (from e in db.UsuarioObra where e.Usuario == userId orderby e.Obra.Descricao select e.Obra).Where(e => e.Ativo).ToList();            
             return Obras;
         }
 
         public List<Obra> BuscarObrasSetoresCorporativos(Setor setorCorporativo)
         {
-            var SetoresCoporativos = (from s in db.Setor where s.SetorCorporativo == setorCorporativo.SetorCorporativo select s).ToList();
+            var SetoresCoporativos = (from s in db.Setor where s.SetorCorporativo == setorCorporativo.SetorCorporativo orderby s.Descricao select s).ToList();
             var Obras = new List<Obra>();
             foreach(var setor in SetoresCoporativos)
             {

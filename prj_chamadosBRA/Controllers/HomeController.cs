@@ -13,7 +13,7 @@ namespace prj_chamadosBRA.Controllers
         {
             try
             {
-                if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "5" || Session["PerfilUsuario"].ToString() == "6")
+                if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "3" || Session["PerfilUsuario"].ToString() == "5" || Session["PerfilUsuario"].ToString() == "6")
                 {
                     return View();
                 }

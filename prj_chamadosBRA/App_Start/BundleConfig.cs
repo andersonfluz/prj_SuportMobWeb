@@ -27,10 +27,9 @@ namespace prj_chamadosBRA
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
-                      "~/Scripts/moment.js",
+                      "~/Scripts/moment-with-locales.min.js",
                       "~/Scripts/bootstrap-datepicker.js",
                       "~/Scripts/bootstrap-datetimepicker.js",
-                      "~/Scripts/locales/bootstrap-datepicker.pt-BR.js",
                       "~/Scripts/respond.js",
                       "~/Scripts/modalCarregamento.js"));
 
