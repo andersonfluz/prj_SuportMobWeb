@@ -1,0 +1,67 @@
+﻿@model IEnumerable<prj_chamadosBRA.Models.ListaTarefaViewModel>
+
+@{
+    ViewBag.Title = "Encerrados";
+}
+
+<h2>Tarefas Finalizadas</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("#")
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Assunto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataAbertura)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataPrevisaoEntrega)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataEntrega)
+        </th>
+        <th>Detalhes</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assunto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataAbertura)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataPrevisaoEntrega)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataEntrega)
+            </td>
+            <td>
+                <button class="btn btn-default details" data-id="@item.Id"><i class="glyphicon glyphicon-file"></i></button>
+            </td>
+        </tr>
+    }
+
+</table>
+<div class="modal" id="modal">
+</div>
+<script>
+    jQuery(document).ready(function ($) {
+        $(function () {
+            $(".details").click(function () {
+                var id = $(this).attr("data-id");
+                $("#modal").load("@Url.Action("EncerradoInfo", "Tarefa")/" + id, function () {
+                    $('#modal').modal({ show: true });
+                })
+            })
+        })
+    });
+</script>

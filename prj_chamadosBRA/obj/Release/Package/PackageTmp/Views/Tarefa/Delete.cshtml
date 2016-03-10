@@ -1,0 +1,80 @@
+﻿@model prj_chamadosBRA.Models.Tarefa
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Tarefa</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Assunto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Assunto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Descricao)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Descricao)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Especialista)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Especialista)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StatusTarefa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StatusTarefa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Solucao)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Solucao)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Cancelado)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cancelado)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JustificativaCancelamento)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JustificativaCancelamento)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

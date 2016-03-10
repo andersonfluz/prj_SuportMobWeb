@@ -36,7 +36,7 @@
                     @Html.Label("Setor Destino:")
                     @if (Model.SetorDestino != null)
                     {
-                        @Html.DropDownList("SetorDestino")                        
+                        @Html.DropDownList("SetorDestino")
                     }
                     else
                     {
@@ -115,7 +115,7 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-condensed" data-row-style="rowStyle">
+                    <table class="table table-condensed table-bordered" data-row-style="rowStyle">
                         <tr>
                             <th>
                                 @Html.DisplayName("Tarefa")
@@ -140,7 +140,7 @@
                         @foreach (var item in ((List<prj_chamadosBRA.Models.Tarefa>)ViewBag.listaTarefa))
                         {
 
-                            <tr class="@(item.StatusTarefa ? "success" : "warning")">
+                            <tr class="@(item.Aprovado == null ? item.StatusTarefa ? "info" : "warning" : item.Aprovado.Value? "success": "danger")" >
                                 <td>
                                     @item.Assunto
                                 </td>
@@ -151,12 +151,33 @@
                                     @item.Responsavel.Nome
                                 </td>
                                 <td>
-                                    @(item.StatusTarefa ? "Entregue" : "Aberto")
+                                    @if (item.TipoTarefa == 1)
+                                    {
+                                        @(item.StatusTarefa ? "Entregue" : "Aberto")
+                                    }
+                                    else
+                                    {
+                                        if (item.Aprovado != null)
+                                        {
+                                            @(item.Aprovado.Value ? "Aprovado" : "Não Aprovado")
+                                        }
+                                        else
+                                        {
+                                            @("Aberto")
+                                        }
+                                    }
                                 </td>
                                 <td>
-                                    @if(item.DataPrevisaoEntrega == null)
+                                    @if (item.DataPrevisaoEntrega == null)
                                     {
-                                        @("Sem Previsão");
+                                        if (item.TipoTarefa == 1)
+                                        {
+                                            @("Sem Previsão");
+                                        }
+                                        else
+                                        {
+                                            @("Não se enquadra")
+                                        }
                                     }
                                     else
                                     {
@@ -165,7 +186,7 @@
                                 </td>
                                 <td>
                                     <a href="#" class="btn btn-default editartarefa" id="editartarefa" data-id="@item.Id"><i class="glyphicon glyphicon-edit"></i></a>
-                                </td>                                
+                                </td>
                             </tr>
                         }
                     </table>
@@ -385,7 +406,7 @@
             $(function () {
                 $("#encerrar").click(function () {
                     var id = $(this).attr("data-id");
-                    $("#modal").load("@Url.Action("Encerrar", "Chamado")/"+id, function () {
+                    $("#modal").load("@Url.Action("Encerrar", "Chamado")/" + id, function () {
                         $('#modal').modal({ show: true });
                     })
                 });
@@ -394,7 +415,7 @@
             $(function () {
                 $("#cancelar").click(function () {
                     var id = $(this).attr("data-id");
-                    $("#modal").load("@Url.Action("Cancelar", "Chamado")/"+id, function () {
+                    $("#modal").load("@Url.Action("Cancelar", "Chamado")/" + id, function () {
                         $('#modal').modal({ show: true });
                     })
                 });
@@ -403,7 +424,7 @@
             $(function () {
                 $("#novatarefa").click(function () {
                     var id = $(this).attr("data-id");
-                    $("#modal").load("@Url.Action("Create", "Tarefa")/"+id, function () {
+                    $("#modal").load("@Url.Action("Create", "Tarefa")/" + id, function () {
                         $('#modal').modal({ show: true });
                     })
                 });
@@ -412,11 +433,11 @@
             $(function () {
                 $(".editartarefa").click(function () {
                     var id = $(this).attr("data-id");
-                    $("#modal").load("@Url.Action("Details", "Tarefa")/"+id, function () {
+                    $("#modal").load("@Url.Action("Details", "Tarefa")/" + id, function () {
                         $('#modal').modal({ show: true });
                     })
                 });
-            })            
+            })
 
             $('#atualizar').click(function () {
                 waitingDialog.show('Atualizando Chamado...');
@@ -487,10 +508,7 @@
                 if (confirmacao) {
                     var setorId = $('#SetorDestino').val();
                     window.location.assign("@Url.Action("DirecionarSetor")/?id=@Model.Id&setor=" + setorId);
-                } else {
-                    txt = "Não faz nada";
                 }
-                alert(txt);
             })
         });
     </script>

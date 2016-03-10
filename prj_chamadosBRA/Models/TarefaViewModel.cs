@@ -43,6 +43,8 @@ namespace prj_chamadosBRA.Models
         [Display(Name = "Previsão de Entrega")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime? DataPrevisaoEntrega { get; set; }
+        [Display(Name = "Tipo do Chamado")]
+        public int TipoTarefa { get; set; }
         [Display(Name = "Solicitante")]
         public ApplicationUser Solicitante { get; set; }
         public DateTime DataEntrega { get; set; } 
@@ -90,6 +92,8 @@ namespace prj_chamadosBRA.Models
         public ChamadoSubClassificacao SubNatureza { get; set; }
         public DateTime? DataEntrega { get; set; }
         public string Solucao { get; set; }
+        public bool? Aprovado { get; set; }
+        public string JustificativaAprovacao { get; set; }
     }
 
     public class PrevisaoTarefaViewModel
@@ -123,14 +127,32 @@ namespace prj_chamadosBRA.Models
         public DateTime DataAbertura { get; set; }        
         [Required]
         [Display(Name = "Data da Entrega")]
-        public DateTime DataEntrega { get; set; }
+        public DateTime DataEntrega { get; set; }        
         [Required]
         [Display(Name = "Solução")]
         [DataType(DataType.MultilineText)]
         public string Solucao { get; set; }
         [Display(Name = "Responsável")]
+        public ApplicationUser Responsavel { get; set; }        
+    }
+
+    public class AprovacaoTarefaViewModel
+    {
+        public int Id { get; set; }
+        public virtual Chamado Chamado { get; set; }
+        public string Assunto { get; set; }
+        [Display(Name = "Descrição")]
+        public string Descricao { get; set; }
+        public ApplicationUser Solicitante { get; set; }
+        [Display(Name = "Abertura")]
+        public DateTime DataAbertura { get; set; }
+        [Required]
+        public bool? Aprovado { get; set; }
+        [Required]
+        [Display(Name = "Justificativa/Observação")]
+        public string Justificativa { get; set; }
+        [Display(Name = "Responsável")]
         public ApplicationUser Responsavel { get; set; }
-        
     }
 
 }

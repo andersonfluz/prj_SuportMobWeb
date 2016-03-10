@@ -73,11 +73,11 @@ namespace prj_chamadosBRA.Controllers
             {
                 user.EnvioEmailSuperior = false;
             }
-            if (user.Superior != null)
+            if (!string.IsNullOrEmpty(user.Superior))
             {
                 ViewBag.SuperiorSelecionado = new ApplicationUserDAO().retornarUsuario(user.Superior).Nome;
             }
-            if (Session["PerfilUsuario"].ToString().Equals("1"))
+            if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("9"))
             {
                 //montagem de perfil
                 var perfil = new PerfilUsuarioDAO().BuscarPerfil(Convert.ToInt32(user.PerfilUsuario));
@@ -137,7 +137,7 @@ namespace prj_chamadosBRA.Controllers
                 userOrigem.PerfilUsuario = Convert.ToInt32(PerfilUsuario);
                 userOrigem.Contato = user.Contato;
                 userOrigem.Chapa = user.Chapa;
-                userOrigem.Superior = Superior;
+                if (!string.IsNullOrEmpty(Superior)) { userOrigem.Superior = Superior; };
                 userOrigem.EnvioEmailSuperior = user.EnvioEmailSuperior;
                 appDAO.atualizarApplicationUser(user.Id, userOrigem);
             }
@@ -405,6 +405,12 @@ namespace prj_chamadosBRA.Controllers
                             Session["TipoChamadoVisivel"] = true;
                             Session["SelecionarResponsavelAbertura"] = true;
                             break;
+                        case "9": //Central Atendimento
+                            Session["SetorVisivel"] = true;
+                            Session["ObraVisivel"] = true;
+                            Session["TipoChamadoVisivel"] = true;
+                            Session["SelecionarResponsavelAbertura"] = true;
+                            break;
                         default:
                             Session["SetorVisivel"] = true;
                             Session["ObraVisivel"] = false;
@@ -433,13 +439,9 @@ namespace prj_chamadosBRA.Controllers
                     await SignInAsync(user, model.RememberMe);
                     if (returnUrl == null)
                     {
-                        if (user.PerfilUsuario == 1 || user.PerfilUsuario == 6 || user.PerfilUsuario == 5)
+                        if (user.PerfilUsuario == 1 || user.PerfilUsuario == 6 || user.PerfilUsuario == 5 || user.PerfilUsuario == 3 || user.PerfilUsuario == 7 || user.PerfilUsuario == 9)
                         {
                             return RedirectToAction("Index", "Home");
-                        }
-                        else if (user.PerfilUsuario == 3 || user.PerfilUsuario == 7)
-                        {
-                            return RedirectToAction("Index", "Chamado");
                         }
                         else
                         {

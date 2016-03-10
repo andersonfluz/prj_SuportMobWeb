@@ -84,11 +84,11 @@ namespace prj_chamadosBRA.Repositories
             {
                 if (tipoChamado == 1)
                 {
-                    users = users.Where(s => s.PerfilUsuario == 7).ToList();
+                    users = users.Where(s => s.PerfilUsuario == 7 || s.PerfilUsuario == 9).ToList();
                 }
                 else
                 {
-                    users = users.Where(s => s.PerfilUsuario == 3).ToList();
+                    users = users.Where(s => s.PerfilUsuario == 3 || s.PerfilUsuario == 9).ToList();
                 }
             }
             return users;

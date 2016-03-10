@@ -2,8 +2,8 @@
     ViewBag.Title = "Home Page";
 }
 <div class="jumbotron">
-    <h1>Chamados BRA</h1>
-    <p class="lead">Administração do Sistema.</p>
+    <h1>HelpMe!</h1>    
+    <p class="lead">Início do Sistema.</p>
     <!--<p><a href=".\Chamado\Create" class="btn btn-primary btn-lg">Novo Chamado &raquo;</a></p>-->
 </div>
 <div class="row">
@@ -46,6 +46,31 @@
             <h2>Cadastro de subclassificação</h2>
             <p>Cadastro de subclassificação de chamados para encerramento</p>
             <p><a class="btn btn-default" href="../SubClassificacao/Index">Cadastros de SubClassificação</a></p>
+        </div>
+    </div>
+}
+@if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5" || Session["PerfilUsuario"].ToString() == "3" || Session["PerfilUsuario"].ToString() == "9" || Session["PerfilUsuario"].ToString() == "7")
+{
+    
+    
+    <div class="row">
+        @if(Convert.ToBoolean(HttpContext.Current.Request.Cookies["UsuarioSetorCorporativo"].Value))
+        {
+        <div class="col-md-4">
+            <h2>Triagem de Chamados</h2>
+            <p>Direcione os chamados do seu setor</p>
+            <p><a class="btn btn-default" href="../Chamado/Triagem">Triagem de Chamados</a></p>
+        </div>
+        }
+        <div class="col-md-4">
+            <h2>Gestão de Chamados</h2>
+            <p>Gerencie os chamados do seu setor</p>
+            <p><a class="btn btn-default" href="../Chamado/Index">Gestão de Chamados</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Acompanhamento de Chamados</h2>
+            <p>Acompanhe seus chamados solicitados</p>
+            <p><a class="btn btn-default" href="../Chamado/Acompanhamento">Acompanhamento de Chamados</a></p>
         </div>
     </div>
 }

@@ -36,47 +36,88 @@ else
 @Html.Hidden("pageAtual", Model.PageNumber)
 <p>
 </p>
-<table class="table" data-row-style="rowStyle">
-    <tr>
+<table class="table table-condensed table-hover" data-row-style="rowStyle">
+    <tr class="active">
         <th>
-            @Html.DisplayName("Chamado N°")
+            @Html.ActionLink("#", "ChamadosEncerrados", new
+       {
+           sortOrder = "Id",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Data Abertura")
+            @Html.ActionLink("Abertura", "ChamadosEncerrados", new
+       {
+           sortOrder = "dataAbertura",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Data Encerramento")
+            @Html.ActionLink("Encerramento", "ChamadosEncerrados", new
+       {
+           sortOrder = "dataEncerramento",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Solicitante")
+            @Html.ActionLink("Solicitante", "ChamadosEncerrados", new
+       {
+           sortOrder = "solicitante",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Assunto")
+            @Html.ActionLink("Assunto", "ChamadosEncerrados", new
+       {
+           sortOrder = "assunto",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
-            @Html.DisplayName("Responsavel")
+            @Html.ActionLink("Responsavel", "ChamadosEncerrados", new
+       {
+           sortOrder = "responsavel",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
-        @if ((bool)Session["ObraVisivel"])
-        {
-            <th>
-                @Html.DisplayName("Obra")
-            </th>
-        }
-        @if ((bool)Session["SetorVisivel"])
-        {
-            <th>
-                @Html.DisplayName("Setor")
-            </th>
-        }
+        <th>
+            @Html.ActionLink("Obra", "ChamadosEncerrados", new
+       {
+           sortOrder = "obra",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
+        </th>
+        <th>
+            @Html.ActionLink("Setor", "ChamadosEncerrados", new
+       {
+           sortOrder = "setor",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
+        </th>
         <th>
             @Html.DisplayName("Tipo Chamado")
         </th>
         <th>
-            @Html.DisplayName("Visualizar")
+            @Html.DisplayName("Consultar")
         </th>
 
     </tr>
-
     @foreach (var item in Model)
     {
         <tr>
@@ -145,7 +186,7 @@ else
     Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
 
     @Html.PagedListPager(Model, page => Url.Action("ChamadosEncerrados",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    new { page, sortOrder = ViewBag.CurrentSort, filtro = ViewBag.CurrentFiltro }))
     @section scripts{
         <script>
             jQuery(document).ready(function ($) {

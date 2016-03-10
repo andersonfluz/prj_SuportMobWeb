@@ -116,7 +116,7 @@ namespace prj_chamadosBRA.Controllers
                 TempData["notice"] = "Setor Atualizado Com Sucesso!";
                 return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return View();
             }

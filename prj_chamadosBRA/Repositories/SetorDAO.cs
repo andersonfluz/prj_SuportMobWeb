@@ -21,13 +21,19 @@ namespace prj_chamadosBRA.Repositories
 
         public List<Setor> BuscarSetores()
         {
-            var setores = (from e in db.Setor where e.Ativo orderby e.Descricao select e ).ToList();
+            var setores = (from e in db.Setor where e.Ativo orderby e.Descricao select e).ToList();
             return setores;
         }
 
         public List<Setor> BuscarSetoresPorObra(int idObra)
         {
             var setores = (from e in db.Setor where e.obra.IDO == idObra && e.Ativo orderby e.Descricao select e).ToList();
+            return setores;
+        }
+
+        public List<Setor> BuscarSetoresPorObraAtendimento(int idObra)
+        {
+            var setores = (from e in db.Setor where e.obra.IDO == idObra && e.Ativo && e.Atendimento orderby e.Descricao select e).ToList();
             return setores;
         }
 
@@ -45,9 +51,9 @@ namespace prj_chamadosBRA.Repositories
             return setor;
         }
 
-        public Setor BuscarSetorPorIdSetorIdObra(int idsetor, int idObra)
+        public Setor BuscarSetorPorIdSetorIdObra(int idsetor)
         {
-            var setor = (from e in db.Setor where e.Id == idsetor && e.obra.IDO == idObra && e.Ativo select e).SingleOrDefault();
+            var setor = (from e in db.Setor where e.Id == idsetor && e.Ativo select e).SingleOrDefault();
             return setor;
         }
 
@@ -101,7 +107,8 @@ namespace prj_chamadosBRA.Repositories
             setorUpdate.EmailResponsavel = setor.EmailResponsavel;
             setorUpdate.EmailSetor = setor.EmailSetor;
             var obra = setorUpdate.obra;
-            setorUpdate.obra = obra;            
+            setorUpdate.obra = obra;
+            setorUpdate.Atendimento = setor.Atendimento;
             db.SaveChanges();
         }
     }

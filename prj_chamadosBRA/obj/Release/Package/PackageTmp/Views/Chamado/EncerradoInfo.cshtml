@@ -145,6 +145,15 @@
                         </div>
                         <div class="row">
                             <div class="col-md-10">
+                                @if (!Model.Cancelado)
+                                {
+                                    @Html.Label("Diagnóstico:")
+                                    @Html.DisplayFor(model => model.Diagnostico)
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
                                 @Html.Label("Classificação:")
                                 @ViewBag.Classificacao
                             </div>
@@ -180,6 +189,15 @@
                                 {
                                     @Html.Label("Data Cancelamento:")
                                     @Html.DisplayFor(model => model.DataHoraCancelamento)
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                @if (!Model.Cancelado)
+                                {
+                                    @Html.Label("Ferramenta:")
+                                    @Html.DisplayFor(model => model.FerramentaSolucao)
                                 }
                             </div>
                         </div>

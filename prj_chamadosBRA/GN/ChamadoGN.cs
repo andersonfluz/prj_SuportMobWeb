@@ -22,7 +22,7 @@ namespace prj_chamadosBRA.GN
 
         public static List<Setor> RetornarSetoresPorObra(string idObra)
         {
-            return new SetorDAO().BuscarSetoresPorObra(Convert.ToInt32(idObra));
+            return new SetorDAO().BuscarSetoresPorObraAtendimento(Convert.ToInt32(idObra));
         }
 
         public List<Chamado> GestaoChamados(string tipoChamado, string filtro, string sortOrder, ApplicationUser user)
@@ -33,7 +33,8 @@ namespace prj_chamadosBRA.GN
                 || user.PerfilUsuario == 3
                 || user.PerfilUsuario == 5
                 || user.PerfilUsuario == 6
-                || user.PerfilUsuario == 7)
+                || user.PerfilUsuario == 7
+                || user.PerfilUsuario == 9)
             {
                 //Usuario Vinculado a Obras
                 var obras = new UsuarioObraDAO(db).buscarObrasDoUsuario(user);
@@ -78,7 +79,7 @@ namespace prj_chamadosBRA.GN
                         //.ToPagedList(pageNumber, pageSize);
                     }
                 }
-                else if (isMatriz && (user.PerfilUsuario == 3 || user.PerfilUsuario == 5))
+                else if (isMatriz && (user.PerfilUsuario == 3 || user.PerfilUsuario == 5 || user.PerfilUsuario == 9))
                 {
                     List<Setor> setores;
                     if (Convert.ToBoolean(HttpContext.Current.Request.Cookies["UsuarioSetorCorporativo"].Value))
@@ -153,7 +154,7 @@ namespace prj_chamadosBRA.GN
                 }
 
             }
-            else if (user.PerfilUsuario == 2 || user.PerfilUsuario == 3 || user.PerfilUsuario == 4 || user.PerfilUsuario == 7)
+            else if (user.PerfilUsuario == 2 || user.PerfilUsuario == 3 || user.PerfilUsuario == 4 || user.PerfilUsuario == 7 || user.PerfilUsuario == 9)
             {
                 if (tipoChamado == null || tipoChamado == "-2")
                 {
@@ -349,7 +350,8 @@ namespace prj_chamadosBRA.GN
                 }
                 if (SetorDestino != null)
                 {
-                    setor = sDAO.BuscarSetorPorIdSetorIdObra(Int32.Parse(SetorDestino), Int32.Parse(ObraDestino));
+                    setor = sDAO.BuscarSetorPorIdSetorIdObra(Int32.Parse(SetorDestino));
+                    ObraDestino = setor.obra.IDO.ToString();
                     chamado.SetorDestino = setor;
                 }
 

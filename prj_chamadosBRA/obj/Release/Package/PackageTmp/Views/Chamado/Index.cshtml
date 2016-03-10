@@ -10,7 +10,7 @@
 </p>
 <div class="modal" id="modal">
 </div>
-@if (Session["PerfilUsuario"].ToString() != "2" || Session["PerfilUsuario"].ToString() != "4")
+@if (ViewBag.SessionUser.ToString() != "2" || ViewBag.SessionUser.ToString() != "4")
 {
     using (Html.BeginForm("Index", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
     {
@@ -42,7 +42,7 @@ else
 <table class="table table-condensed table-hover" data-row-style="rowStyle">
     <tr class="active">
         <th>
-            @Html.ActionLink("Chamado N°", "Index", new
+            @Html.ActionLink("#", "Index", new
        {
            sortOrder = "Id",
            pageAtual = Model.PageNumber,
@@ -86,30 +86,24 @@ else
            filtro = ViewBag.CurrentFiltro
        })
         </th>
-        @if ((bool)Session["ObraVisivel"])
-        {
-            <th>
-                @Html.ActionLink("Obra", "Index", new
+        <th>
+            @Html.ActionLink("Obra", "Index", new
            {
                sortOrder = "obra",
                pageAtual = Model.PageNumber,
                tipoChamado = ViewBag.CurrentTipoChamado,
                filtro = ViewBag.CurrentFiltro
            })
-            </th>
-        }
-        @if ((bool)Session["SetorVisivel"])
-        {
-            <th>
-                @Html.ActionLink("Setor", "Index", new
+        </th>
+        <th>
+            @Html.ActionLink("Setor", "Index", new
            {
                sortOrder = "setor",
                pageAtual = Model.PageNumber,
                tipoChamado = ViewBag.CurrentTipoChamado,
                filtro = ViewBag.CurrentFiltro
            })
-            </th>
-        }
+        </th>
         <th>
             @Html.DisplayName("Tipo Chamado")
         </th>
@@ -133,25 +127,19 @@ else
             <td>
                 @Html.DisplayFor(modelItem => item.ResponsavelChamado.Nome)
             </td>
-            @if ((bool)Session["ObraVisivel"])
-            {
-                <td>
-                    @Html.DisplayFor(modelItem => item.ObraDestino.Descricao)
-                </td>
-            }
-            @if ((bool)Session["SetorVisivel"])
-            {
-                <td>
-                    @if (item.SetorDestino != null)
-                    {
-                        @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
-                    }
-                    else
-                    {
-                        @Html.Label("Setor Indefinido")
-                    }
-                </td>
-            }
+            <td>
+                @Html.DisplayFor(modelItem => item.ObraDestino.Descricao)
+            </td>
+            <td>
+                @if (item.SetorDestino != null)
+                {
+                    @Html.DisplayFor(modelItem => item.SetorDestino.Nome)
+                }
+                else
+                {
+                    @Html.Label("Setor Indefinido")
+                }
+            </td>
             <td>
                 @if (item.TipoChamado == 1)
                 {
@@ -200,25 +188,10 @@ else
     @section scripts{
         <script>
             jQuery(document).ready(function ($) {
-                $(function () {
-                    $(".details").click(function () {
-                        var id = $(this).attr("data-id");
-                        $("#modal").load("../Chamado/ChamadoInfo/" + id, function () {
-                            $("#modal").modal({ show: true });
-                        })
-                    });
-                });
                 $('#TipoChamado').change(function () {
                     //var url = window.location.href;
                     var url = '@Url.Action("Index", "Chamado", new { page = "__page__", tipoChamado = "__tipoChamado__"  })';
                     window.location.href = url.replace('__page__&amp;', $('#pageAtual').val() + '&').replace('__tipoChamado__', $('#TipoChamado').val());
-
-                    //if (url.indexOf("page") > -1) {
-
-                    //    window.location.href = '../../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-                    //} else {
-                    //    window.location.href = '../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-                    //}
                 });
             });
             $(window).load(function () {

@@ -66,5 +66,7 @@ namespace prj_chamadosBRA.Models
         public System.Data.Entity.DbSet<prj_chamadosBRA.Models.ListaTarefaViewModel> ListaTarefaViewModels { get; set; }
 
         public System.Data.Entity.DbSet<prj_chamadosBRA.Models.DetalhesTarefaViewModel> DetalhesTarefaViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<prj_chamadosBRA.Models.AprovacaoTarefaViewModel> AprovacaoTarefaViewModels { get; set; }
     }
 }

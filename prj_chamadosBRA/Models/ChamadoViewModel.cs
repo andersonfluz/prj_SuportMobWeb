@@ -35,6 +35,12 @@ namespace prj_chamadosBRA.Models
         [Key]
         public int Id { get; set; }
         public bool? StatusChamado { get; set; }
+        [Display(Name = "Situação Analisada")]
+        [Required(ErrorMessage = "Informe a situação analisada do Chamado")]
+        public string SituacaoAnalisada { get; set; }
+        [Display(Name = "Ferramenta(s)")]
+        [Required(ErrorMessage = "Informe a Ferramenta utilizada do Chamado")]
+        public string FerramentaUtilizada { get; set; }
         [Display(Name = "Solução")]
         [Required(ErrorMessage = "Informe a solução do Chamado")]
         public string Solucao { get; set; }

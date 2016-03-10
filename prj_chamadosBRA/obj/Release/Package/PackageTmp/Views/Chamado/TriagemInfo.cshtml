@@ -6,7 +6,7 @@
 
 <div class="modal-dialog" id="modalDetails">
     <div class="modal-content">
-        @using (Html.BeginForm("TriagemInfo", "Chamado", null, FormMethod.Post))
+        @using (Html.BeginForm("TriagemInfo", "Chamado", null, FormMethod.Post, new { id = "triagem" }))
         {
             @Html.HiddenFor(model => model.Id)
             <div class="modal-header">
@@ -44,9 +44,9 @@
                         <div class="row">
                             <div class="col-md-10">
                                 @Html.Label("Tipo do Chamado:") &nbsp;
-                                @Html.RadioButtonFor(model => model.TipoChamado, "1", new { disabled = "disabled" })<label>Totvs RM</label>
+                                @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>Totvs RM</label>
                                 <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                                @Html.RadioButtonFor(model => model.TipoChamado, "2", new { disabled = "disabled" })<label>Outros</label>
+                                @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>Outros</label>
                             </div>
                         </div>
                     </div>
@@ -66,15 +66,13 @@
             </div>
             <div class="modal-footer">
                 <div class="row">
-                    <div class="col-md-2">@Html.ActionLink("Assumir este chamado", "AssumirChamado", new { id = Model.Id }, new { @class = "btn btn-default" })</div>
-                    <div class="col-md-4 col-md-offset-6" align="right">
-                        <input type="submit" value="Direcionar Chamado" id="confirmar" name="confirmar" class="btn btn-default" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    <div class="col-md-2"><i class="btn btn-default assumirChamado" data-id="@Model.Id">Assumir este chamado</i></div>
+                        @*<div class="col-md-2">@Html.ActionLink("Assumir este chamado", "AssumirChamado", new { id = Model.Id, TipoChamado = Model.TipoChamado }, new { @class = "btn btn-default" })</div>*@
+                        <div class="col-md-4 col-md-offset-6" align="right">
+                            <input type="submit" value="Direcionar Chamado" id="confirmar" name="confirmar" class="btn btn-default" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        </div>
                     </div>
-                </div>                
-                @*@Html.ActionLink("Assumir este chamado", "AssumirChamado", new { id = Model.Id }, new { @class = "btn btn-default" })
-                <input type="submit" value="Confirmar" id="confirmar" name="confirmar" class="btn btn-default" />
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>*@
             </div>
         }
     </div>
@@ -100,6 +98,12 @@
                 $('#confirmar').removeAttr("disable");
                 $('#DropDownVal').html("");               
             }
-        });        
+        });
+        $(".assumirChamado").click(function () {
+            var id = $(this).attr("data-id");
+            var TipoChamado = $('input[name=TipoChamado]:checked', '#triagem').val();
+            var url = '@Url.Action("AssumirChamado", "Chamado", new { id = "__id__", TipoChamado = "__TipoChamado__" })';
+            window.location.href = url.replace('__id__', id).replace('__TipoChamado__', TipoChamado);
+        });
     });
 </script>

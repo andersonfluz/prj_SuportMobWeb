@@ -39,6 +39,7 @@ namespace prj_chamadosBRA.Controllers
                 ViewBag.CurrentTipoChamado = tipoChamado;
                 ViewBag.CurrentFiltro = filtro;
                 ViewBag.CurrentSort = sortOrder;
+                ViewBag.SessionUser = manager.FindById(User.Identity.GetUserId()).PerfilUsuario;
                 var dropdownItems = new List<SelectListItem>();
                 dropdownItems.AddRange(new[]{
                                                 new SelectListItem { Text = "Todos", Value = "-2" },
@@ -322,7 +323,7 @@ namespace prj_chamadosBRA.Controllers
                 ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", tipoChamado);
 
                 return View(new ChamadoGN(db).MeusChamados(filtro, sortOrder, manager.FindById(User.Identity.GetUserId())).ToPagedList(page ?? 1, 7));
-                
+
             }
             catch (NullReferenceException)
             {
@@ -433,7 +434,7 @@ namespace prj_chamadosBRA.Controllers
 
         // POST: Chamado/TriagemInfo/5
         [HttpPost]
-        public async Task<ActionResult> TriagemInfo(int id, string ddlResponsavelChamado)
+        public async Task<ActionResult> TriagemInfo(int id, Chamado chamadoAtualizado, string ddlResponsavelChamado)
         {
             try
             {
@@ -441,6 +442,8 @@ namespace prj_chamadosBRA.Controllers
                 var cDAO = new ChamadoDAO(db);
                 var chamado = cDAO.BuscarChamadoId(id);
                 chamado.ResponsavelChamado = new ApplicationUserDAO(db).retornarUsuario(ddlResponsavelChamado);
+                chamado.TipoChamado = chamadoAtualizado.TipoChamado;
+                cDAO.atualizarChamado(id, chamado);
                 if ((DateTime.Now - chamado.DataHoraAbertura).TotalMinutes < 30)
                 {
                     new ChamadoLogAcaoDAO(db).removerLogIndevido(chamado.Id, 4);
@@ -464,7 +467,7 @@ namespace prj_chamadosBRA.Controllers
         }
 
         // GET: Chamado/AssumirChamado/5
-        public async Task<ActionResult> AssumirChamado(int id)
+        public async Task<ActionResult> AssumirChamado(int id, int TipoChamado)
         {
             try
             {
@@ -472,7 +475,8 @@ namespace prj_chamadosBRA.Controllers
                 var cDAO = new ChamadoDAO(db);
                 var chamado = cDAO.BuscarChamadoId(id);
                 chamado.ResponsavelChamado = new ApplicationUserDAO(db).retornarUsuario(User.Identity.GetUserId());
-
+                chamado.TipoChamado = TipoChamado;
+                cDAO.atualizarChamado(id, chamado);
                 if (cGN.atualizarChamadoHistorico(id, "O Chamado foi direcionado para o Usuario " + chamado.ResponsavelChamado.Nome, manager.FindById(User.Identity.GetUserId())))
                 {
                     TempData["notice"] = "Chamado Assumido Com Sucesso!";
@@ -490,8 +494,7 @@ namespace prj_chamadosBRA.Controllers
                 return RedirectToAction("Triagem", "Chamado");
             }
         }
-
-
+        
         // GET: Chamado/Details/5
         public ActionResult Details(int id)
         {
@@ -543,8 +546,16 @@ namespace prj_chamadosBRA.Controllers
             ViewBag.listaChamadoAnexo = new ChamadoAnexoDAO(db).retornarListaAnexoChamado(id);
             if (!chamado.Cancelado)
             {
-                ViewBag.Classificacao = new ChamadoClassificacaoDAO(db).BuscarClassificacao(chamado.Classificacao.Value).Descricao;
-                ViewBag.SubClassificacao = new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(chamado.SubClassificacao.Value).Descricao;
+                if (chamado.Classificacao != null)
+                {
+                    ViewBag.Classificacao = (new ChamadoClassificacaoDAO(db).BuscarClassificacao(chamado.Classificacao.Value) != null ? new ChamadoClassificacaoDAO(db).BuscarClassificacao(chamado.Classificacao.Value).Descricao : "Sem classificação selecionada");
+                    ViewBag.SubClassificacao = (new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(chamado.SubClassificacao.Value) != null ? new ChamadoSubClassificacaoDAO(db).BuscarSubClassificacao(chamado.SubClassificacao.Value).Descricao : "Sem SubClassificação Selecionada");
+                }
+                else
+                {
+                    ViewBag.Classificacao = "Sem Classificação";
+                    ViewBag.SubClassificacao = "Sem SubClassificação";
+                }
             }
             else
             {
@@ -786,7 +797,7 @@ namespace prj_chamadosBRA.Controllers
             ViewBag.listaTarefa = new TarefaDAO(db).BuscarTarefasPorChamado(id);
             if (chamado.SetorDestino != null)
             {
-                ViewBag.SetorDestino = new SelectList(new SetorDAO(db).BuscarSetoresPorObra(chamado.ObraDestino.IDO), "Id", "Nome", chamado.SetorDestino.Id);
+                ViewBag.SetorDestino = new SelectList(new SetorDAO(db).BuscarSetoresPorObraAtendimento(chamado.ObraDestino.IDO), "Id", "Nome", chamado.SetorDestino.Id);
 
                 #region DropDownResponsaveis
                 var user = manager.FindById(User.Identity.GetUserId());
@@ -992,6 +1003,8 @@ namespace prj_chamadosBRA.Controllers
                     chamadoOriginal.Classificacao = chamado.Classificacao;
                     chamadoOriginal.SubClassificacao = chamado.SubClassificacao;
                     chamadoOriginal.Solucao = chamado.Solucao;
+                    chamadoOriginal.Diagnostico = chamado.SituacaoAnalisada;
+                    chamadoOriginal.FerramentaSolucao = chamado.FerramentaUtilizada;
                     chamadoOriginal.DataHoraBaixa = DateTime.Now;
                     chamadoOriginal.ResponsavelChamado = manager.FindById(User.Identity.GetUserId());
                     chamadoOriginal.ErroOperacional = chamado.ErroOperacional;
@@ -1153,6 +1166,8 @@ namespace prj_chamadosBRA.Controllers
                         Session["tipoChamado"] = "-2";
                     }
                 }
+                ViewBag.CurrentFiltro = filtro;
+                ViewBag.CurrentSort = sortOrder;
                 var dropdownItems = new List<SelectListItem>();
                 dropdownItems.AddRange(new[]{
                                                 new SelectListItem { Text = "Todos", Value = "-2" },

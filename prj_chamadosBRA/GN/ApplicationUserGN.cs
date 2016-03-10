@@ -33,6 +33,9 @@ namespace prj_chamadosBRA.GN
                     var obras = new ObraDAO(db).BuscarObrasPorUsuario(idUser);
                     listUsers = new ApplicationUserDAO(db).retornarUsuariosObras(obras, filtro);
                     break;
+                case 9: //Administrador
+                    listUsers = new ApplicationUserDAO(db).retornarUsuarios(filtro);
+                    break;
                 default:
                     listUsers = null;
                     break;

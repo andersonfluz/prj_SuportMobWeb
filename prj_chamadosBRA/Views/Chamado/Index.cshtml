@@ -10,7 +10,7 @@
 </p>
 <div class="modal" id="modal">
 </div>
-@if (Session["PerfilUsuario"].ToString() != "2" || Session["PerfilUsuario"].ToString() != "4")
+@if (ViewBag.SessionUser.ToString() != "2" || ViewBag.SessionUser.ToString() != "4")
 {
     using (Html.BeginForm("Index", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
     {
@@ -188,25 +188,10 @@ else
     @section scripts{
         <script>
             jQuery(document).ready(function ($) {
-                $(function () {
-                    $(".details").click(function () {
-                        var id = $(this).attr("data-id");
-                        $("#modal").load("../Chamado/ChamadoInfo/" + id, function () {
-                            $("#modal").modal({ show: true });
-                        })
-                    });
-                });
                 $('#TipoChamado').change(function () {
                     //var url = window.location.href;
                     var url = '@Url.Action("Index", "Chamado", new { page = "__page__", tipoChamado = "__tipoChamado__"  })';
                     window.location.href = url.replace('__page__&amp;', $('#pageAtual').val() + '&').replace('__tipoChamado__', $('#TipoChamado').val());
-
-                    //if (url.indexOf("page") > -1) {
-
-                    //    window.location.href = '../../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-                    //} else {
-                    //    window.location.href = '../Chamado/Index/page=' + $('#pageAtual').val() + '?tipochamado=' + $('#TipoChamado').val();
-                    //}
                 });
             });
             $(window).load(function () {

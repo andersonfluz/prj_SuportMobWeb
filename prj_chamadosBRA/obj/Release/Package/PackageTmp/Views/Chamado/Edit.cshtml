@@ -18,6 +18,7 @@
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.Id)
     @Html.Hidden("notice", @TempData["notice"])
+    @Html.Hidden("sucess", @TempData["sucess"])
     <div class="panel panel-default">
         <div class="panel-heading">Informações</div>
         <div class="panel-body">
@@ -110,53 +111,106 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading">Anexos do Chamado</div>
+        <div class="panel-heading">Tarefas do Chamado</div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-10">
-                    <table class="table" data-row-style="rowStyle">
+                <div class="col-md-12">
+                    <table class="table table-condensed table-bordered" data-row-style="rowStyle">
                         <tr>
                             <th>
-                                @Html.DisplayName("Nome Arquivo")
+                                @Html.DisplayName("Tarefa")
                             </th>
                             <th>
-                                @Html.DisplayName("Baixar")
+                                @Html.DisplayName("Solicitante")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Responsavel")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Status")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Previsão Entrega")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Acessar")
                             </th>
                         </tr>
 
-                        @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoAnexo>)ViewBag.listaChamadoAnexo))
+                        @foreach (var item in ((List<prj_chamadosBRA.Models.Tarefa>)ViewBag.listaTarefa))
                         {
-                            <tr>
+
+                            <tr class="@(item.Aprovado == null ? item.StatusTarefa ? "info" : "warning" : item.Aprovado.Value? "success": "danger")" >
                                 <td>
-                                    @item.NomeAnexo
+                                    @item.Assunto
                                 </td>
                                 <td>
-                                    @Html.ActionLink("Baixar", "Filedownload", new { id = @item.idAnexo })
+                                    @item.Solicitante.Nome
+                                </td>
+                                <td>
+                                    @item.Responsavel.Nome
+                                </td>
+                                <td>
+                                    @if (item.TipoTarefa == 1)
+                                    {
+                                        @(item.StatusTarefa ? "Entregue" : "Aberto")
+                                    }
+                                    else
+                                    {
+                                        if (item.Aprovado != null)
+                                        {
+                                            @(item.Aprovado.Value ? "Aprovado" : "Não Aprovado")
+                                        }
+                                        else
+                                        {
+                                            @("Aberto")
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.DataPrevisaoEntrega == null)
+                                    {
+                                        if (item.TipoTarefa == 1)
+                                        {
+                                            @("Sem Previsão");
+                                        }
+                                        else
+                                        {
+                                            @("Não se enquadra")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @(item.DataPrevisaoEntrega.Value);
+                                    }
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-default editartarefa" id="editartarefa" data-id="@item.Id"><i class="glyphicon glyphicon-edit"></i></a>
                                 </td>
                             </tr>
                         }
                     </table>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-md-12">
-                    @Html.Label("Adicionar anexo:", new { @class = "control-label col-md-2" })
-                    <input type="file" id="anexo" name="upload" />
-                    @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
-                    <span id="carregamentoAnexo" class="glyphicon glyphicon-refresh glyphicon-refresh-animate" style="display: none"></span>
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-12 center-block">
+                        <a href="#" class="btn btn-default novatarefa center-block" id="novatarefa" data-id="@Model.Id">Solicitar Tarefa</a>
+                        @*@Html.ActionLink("Solicitar Tarefa", "Create", "Tarefa", new { id = Model.Id }, new { @class = "btn btn-default novaTarefa center" })
+                            @*<button class="btn btn-default center-block encerrar" id="encerrar" data-toggle="modal" data-id="@Model.Id">Nova Tarefa</button>*@
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading">Informações de Acompanhamento</div>
+        <div class="panel-heading">Informações Adicionais</div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-10">
                     @Html.Label("Informações Adicionais:")
                     @Html.TextArea("informacoesAcompanhamento", htmlAttributes: new { @class = "form-control", Style = "max-width:1500px; height:100px" })
-
                 </div>
             </div>
         </div>
@@ -167,7 +221,7 @@
         <div class="panel-body tab-pane">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table tree table-hover">
+                    <table class="table table-condensed">
                         <tr>
                             <th>
                                 @Html.DisplayName("Data")
@@ -201,6 +255,46 @@
                             </tr>
                         }
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Anexos do Chamado</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table" data-row-style="rowStyle">
+                        <tr>
+                            <th>
+                                @Html.DisplayName("Nome Arquivo")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Baixar")
+                            </th>
+                        </tr>
+
+                        @foreach (var item in ((List<prj_chamadosBRA.Models.ChamadoAnexo>)ViewBag.listaChamadoAnexo))
+                        {
+                            <tr>
+                                <td>
+                                    @item.NomeAnexo
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Baixar", "Filedownload", new { id = @item.idAnexo })
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    @Html.Label("Adicionar anexo:", new { @class = "control-label col-md-2" })
+                    <input type="file" id="anexo" name="upload" />
+                    @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
+                    <span id="carregamentoAnexo" class="glyphicon glyphicon-refresh glyphicon-refresh-animate" style="display: none"></span>
                 </div>
             </div>
         </div>
@@ -266,6 +360,30 @@
     </div>
 }
 
+@if (TempData["sucess"] != null)
+{
+    <div id="modalSucess" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mensagem</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-success"><strong>@TempData["sucess"]</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
@@ -276,13 +394,19 @@
                 $('#modalNotice').modal({ show: true });
             }
         });
+        $(window).load(function () {
+            if ($('#sucess').val() != "") {
+                //alert($('#notice').val());
+                $('#modalSucess').modal({ show: true });
+            }
+        });
     </script>
     <script>
         jQuery(document).ready(function ($) {
             $(function () {
                 $("#encerrar").click(function () {
                     var id = $(this).attr("data-id");
-                    $("#modal").load("../Encerrar/" + id, function () {
+                    $("#modal").load("@Url.Action("Encerrar", "Chamado")/" + id, function () {
                         $('#modal').modal({ show: true });
                     })
                 });
@@ -291,11 +415,30 @@
             $(function () {
                 $("#cancelar").click(function () {
                     var id = $(this).attr("data-id");
-                    $("#modal").load("../Cancelar/" + id, function () {
+                    $("#modal").load("@Url.Action("Cancelar", "Chamado")/" + id, function () {
                         $('#modal').modal({ show: true });
                     })
                 });
             })
+
+            $(function () {
+                $("#novatarefa").click(function () {
+                    var id = $(this).attr("data-id");
+                    $("#modal").load("@Url.Action("Create", "Tarefa")/" + id, function () {
+                        $('#modal').modal({ show: true });
+                    })
+                });
+            })
+
+            $(function () {
+                $(".editartarefa").click(function () {
+                    var id = $(this).attr("data-id");
+                    $("#modal").load("@Url.Action("Details", "Tarefa")/" + id, function () {
+                        $('#modal').modal({ show: true });
+                    })
+                });
+            })
+
             $('#atualizar').click(function () {
                 waitingDialog.show('Atualizando Chamado...');
             });
@@ -341,7 +484,7 @@
 
                         $.ajax({
                             type: "POST",
-                            url: '/Chamado/AdicionarAnexo?id=' + $("#Id").val(),
+                            url: '@Url.Action("AdicionarAnexo", "Chamado")/?id=' + $("#Id").val(),
                             contentType: false,
                             processData: false,
                             data: data,
@@ -358,6 +501,13 @@
                     } else {
                         alert("This browser doesn't support HTML5 file uploads!");
                     }
+                }
+            })
+            $('#SetorDestino').on('change', function (e) {
+                var confirmacao = confirm("Confirma o direcionamento do setor?");
+                if (confirmacao) {
+                    var setorId = $('#SetorDestino').val();
+                    window.location.assign("@Url.Action("DirecionarSetor")/?id=@Model.Id&setor=" + setorId);
                 }
             })
         });

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Chamados BRA</title>
+    <title>@ViewBag.Title - HelpMe!</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
@@ -24,40 +24,56 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="../Home/Index"><img src="~/Images/logo_Web.png" width="50" height="50" /></a>
+                <a href="@Url.Action("Index", "Home")"><img src="~/Images/logo_Web.png" width="50" height="50" /></a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 @if (Session["PerfilUsuario"] != null)
                 {
                     <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Inicio", "Index", "Home")</li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Chamados <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li>@Html.ActionLink("Novo Chamado", "Create", "Chamado")</li>
                                 <li role="separator" class="divider"></li>
-                                @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7"))
+                                @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7") || Session["PerfilUsuario"].ToString() == "9")
                                 {
-                                    if ((bool)Session["UsuarioSetorCorporativo"])
+                                    if (Convert.ToBoolean(Request.Cookies["UsuarioSetorCorporativo"].Value))
+                                    //(bool)Session["UsuarioSetorCorporativo"])
                                     {
                                         <li>@Html.ActionLink("Triagem", "Triagem", "Chamado", null, new { title = "Triagem das solicitações" })</li>
                                     }
                                     <li>@Html.ActionLink("Gestão", "Index", "Chamado", null, new { title = "Gerencie as solicitações do seu setor" })</li>
                                 }
                                 <li>@Html.ActionLink("Acompanhamento", "Acompanhamento", "Chamado", null, new { title = "Acompanhe suas solicitações" })</li>
-                                @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7"))
+
+                                @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7") || Session["PerfilUsuario"].ToString() == "9")
                                 {
                                     <li role="separator" class="divider"></li>
                                     <li>@Html.ActionLink("Chamados Encerrados", "ChamadosEncerrados", "Chamado")</li>
                                 }
                             </ul>
                         </li>
-                        @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5")
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Minhas Atividades <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+
+                                @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7") || Session["PerfilUsuario"].ToString().Equals("9"))
+                                {
+                                    <li>@Html.ActionLink("Meus Chamados", "MeusChamados", "Chamado", null, new { title = "Gerencie os chamados em sua responsabilidade" })</li>
+                                }
+                                <li role="separator" class="divider"></li>
+                                <li>@Html.ActionLink("Minhas Tarefas", "Index", "Tarefa", null, new { title = "Gerencie as tarefas em sua responsabilidade" })</li>
+                                <li>@Html.ActionLink("Minhas Tarefas Entregues", "Encerrados", "Tarefa", null, new { title = "Tarefas Encerrados em sua responsabilidade" })</li>
+                            </ul>
+                        </li>
+
+                        @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5" || Session["PerfilUsuario"].ToString() == "9")
                         {
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cadastros <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5")
+                                    @if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "6" || Session["PerfilUsuario"].ToString() == "5" || Session["PerfilUsuario"].ToString() == "9")
                                     {
                                         <li>@Html.ActionLink("Usuários", "Index", "Account")</li>
 
@@ -88,7 +104,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Chamados BRA</p>
+            <p>&copy; @DateTime.Now.Year - HelpMe!</p>
         </footer>
     </div>
 

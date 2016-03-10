@@ -1,0 +1,160 @@
+﻿@model prj_chamadosBRA.Models.NovaTarefaViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Create";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        @using (Html.BeginForm())
+        {
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Nova Tarefa do Chamado N. @Model.Chamado.Id</h4>
+            </div>
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Chamado.Id)
+                    @Html.HiddenFor(model => model.Terceirizado)
+                    @Html.HiddenFor(model => model.Especialista)
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Assunto, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Assunto, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Assunto, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("Tipo de Chamado:", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.RadioButtonFor(m => m.TipoTarefa, "1")<label>&nbsp;Questionamento</label>
+                            <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                            @Html.RadioButtonFor(m => m.TipoTarefa, "2")<label>&nbsp;Aprovação</label>             
+                            <p>@Html.ValidationMessageFor(m => m.TipoTarefa, "", new { @class = "text-danger" })</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("Tarefa para:", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.RadioButtonFor(m => m.TipoResponsavel, "1")<label>&nbsp;Solicitante</label>
+                            <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                            @Html.RadioButtonFor(m => m.TipoResponsavel, "2")<label>&nbsp;Especialista</label>
+                            <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                            @Html.RadioButtonFor(m => m.TipoResponsavel, "3")<label>&nbsp;Terceiros</label>
+                            <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
+                            @Html.RadioButtonFor(m => m.TipoResponsavel, "4")<label>&nbsp;Superior do Solicitante</label>
+                            @Html.DropDownListFor(m => m.Responsavel, (SelectList)ViewBag.ddlResponsavelChamado, new { @class = "form-control" })
+                            @Html.DropDownListFor(m => m.ResponsavelTerceiros, (SelectList)ViewBag.ddlResponsavelTerceirizado, "-- Selecione o Terceirizado --", new { @class = "form-control" })                                                                                                          
+                            <p>@Html.ValidationMessageFor(m => m.TipoResponsavel, "", new { @class = "text-danger" })</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("Natureza", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.Natureza, (SelectList)ViewBag.SetorDestinoClassificacao, "-- Selecione a Natureza --", new { @class = "form-control Natureza" })
+                            @Html.ValidationMessageFor(m => m.Natureza, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("SubNatureza", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.SubNatureza, new SelectList(string.Empty, "Id", "Nome"), "-- Selecione a Natureza primeiro --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.SubNatureza, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Salvar" class="btn btn-default" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script type="text/javascript">
+    //Dropdownlist Selectedchange event
+    $(".Natureza").change(function () {
+        $("#SubNatureza").empty();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("RetornaSubClassPorClass", "Chamado")',
+            dataType: 'json',
+            data: { selectedValue: $(".Natureza").val() },
+            success: function (subclasses) {
+                // states contains the JSON formatted list
+                // of states passed from the controller
+                $("#SubNatureza").append('<option value="">-- Selecione a SubNatureza --</option>');
+                $.each(subclasses, function (i, subclass) {
+                    $("#SubNatureza").append('<option value="'
+                    + subclass.Value + '">'
+                    + subclass.Text + '</option>');
+                });
+            },
+            error: function (ex) {
+                alert('Failed to retrieve SubNatureza.' + ex);
+            }
+        });
+        return false;
+    });
+
+    $('.datepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        language: 'pt-BR',
+        autoclose: true
+    }); //Initialise any date pickers
+
+    $('#Hora').focusin(function () {
+        $('#Hora').mask("99:99");
+    });
+    $(document).ready(function () {
+        $("#Responsavel").hide('fast');
+        $("#ResponsavelTerceiros").hide('fast');
+        $("input[name='TipoResponsavel']").change(function () {
+            if ($("input[name='TipoResponsavel']:checked").val() == "1") {
+                $("#Responsavel").hide('fast');
+                $("#Terceirizado").val(false);
+                $("#Especialista").val(false);
+                $("#ResponsavelTerceiros").hide('fast');                
+                $("#Responsavel").val("@Model.Chamado.ResponsavelAberturaChamado.Id.ToString()");
+            } else if ($("input[name='TipoResponsavel']:checked").val() == "2") {
+                $("#ResponsavelTerceiros").hide('fast');
+                $("#Responsavel").show('fast');
+                $("#Terceirizado").val(false);
+                $("#Especialista").val(true);
+                $("#Responsavel").val("-1");
+            } else if ($("input[name='TipoResponsavel']:checked").val() == "3") {
+                $("#ResponsavelTerceiros").show('fast');
+                $("#Terceirizado").val(true);
+                $("#Especialista").val(false);
+                $("#Responsavel").hide('fast');
+            } else if ($("input[name='TipoResponsavel']:checked").val() == "4") {
+                $("#ResponsavelTerceiros").hide('fast');
+                $("#Terceirizado").val(false);
+                $("#Especialista").val(false);
+                $("#Responsavel").hide('fast');
+            }
+        });
+    });
+</script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

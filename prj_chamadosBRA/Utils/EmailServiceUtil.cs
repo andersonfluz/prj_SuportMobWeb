@@ -41,8 +41,8 @@ namespace prj_chamadosBRA.Utils
 
                             foreach (var usuario in usuarios)
                             {
-                                mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                                //mail.CC.Add(usuario.UserName);
+                                //mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                                mail.CC.Add(usuario.UserName);
                             }
 
                         }else
@@ -51,8 +51,8 @@ namespace prj_chamadosBRA.Utils
 
                             foreach (var usuario in usuarios)
                             {
-                                mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                                //mail.CC.Add(usuario.UserName);
+                                //mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                                mail.CC.Add(usuario.UserName);
                             }
                         }
                     }
@@ -214,6 +214,78 @@ namespace prj_chamadosBRA.Utils
                     mail.To.Add(new MailAddress(user.UserName));
                     mail.Subject = "HelpMe! - Criação de novo usuario na plataforma";
                     mail.Body = montarCorpoMensagemCriacaoUsuario(user);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public static string envioEmailAberturaTarefa(Tarefa tarefa)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    mail.To.Add(new MailAddress(tarefa.Responsavel.UserName));
+                    mail.CC.Add(tarefa.Solicitante.UserName);                    
+                    mail.Subject = "HelpMe! - Notificação Abertura de Tarefa N. " + tarefa.Id;
+                    mail.Body = montarCorpoMensagemAberturaTarefa(tarefa);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public static string envioEmailPrevisaoEntregaTarefa(Tarefa tarefa)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    mail.To.Add(new MailAddress(tarefa.Solicitante.UserName));
+                    mail.CC.Add(tarefa.Responsavel.UserName);
+                    mail.Subject = "HelpMe! - Notificação Previsão de Entrega de Tarefa N. " + tarefa.Id;
+                    mail.Body = montarCorpoMensagemPrevisaoEntregaTarefa(tarefa);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public static string envioEmailEntregaTarefa(Tarefa tarefa)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    mail.To.Add(new MailAddress(tarefa.Solicitante.UserName));
+                    mail.CC.Add(tarefa.Responsavel.UserName);
+                    mail.Subject = "HelpMe! - Notificação Entrega de Tarefa N. " + tarefa.Id;
+                    mail.Body = montarCorpoMensagemEntregaTarefa(tarefa);
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
                     smtpClient.Send(mail);
@@ -683,7 +755,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
@@ -848,7 +920,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
@@ -995,7 +1067,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
@@ -1124,7 +1196,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
@@ -1175,7 +1247,7 @@ namespace prj_chamadosBRA.Utils
                                 + "</tr>"
                                 + "</tbody>"
                                 + "</table>"
-                                + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                 + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                 + "</div>";
             return corpoMensagem;
@@ -1227,7 +1299,7 @@ namespace prj_chamadosBRA.Utils
                                 + "</tr>"
                                 + "</tbody>"
                                 + "</table>"
-                                + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                 + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                 + "</div>";
             return corpoMensagem;
@@ -1364,7 +1436,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
@@ -1492,7 +1564,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
@@ -1620,7 +1692,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
@@ -1748,7 +1820,7 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;
@@ -1792,7 +1864,623 @@ namespace prj_chamadosBRA.Utils
                                    + "</tr>"
                                    + "</tbody>"
                                    + "</table>"
-                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do Chamados BRA.</p>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemAberturaTarefa(Tarefa tarefa)
+        {
+            var mensagem = "<b>Nova Tarefa</b> N. " + tarefa.Id + " do Chamado N. " + tarefa.Chamado.Id;
+            var mensagemSetorObra = tarefa.Chamado.ObraDestino.Descricao;
+            var setorDestino = tarefa.Chamado.SetorDestino.Descricao;
+            var assunto = tarefa.Assunto;
+            var descricao = tarefa.Descricao;
+            var Solicitante = tarefa.Solicitante.Nome;
+            var Responsavel = tarefa.Responsavel.Nome;
+            var statusChamado = !tarefa.StatusTarefa ? "Tarefa Aberta" : "Tarefa Fechada";
+            var DataHoraAbertura = tarefa.DataAbertura.ToString();
+            var Natureza = tarefa.Natureza.Descricao;
+            var SubNatureza = tarefa.SubNatureza.Descricao;
+
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='padding-right:2px; padding-left:2px'>" + mensagemSetorObra + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<em>" + mensagem + "</em></td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Assunto:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + assunto + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Descrição:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'><b>"
+                                   + descricao + "</b></td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Abertura:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + DataHoraAbertura + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Natureza:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Natureza + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "SubNatureza:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + SubNatureza + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Obra:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + mensagemSetorObra + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Setor:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + setorDestino + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solicitante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Solicitante + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Responsavel:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top color:red'><b>"
+                                   + Responsavel + "</b></td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Status:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + statusChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemPrevisaoEntregaTarefa(Tarefa tarefa)
+        {
+            var mensagem = "Previsão de Entrega da Tarefa N. " + tarefa.Id + " do Chamado N. " + tarefa.Chamado.Id;
+            var mensagemSetorObra = tarefa.Chamado.ObraDestino.Descricao;
+            var setorDestino = tarefa.Chamado.SetorDestino.Descricao;
+            var assunto = tarefa.Assunto;
+            var descricao = tarefa.Descricao;
+            var Solicitante = tarefa.Solicitante.Nome;
+            var Responsavel = tarefa.Responsavel.Nome;
+            var statusChamado = !tarefa.StatusTarefa ? "Tarefa Aberta" : "Tarefa Fechada";
+            var DataHoraAbertura = tarefa.DataAbertura.ToString();
+            var DataHoraPrevisaoEntrega = tarefa.DataPrevisaoEntrega.ToString();
+            var Natureza = tarefa.Natureza.Descricao;
+            var SubNatureza = tarefa.SubNatureza.Descricao;
+
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='padding-right:2px; padding-left:2px'>" + mensagemSetorObra + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<em>" + mensagem + "</em></td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Assunto:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + assunto + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Descrição:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + descricao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Abertura:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + DataHoraAbertura + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Previsão de Entrega:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top; color:blue'>"
+                                   + DataHoraPrevisaoEntrega + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Natureza:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Natureza + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "SubNatureza:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + SubNatureza + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Obra:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + mensagemSetorObra + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Setor:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + setorDestino + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solicitante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Solicitante + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Responsavel:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Responsavel + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Status:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + statusChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemEntregaTarefa(Tarefa tarefa)
+        {
+            var mensagem = "Entrega da Tarefa N. " + tarefa.Id + " do Chamado N. " + tarefa.Chamado.Id;
+            var mensagemSetorObra = tarefa.Chamado.ObraDestino.Descricao;
+            var setorDestino = tarefa.Chamado.SetorDestino.Descricao;
+            var assunto = tarefa.Assunto;
+            var descricao = tarefa.Descricao;
+            var Solicitante = tarefa.Solicitante.Nome;
+            var Responsavel = tarefa.Responsavel.Nome;
+            var statusChamado = !tarefa.StatusTarefa ? "Tarefa Aberta" : "Tarefa Fechada";
+            var DataHoraAbertura = tarefa.DataAbertura.ToString();
+            var DataHoraPrevisaoEntrega = tarefa.DataPrevisaoEntrega.ToString();
+            var DataHoraEntrega = tarefa.DataEntrega.ToString();
+            var Natureza = tarefa.Natureza.Descricao;
+            var SubNatureza = tarefa.SubNatureza.Descricao;
+            var Solucao = tarefa.Solucao;
+
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='padding-right:2px; padding-left:2px'>" + mensagemSetorObra + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<em>" + mensagem + "</em></td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Assunto:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + assunto + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Descrição:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + descricao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Abertura:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + DataHoraAbertura + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Previsao de Entrega:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + DataHoraPrevisaoEntrega + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Entrega:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top; color:blue'>"
+                                   + DataHoraEntrega + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Natureza:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Natureza + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "SubNatureza:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + SubNatureza + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solução:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Solucao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Obra:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + mensagemSetorObra + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Setor:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + setorDestino + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solicitante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Solicitante + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Responsavel:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Responsavel + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Status:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + statusChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
+                                   + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
+                                   + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemAprovacaoTarefa(Tarefa tarefa)
+        {
+            var mensagem = "Entrega da Tarefa N. " + tarefa.Id + " do Chamado N. " + tarefa.Chamado.Id;
+            var mensagemSetorObra = tarefa.Chamado.ObraDestino.Descricao;
+            var setorDestino = tarefa.Chamado.SetorDestino.Descricao;
+            var assunto = tarefa.Assunto;
+            var descricao = tarefa.Descricao;
+            var Solicitante = tarefa.Solicitante.Nome;
+            var Responsavel = tarefa.Responsavel.Nome;
+            var statusChamado = !tarefa.StatusTarefa ? "Tarefa Aberta" : "Tarefa Fechada";
+            var AprovacaoTarefa = !tarefa.Aprovado.Value ? "Tarefa Aprovada" : "Tarefa Não Aprovada";
+            var DataHoraAbertura = tarefa.DataAbertura.ToString();
+            var DataHoraPrevisaoEntrega = tarefa.DataPrevisaoEntrega.ToString();
+            var DataHoraEntrega = tarefa.DataEntrega.ToString();
+            var Natureza = tarefa.Natureza.Descricao;
+            var SubNatureza = tarefa.SubNatureza.Descricao;
+            var Justificativa = tarefa.Justificativa;            
+
+            var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='color:rgb(0,0,0); font-family:verdana; font-size:16pt'>"
+                                   + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td style='padding-right:2px; padding-left:2px'>" + mensagemSetorObra + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<em>" + mensagem + "</em></td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<table cellspacing='0' cellpadding='0' style='width:100%; margin-top:6px; border-bottom-color:rgb(156,163,173); border-bottom-width:1px; border-bottom-style:solid'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td colspan='3'>"
+                                   + "<table width='100%' cellspacing='0' cellpadding='0' style='padding:3px 3px 6px; border:1px solid rgb(232,234,236); background-color:rgb(248,248,249)'>"
+                                   + "<tbody>"
+                                   + "<tr>"
+                                   + "<td>"
+                                   + "<table border='0' cellspacing='0' cellpadding='0'>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td colspan='3' style='height:10px; line-height:1px; font-size:1px'>&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Assunto:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + assunto + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Descrição:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + descricao + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Abertura:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + DataHoraAbertura + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Previsao de Entrega:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + DataHoraPrevisaoEntrega + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Data da Entrega:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top; color:blue'>"
+                                   + DataHoraEntrega + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Natureza:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Natureza + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "SubNatureza:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + SubNatureza + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Aprovado:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + AprovacaoTarefa + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Justificativa:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Justificativa + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Obra:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + mensagemSetorObra + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Setor:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + setorDestino + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Solicitante:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Solicitante + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Responsavel:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + Responsavel + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "<tr>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + "Status:</td>"
+                                   + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
+                                   + statusChamado + "</td>"
+                                   + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
+                                   + "&nbsp;</td>"
+                                   + "</tr>"
+                                   + "</tbody>"
+                                   + "</table>"
+                                   + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
                                    + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
                                    + "</div>";
             return corpoMensagem;

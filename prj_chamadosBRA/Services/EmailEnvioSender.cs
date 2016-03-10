@@ -10,7 +10,7 @@ namespace prj_chamadosBRA.Service
 {
     public class EmailEnvioSender
     {
-        public static async void EnvioEmailAberturaChamados()
+        public static void EnvioEmailAberturaChamados()
         {
             using (var db = new ApplicationDbContext())
             {
@@ -25,7 +25,7 @@ namespace prj_chamadosBRA.Service
                     }
                     else
                     {
-                        email.Tentativas = email.Tentativas+1;
+                        email.Tentativas = email.Tentativas + 1;
                         email.Erro = retorno;
                         new EmailEnvioDAO(db).atualizarEmailEnvio(email);
                     }
@@ -47,7 +47,7 @@ namespace prj_chamadosBRA.Service
                     }
                     else
                     {
-                        email.Tentativas = email.Tentativas+1;
+                        email.Tentativas = email.Tentativas + 1;
                         email.Erro = retorno;
                         new EmailEnvioDAO(db).atualizarEmailEnvio(email);
                     }
@@ -69,7 +69,7 @@ namespace prj_chamadosBRA.Service
                     }
                     else
                     {
-                        email.Tentativas = email.Tentativas+1;
+                        email.Tentativas = email.Tentativas + 1;
                         email.Erro = retorno;
                         new EmailEnvioDAO(db).atualizarEmailEnvio(email);
                     }
@@ -91,7 +91,7 @@ namespace prj_chamadosBRA.Service
                     }
                     else
                     {
-                        email.Tentativas = email.Tentativas+1;
+                        email.Tentativas = email.Tentativas + 1;
                         email.Erro = retorno;
                         new EmailEnvioDAO(db).atualizarEmailEnvio(email);
                     }
@@ -113,7 +113,7 @@ namespace prj_chamadosBRA.Service
                     }
                     else
                     {
-                        email.Tentativas = email.Tentativas+1;
+                        email.Tentativas = email.Tentativas + 1;
                         email.Erro = retorno;
                         new EmailEnvioDAO(db).atualizarEmailEnvio(email);
                     }
@@ -135,7 +135,7 @@ namespace prj_chamadosBRA.Service
                     }
                     else
                     {
-                        email.Tentativas = email.Tentativas+1;
+                        email.Tentativas = email.Tentativas + 1;
                         email.Erro = retorno;
                         new EmailEnvioDAO(db).atualizarEmailEnvio(email);
                     }
@@ -157,7 +157,7 @@ namespace prj_chamadosBRA.Service
                     }
                     else
                     {
-                        email.Tentativas = email.Tentativas+1;
+                        email.Tentativas = email.Tentativas + 1;
                         email.Erro = retorno;
                         new EmailEnvioDAO(db).atualizarEmailEnvio(email);
                     }
@@ -182,14 +182,79 @@ namespace prj_chamadosBRA.Service
                     }
                     else
                     {
-                        email.Tentativas = email.Tentativas+1;
+                        email.Tentativas = email.Tentativas + 1;
                         email.Erro = retorno;
                         new EmailEnvioDAO(db).atualizarEmailEnvio(email);
                     }
                 }
             }
         }
-
+        public static void EnvioEmailAberturaTarefa()
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.AberturaTarefa);
+                foreach (var email in emailEnvio)
+                {
+                    var tarefa = new TarefaDAO(db).BuscarTarefaId(Convert.ToInt32(email.InfoEmail));
+                    var retorno = EmailServiceUtil.envioEmailAberturaTarefa(tarefa);
+                    if (retorno == "0")
+                    {
+                        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
+                    }
+                    else
+                    {
+                        email.Tentativas = email.Tentativas + 1;
+                        email.Erro = retorno;
+                        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
+                    }
+                }
+            }
+        }
+        public static void EnvioEmailPrevisaoEntregaTarefa()
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.PrevisaoEntregaTarefa);
+                foreach (var email in emailEnvio)
+                {
+                    var tarefa = new TarefaDAO(db).BuscarTarefaId(Convert.ToInt32(email.InfoEmail));
+                    var retorno = EmailServiceUtil.envioEmailPrevisaoEntregaTarefa(tarefa);
+                    if (retorno == "0")
+                    {
+                        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
+                    }
+                    else
+                    {
+                        email.Tentativas = email.Tentativas + 1;
+                        email.Erro = retorno;
+                        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
+                    }
+                }
+            }
+        }
+        public static void EnvioEmailEntregaTarefa()
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.EntregaTarefa);
+                foreach (var email in emailEnvio)
+                {
+                    var tarefa = new TarefaDAO(db).BuscarTarefaId(Convert.ToInt32(email.InfoEmail));
+                    var retorno = EmailServiceUtil.envioEmailEntregaTarefa(tarefa);
+                    if (retorno == "0")
+                    {
+                        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
+                    }
+                    else
+                    {
+                        email.Tentativas = email.Tentativas + 1;
+                        email.Erro = retorno;
+                        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
+                    }
+                }
+            }
+        }
         public static void EnvioEmailAlertaSemResponsavelTrintaMinutos()
         {
             using (var db = new ApplicationDbContext())

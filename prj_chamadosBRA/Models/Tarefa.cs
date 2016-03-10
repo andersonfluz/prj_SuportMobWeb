@@ -22,6 +22,7 @@ namespace prj_chamadosBRA.Models
         public bool Especialista { get; set; }
         public bool StatusTarefa { get; set; }
         public bool? Aprovado { get; set; }
+        public string Justificativa { get; set; }
         public DateTime? DataEntrega { get; set; }
         public string Solucao { get; set; }
         public bool Cancelado { get; set; }

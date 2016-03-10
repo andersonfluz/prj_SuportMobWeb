@@ -29,7 +29,10 @@ namespace prj_chamadosBRA.Models
             AlertaSemAtualizacaoDoisDiasTrintaMinutos = 12,
             AlertaSemAtualizacaoDoisDiasUmaHora = 13,
             AlertaSemAtualizacaoDoisDiasDuasHoras = 14,
-            AlertaSemRetornoSolicitanteUmaOuSeisHoras = 15
+            AlertaSemRetornoSolicitanteUmaOuSeisHoras = 15,
+            AberturaTarefa = 16,
+            PrevisaoEntregaTarefa = 17,
+            EntregaTarefa = 18
         }
     }
 }

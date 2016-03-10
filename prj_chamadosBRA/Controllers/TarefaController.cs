@@ -38,6 +38,7 @@ namespace prj_chamadosBRA.Controllers
                     Id = tarefa.Id,
                     Assunto = tarefa.Assunto,
                     Solicitante = tarefa.Solicitante,
+                    TipoTarefa = tarefa.TipoTarefa.Value,
                     DataAbertura = tarefa.DataAbertura,
                     DataPrevisaoEntrega = tarefa.DataPrevisaoEntrega
                 });
@@ -64,7 +65,9 @@ namespace prj_chamadosBRA.Controllers
                 Natureza = tarefa.Natureza,
                 SubNatureza = tarefa.SubNatureza,
                 Responsavel = tarefa.Responsavel,
-                Solicitante = tarefa.Solicitante
+                Solicitante = tarefa.Solicitante,
+                Aprovado = tarefa.Aprovado,
+                JustificativaAprovacao = tarefa.Justificativa
             };
             return View(tarefaVM);
         }
@@ -230,8 +233,15 @@ namespace prj_chamadosBRA.Controllers
             {
                 var tarefaAtualizada = new TarefaGN(db).BuscarTarefasPorId(tarefa.Id);
                 tarefaAtualizada.DataPrevisaoEntrega = tarefa.DataPrevisaoEntrega;
-                if(new TarefaGN(db).atualizarTarefa(tarefaAtualizada))
+                
+                if (new TarefaGN(db).atualizarTarefa(tarefaAtualizada))
                 {
+                    new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = tarefaAtualizada.Id.ToString(),
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.PrevisaoEntregaTarefa
+                    });
                     TempData["sucess"] = "Previsão de Entrega da tarefa gravada com sucesso!";
                     return RedirectToAction("Index", "Tarefa");
                 }
@@ -284,6 +294,12 @@ namespace prj_chamadosBRA.Controllers
                 tarefaAtualizada.StatusTarefa = true;
                 if (new TarefaGN(db).atualizarTarefa(tarefaAtualizada))
                 {
+                    new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = tarefaAtualizada.Id.ToString(),
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.EntregaTarefa
+                    });
                     TempData["sucess"] = "Tarefa entregue com sucesso!";
                     return RedirectToAction("Index", "Tarefa");
                 }
@@ -301,6 +317,63 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
+        public async Task<ActionResult> Aprovacao(int id)
+        {
+            var tarefa = new TarefaGN(db).BuscarTarefasPorId(id);
+            var tarefaVM = new AprovacaoTarefaViewModel
+            {
+                Id = tarefa.Id,
+                Assunto = tarefa.Assunto,
+                Descricao = tarefa.Descricao,
+                DataAbertura = tarefa.DataAbertura,
+                Responsavel = tarefa.Responsavel,
+                Solicitante = tarefa.Solicitante,
+                Chamado = tarefa.Chamado,
+                Aprovado = tarefa.Aprovado
+
+            };
+            return View(tarefaVM);
+        }
+
+        // POST: Tarefa/Aprovacao/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Aprovacao(AprovacaoTarefaViewModel tarefa)
+        {
+            if (ModelState.IsValid)
+            {
+                var tarefaAtualizada = new TarefaGN(db).BuscarTarefasPorId(tarefa.Id);
+                tarefaAtualizada.DataEntrega = DateTime.Now;
+                tarefaAtualizada.Aprovado = tarefa.Aprovado;
+                tarefaAtualizada.Justificativa = tarefa.Justificativa;
+                tarefaAtualizada.StatusTarefa = true;
+                if (new TarefaGN(db).atualizarTarefa(tarefaAtualizada))
+                {
+                    new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                    {
+                        InfoEmail = tarefaAtualizada.Id.ToString(),
+                        Data = DateTime.Now,
+                        IdTipoEmail = (int)EmailTipo.EmailTipos.EntregaTarefa
+                    });
+                    TempData["sucess"] = "Tarefa entregue com sucesso!";
+                    return RedirectToAction("Index", "Tarefa");
+                }
+                else
+                {
+                    TempData["problem"] = "Problemas ao atualizar a tarefa!";
+                    return RedirectToAction("Index", "Tarefa");
+                }
+
+            }
+            else
+            {
+                TempData["problem"] = "Verifique os dados informados!";
+                return RedirectToAction("Index", "Tarefa");
+            }
+        }
+        
         // GET: Tarefa
         [Authorize]
         public async Task<ActionResult> Encerrados()
@@ -344,7 +417,9 @@ namespace prj_chamadosBRA.Controllers
                 Responsavel = tarefa.Responsavel,
                 Solicitante = tarefa.Solicitante,
                 DataEntrega = tarefa.DataEntrega,
-                Solucao = tarefa.Solucao
+                Solucao = tarefa.Solucao,
+                Aprovado = tarefa.Aprovado,
+                JustificativaAprovacao = tarefa.Justificativa
             };
             return View(tarefaVM);
         }

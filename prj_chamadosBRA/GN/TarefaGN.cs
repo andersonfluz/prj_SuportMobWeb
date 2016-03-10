@@ -35,6 +35,12 @@ namespace prj_chamadosBRA.GN
             try
             {
                 new TarefaDAO(db).salvarTarefa(tarefa);
+                new EmailEnvioDAO(db).salvarEmailEnvio(new EmailEnvio
+                {
+                    InfoEmail = tarefa.Id.ToString(),
+                    Data = DateTime.Now,
+                    IdTipoEmail = (int)EmailTipo.EmailTipos.AberturaTarefa
+                });
                 return true;
             }
             catch (Exception e)

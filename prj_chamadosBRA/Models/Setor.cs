@@ -31,6 +31,9 @@ namespace prj_chamadosBRA.Models
         public virtual Obra obra { get; set; }
         public int? CentroAdministrativo { get; set; }
         public int? SetorCorporativo { get; set; }
+        [Required]
+        [Display(Name = "Recebe Solicitação")]
+        public bool Atendimento { get; set; }
         public bool Ativo { get; set; }
         public string Usuario { get; set; }
         public DateTime? DataCriacao { get; set; }

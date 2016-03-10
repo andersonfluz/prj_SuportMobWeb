@@ -6,7 +6,7 @@
 }
 
 <div class="modal-dialog">
-    <div class="modal-content">        
+    <div class="modal-content">
         @using (Html.BeginForm("Encerrar", "Chamado", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "encerrar" }))
         {
             <div class="modal-header">
@@ -46,7 +46,7 @@
                     <div class="form-group">
                         @Html.Label("Classificação", new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(m => m.Classificacao,(SelectList) ViewBag.SetorDestinoClassificacao, "-- Selecione a Classificação --", new { @class = "form-control Classificacao" })
+                            @Html.DropDownListFor(m => m.Classificacao, (SelectList)ViewBag.SetorDestinoClassificacao, "-- Selecione a Classificação --", new { @class = "form-control Classificacao" })
                             @Html.ValidationMessageFor(m => m.Classificacao, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -64,6 +64,22 @@
                         <div class="col-md-10">
                             @Html.CheckBoxFor(m => m.ErroOperacional, new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.ErroOperacional, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SituacaoAnalisada, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(model => model.SituacaoAnalisada, htmlAttributes: new { @class = "form-control", Style = "max-width:430px" })
+                            @Html.ValidationMessageFor(model => model.SituacaoAnalisada, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FerramentaUtilizada, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.FerramentaUtilizada, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.FerramentaUtilizada, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
@@ -91,7 +107,7 @@
         $(".Classificacao").change(function () {
             $("#SubClassificacao").empty();
             $.ajax({
-                type: 'POST',
+                                    type: 'POST',
                 url: '@Url.Action("RetornaSubClassPorClass", "Chamado")',
                 dataType: 'json',
                 data: { selectedValue: $(".Classificacao").val() },
@@ -103,34 +119,33 @@
                         $("#SubClassificacao").append('<option value="'
                         + subclass.Value + '">'
                         + subclass.Text + '</option>');
-                    });
-                },
+                                        });
+                                    },
                 error: function (ex) {
-                    alert('Failed to retrieve SubClassificacoes.' + ex);
-                }
-            });
-            return false;
-        });
+                                        alert('Failed to retrieve SubClassificacoes.' + ex);
+                                    }
+                                });
+                                return false;
+                            });
 
         $('.datepicker').datepicker({
-            format: 'dd/mm/yyyy',
+                                format: 'dd/mm/yyyy',
             language: 'pt-BR',
-            autoclose: true
+            autoclose: true,
+            endDate: '+0d'
         }); //Initialise any date pickers
 
         $('#Hora').focusin(function () {
             $('#Hora').mask("99:99");
-        });
+                            });
     </script>
     @*<script type="text/javascript">
-        $(".timepicker").datetimepicker({
-            pickDate: false
-        });
-    </script>*@
+            $(".timepicker").datetimepicker({
+                pickDate: false
+            });
+        </script>*@
 
-    @*<script src="~/Scripts/mvcfoolproof.unobtrusive.min.js"></script>
-        <script src="~/Scripts/MvcFoolproofJQueryValidation.min.js"></script>
-        <script src="~/Scripts/MvcFoolproofValidation.min.js"></script>*@
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
 </div>
 @section Scripts {
