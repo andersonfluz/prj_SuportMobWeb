@@ -32,7 +32,8 @@ namespace prj_chamadosBRA.Models
             AlertaSemRetornoSolicitanteUmaOuSeisHoras = 15,
             AberturaTarefa = 16,
             PrevisaoEntregaTarefa = 17,
-            EntregaTarefa = 18
+            EntregaTarefa = 18,
+            CadastroUsuarioExterno = 19
         }
     }
 }

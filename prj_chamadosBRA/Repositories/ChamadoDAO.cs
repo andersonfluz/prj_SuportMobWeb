@@ -141,6 +141,9 @@ namespace prj_chamadosBRA.Repositories
                 case "setor":
                     chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                     break;
+                case "ultimainteracao":
+                    chamados = chamados.OrderByDescending(s => s.UltimaInteracao);
+                    break;
                 default:
                     chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                     break;
@@ -317,7 +320,7 @@ namespace prj_chamadosBRA.Repositories
                     chamados = chamados.OrderBy(s => s.Assunto).ToList();
                     break;
                 case "responsavel":
-                    chamados = chamados.OrderBy(s => s.ResponsavelChamado.Nome).ToList();
+                    chamados = chamados.OrderBy(s => s.ResponsavelChamado != null && s.ResponsavelChamado.Nome != null ? s.ResponsavelChamado.Nome : string.Empty).ToList();
                     break;
                 case "obra":
                     chamados = chamados.OrderBy(s => s.ObraDestino.Descricao).ToList();
@@ -678,6 +681,9 @@ namespace prj_chamadosBRA.Repositories
                 case "obra":
                     chamados = chamados.OrderBy(s => s.ObraDestino.Descricao);
                     break;
+                case "ultimainteracao":
+                    chamados = chamados.OrderByDescending(s => s.UltimaInteracao);
+                    break;
                 case "setor":
                     chamados = chamados.OrderBy(s => s.SetorDestino.Descricao);
                     break;
@@ -727,7 +733,7 @@ namespace prj_chamadosBRA.Repositories
                             select e).ToList();
             return chamados;
         }
-        
+
         public List<Chamado> BuscarChamadosSemAtualizaoPorDoisDiasTrintaMinutos()
         {
             var chamados = (from e in db.Chamado
@@ -841,6 +847,13 @@ namespace prj_chamadosBRA.Repositories
             chamadoUpdate.DataHoraCancelamento = DateTime.Now;
             chamadoUpdate.JustificativaCancelamento = chamado.JustificativaCancelamento;
             chamadoUpdate.ResponsavelCancelamento = chamado.ResponsavelCancelamento;
+            db.SaveChanges();
+        }
+
+        public void ultimaInteracao(int idChamado)
+        {
+            var chamadoUpdate = (from e in db.Chamado where e.Id == idChamado select e).SingleOrDefault();
+            chamadoUpdate.UltimaInteracao = DateTime.Now;
             db.SaveChanges();
         }
     }

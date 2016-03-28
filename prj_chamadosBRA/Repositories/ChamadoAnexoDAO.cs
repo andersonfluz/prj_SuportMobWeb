@@ -14,10 +14,10 @@ namespace prj_chamadosBRA.Repositories
             this.db = db;
         }
 
-        public Boolean salvarChamadoAnexo(ChamadoAnexo chamadoAnexo)
+        public bool salvarChamadoAnexo(ChamadoAnexo chamadoAnexo)
         {
             db.ChamadoAnexo.Add(chamadoAnexo);
-            db.SaveChanges();
+            db.SaveChanges();            
             return true;
         }
 

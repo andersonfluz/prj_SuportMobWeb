@@ -119,3 +119,4 @@ D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\Microsoft
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Debug\prj_chamadosBRA.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Debug\prj_chamadosBRA.pdb
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Debug\prj_chamadosBRA.csprojResolveAssemblyReference.cache

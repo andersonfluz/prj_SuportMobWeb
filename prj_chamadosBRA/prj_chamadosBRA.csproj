@@ -556,6 +556,7 @@
     <Content Include="Views\Tarefa\Encerrados.cshtml" />
     <Content Include="Views\Tarefa\EncerradoInfo.cshtml" />
     <Content Include="Views\Tarefa\Aprovacao.cshtml" />
+    <Content Include="Views\Account\RegisterExternal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

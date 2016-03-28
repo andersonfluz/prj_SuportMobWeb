@@ -153,9 +153,10 @@ namespace prj_chamadosBRA.Controllers
                 };
                 if (new TarefaGN(db).gerarTarefa(tarefa))
                 {
+                    new ChamadoGN(db).RegistrarUltimaInteracao(Convert.ToInt32(tarefaVM.Chamado.Id));
                     TempData["sucess"] = "Tarefa Gerada com sucesso!";
                     return RedirectToAction("Edit", "Chamado", new { id = idChamado });
-                }
+                }               
             }
             TempData["notice"] = "Desculpe, estamos com problemas ao atualizar o chamado.";
             return RedirectToAction("Edit", "Chamado", new { id = idChamado });
@@ -242,6 +243,7 @@ namespace prj_chamadosBRA.Controllers
                         Data = DateTime.Now,
                         IdTipoEmail = (int)EmailTipo.EmailTipos.PrevisaoEntregaTarefa
                     });
+                    new ChamadoGN(db).RegistrarUltimaInteracao(Convert.ToInt32(tarefaAtualizada.Chamado.Id));
                     TempData["sucess"] = "Previsão de Entrega da tarefa gravada com sucesso!";
                     return RedirectToAction("Index", "Tarefa");
                 }
@@ -300,6 +302,7 @@ namespace prj_chamadosBRA.Controllers
                         Data = DateTime.Now,
                         IdTipoEmail = (int)EmailTipo.EmailTipos.EntregaTarefa
                     });
+                    new ChamadoGN(db).RegistrarUltimaInteracao(Convert.ToInt32(tarefaAtualizada.Chamado.Id));
                     TempData["sucess"] = "Tarefa entregue com sucesso!";
                     return RedirectToAction("Index", "Tarefa");
                 }
@@ -357,6 +360,7 @@ namespace prj_chamadosBRA.Controllers
                         Data = DateTime.Now,
                         IdTipoEmail = (int)EmailTipo.EmailTipos.EntregaTarefa
                     });
+                    new ChamadoGN(db).RegistrarUltimaInteracao(Convert.ToInt32(tarefaAtualizada.Chamado.Id));
                     TempData["sucess"] = "Tarefa entregue com sucesso!";
                     return RedirectToAction("Index", "Tarefa");
                 }

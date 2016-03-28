@@ -35,9 +35,9 @@ namespace prj_chamadosBRA.Utils
                     }
                     else
                     {
-                        if(chamado.SetorDestino.SetorCorporativo != null)
+                        if (chamado.SetorDestino.SetorCorporativo != null)
                         {
-                            var usuarios = new ApplicationUserDAO().retornarUsuariosSetorTipoChamado(new SetorDAO().BuscarSetorId(chamado.SetorDestino.SetorCorporativo.Value),chamado.TipoChamado.Value);
+                            var usuarios = new ApplicationUserDAO().retornarUsuariosSetorTipoChamado(new SetorDAO().BuscarSetorId(chamado.SetorDestino.SetorCorporativo.Value), chamado.TipoChamado.Value);
 
                             foreach (var usuario in usuarios)
                             {
@@ -45,7 +45,8 @@ namespace prj_chamadosBRA.Utils
                                 mail.CC.Add(usuario.UserName);
                             }
 
-                        }else
+                        }
+                        else
                         {
                             var usuarios = new ApplicationUserDAO().retornarUsuariosSetor(chamado.SetorDestino, null);
 
@@ -226,6 +227,29 @@ namespace prj_chamadosBRA.Utils
             }
         }
 
+        public static string envioEmailCadastroUsuarioExterno(ApplicationUser user)
+        {
+            try
+            {
+                using (var mail = new MailMessage())
+                {
+                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+
+                    mail.To.Add(new MailAddress(user.UserName));
+                    mail.Subject = "HelpMe! - Cadastro de novo usuário na plataforma";
+                    mail.Body = montarCorpoMensagemCadastroUsuarioExterno(user);
+                    mail.IsBodyHtml = true;
+                    var smtpClient = new SmtpClient();
+                    smtpClient.Send(mail);
+                    return "0";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
         public static string envioEmailAberturaTarefa(Tarefa tarefa)
         {
             try
@@ -235,7 +259,7 @@ namespace prj_chamadosBRA.Utils
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(tarefa.Responsavel.UserName));
-                    mail.CC.Add(tarefa.Solicitante.UserName);                    
+                    mail.CC.Add(tarefa.Solicitante.UserName);
                     mail.Subject = "HelpMe! - Notificação Abertura de Tarefa N. " + tarefa.Id;
                     mail.Body = montarCorpoMensagemAberturaTarefa(tarefa);
                     mail.IsBodyHtml = true;
@@ -368,7 +392,7 @@ namespace prj_chamadosBRA.Utils
                 using (var mail = new MailMessage())
                 {
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
-                    
+
                     if (chamado.SetorDestino == null)
                     {
                         var usuarios = new ApplicationUserDAO().retornarUsuariosObra(chamado.ObraDestino.IDO, null);
@@ -431,7 +455,7 @@ namespace prj_chamadosBRA.Utils
                         foreach (var setor in setores)
                         {
                             mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(setor.EmailResponsavel));
+                            //mail.To.Add(new MailAddress(setor.EmailSetor));
                         }
                     }
                     else
@@ -501,7 +525,7 @@ namespace prj_chamadosBRA.Utils
                     mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
                     //mail.To.Add(new MailAddress(chamado.ResponsavelChamado.UserName));
                     mail.Subject = "HelpMe! - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
-                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
+                    mail.Body = montarCorpoMensagemAlertaSemAtualizacao(chamado, "dois dias");
                     mail.IsBodyHtml = true;
                     var smtpClient = new SmtpClient();
                     smtpClient.Send(mail);
@@ -521,27 +545,18 @@ namespace prj_chamadosBRA.Utils
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
+                    if (chamado.ResponsavelChamado.EnvioEmailSuperior.Value)
+                    {
+                        mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
-                    if (chamado.SetorDestino == null)
-                    {
-                        var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
-                        foreach (var setor in setores)
-                        {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(setor.EmailResponsavel));
-                        }
-                    }
-                    else
-                    {
                         mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                        //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
+                        //mail.To.Add(new MailAddress(new ApplicationUserDAO().retornarUsuario(chamado.ResponsavelChamado.Superior).UserName));
+                        mail.Subject = "HelpMe! - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
+                        mail.Body = montarCorpoMensagemAlertaSemAtualizacao(chamado, "dois dias");
+                        mail.IsBodyHtml = true;
+                        var smtpClient = new SmtpClient();
+                        smtpClient.Send(mail);
                     }
-                    mail.Subject = "HelpMe! - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
-                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
-                    mail.IsBodyHtml = true;
-                    var smtpClient = new SmtpClient();
-                    smtpClient.Send(mail);
                     return "0";
                 }
             }
@@ -559,26 +574,18 @@ namespace prj_chamadosBRA.Utils
                 using (var mail = new MailMessage())
                 {
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
-
-                    if (chamado.SetorDestino == null)
+                    mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
+                    var superior = new ApplicationUserDAO().retornarUsuario(chamado.ResponsavelChamado.Superior);
+                    var superiorDoSuperior = new ApplicationUserDAO().retornarUsuario(superior.Superior);
+                    if (superiorDoSuperior.EnvioEmailSuperior.Value)
                     {
-                        var setores = new SetorDAO().BuscarSetoresPorObra(chamado.ObraDestino.IDO);
-                        foreach (var setor in setores)
-                        {
-                            mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                            //mail.To.Add(new MailAddress(setor.EmailResponsavel));
-                        }
+                        mail.To.Add(new MailAddress(superiorDoSuperior.UserName));
+                        mail.Subject = "HelpMe! - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
+                        mail.Body = montarCorpoMensagemAlertaSemAtualizacao(chamado, "dois dias");
+                        mail.IsBodyHtml = true;
+                        var smtpClient = new SmtpClient();
+                        smtpClient.Send(mail);
                     }
-                    else
-                    {
-                        mail.To.Add(new MailAddress("ti.anderson@cav-ba.com.br"));
-                        //mail.To.Add(new MailAddress(chamado.SetorDestino.EmailResponsavel));
-                    }
-                    mail.Subject = "HelpMe! - Alerta de chamado sem atualização - Chamado N. " + chamado.Id;
-                    mail.Body = montarCorpoMensagemAlertaSemResponsavel(chamado, "dois dias");
-                    mail.IsBodyHtml = true;
-                    var smtpClient = new SmtpClient();
-                    smtpClient.Send(mail);
                     return "0";
                 }
             }
@@ -613,7 +620,7 @@ namespace prj_chamadosBRA.Utils
 
         }
 
-        public static string envioEmailTravados(List<EmailEnvio> emailsTravados)
+        public static string envioEmailTravados()
         {
             try
             {
@@ -1178,7 +1185,7 @@ namespace prj_chamadosBRA.Utils
                                    + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
                                    + "&nbsp;</td>"
                                    + "</tr>"
-                                   + "<tr>"                                   
+                                   + "<tr>"
                                    + "<tr>"
                                    + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
                                    + "Historico de Alteração:</td>"
@@ -1240,6 +1247,56 @@ namespace prj_chamadosBRA.Utils
                                 + "<br />"
                                 + "Pronto! Já poderá utilizar a ferramenta. Sugerimos que altere imediatamente sua "
                                 + "senha."
+                                + "<br />"
+                                + "<br />"
+                                + "Equipe de suporte CAS.<br />"
+                                + "&nbsp;</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "<p>Por favor não responda essa mensagem. Esse é um e-mail automático do HelpMe!</p>"
+                                + "</br><p>&copy;" + @DateTime.Now.Year + " - HelpMe!</p>"
+                                + "</div>";
+            return corpoMensagem;
+        }
+
+        private static string montarCorpoMensagemCadastroUsuarioExterno(ApplicationUser user)
+        {
+            var corpoMensagem = "<div>"
+                                + "<table cellspacing='0' cellpadding='0' style='width: 100%'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td style='color: rgb(0,0,0); font-family: verdana; font-size: 16pt'>"
+                                + "<table width='100%' class='x_breadcrumb' cellspacing='0' cellpadding='0'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td style='padding-right: 2px; padding-left: 2px'>"
+                                + "ChamadosBRA - "
+                                + "Criação de Usuario"
+                                + "</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "</td>"
+                                + "</tr>"
+                                + "</tbody>"
+                                + "</table>"
+                                + "<table cellspacing='0' cellpadding='0' style='width: 100%; margin-top: 6px; border-bottom-color: rgb(156,163,173); border-bottom-width: 1px; border-bottom-style: solid'>"
+                                + "<tbody>"
+                                + "<tr>"
+                                + "<td colspan='3'>"
+                                + "Parabens " + user.Nome + " ! <br />"
+                                + "<br />"
+                                + "Seu acesso a ferramenta de chamados já está liberado. Para acessa-la siga as "
+                                + "instruções abaixo: <br />"
+                                + "<br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. Abra seu navegador de internet e digite o endereço: "
+                                + "<a href='http://portal.colegioantoniovieira.com.br/ChamadosBRA/'>http://portal.colegioantoniovieira.com.br/ChamadosBRA/</a>"
+                                + "<br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. No campo usuário digite seu email: " + user.UserName + "  <br />"
+                                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. E utilize a senha informada no cadastro <br />"
+                                + "<br />"
+                                + "Pronto! Já poderá utilizar a ferramenta."
                                 + "<br />"
                                 + "<br />"
                                 + "Equipe de suporte CAS.<br />"
@@ -1491,7 +1548,7 @@ namespace prj_chamadosBRA.Utils
                                    + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
                                    + "Mensagem de Alerta:</td>"
                                    + "<td style='padding:0px 7px; font-family:tahoma; font-size:8pt; vertical-align:top'>"
-                                   + "A solicitação está sem responsavel a mais de "+ tempo + ", favor verificar e direcionar o chamado.</td>"
+                                   + "A solicitação está sem responsavel a mais de " + tempo + ", favor verificar e direcionar o chamado.</td>"
                                    + "<td style='text-align:left; padding-right:8px; padding-left:5px; font-family:tahoma,sans-serif; font-size:8pt; font-weight:normal; text-decoration:none; vertical-align:top'>"
                                    + "&nbsp;</td>"
                                    + "</tr>"
@@ -2330,7 +2387,7 @@ namespace prj_chamadosBRA.Utils
             var DataHoraEntrega = tarefa.DataEntrega.ToString();
             var Natureza = tarefa.Natureza.Descricao;
             var SubNatureza = tarefa.SubNatureza.Descricao;
-            var Justificativa = tarefa.Justificativa;            
+            var Justificativa = tarefa.Justificativa;
 
             var corpoMensagem = "<div> <table cellspacing='0' cellpadding='0' style='width:100%'>"
                                    + "<tbody>"

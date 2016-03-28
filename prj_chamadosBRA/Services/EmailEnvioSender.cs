@@ -409,5 +409,27 @@ namespace prj_chamadosBRA.Service
                 }
             }
         }
+        public static void EnvioEmailCadastroUsuarioExterno()
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var emailEnvio = new EmailEnvioDAO(db).BuscarEmailEnvioTipo((int)EmailTipo.EmailTipos.CadastroUsuarioExterno);
+                foreach (var email in emailEnvio)
+                {
+                    var User = new ApplicationUserDAO(db).retornarUsuario(email.InfoEmail);
+                    var retorno = EmailServiceUtil.envioEmailCriacaoUsuario(User);
+                    if (retorno == "0")
+                    {
+                        new EmailEnvioDAO(db).eliminarEmailEnvio(email);
+                    }
+                    else
+                    {
+                        email.Tentativas = email.Tentativas + 1;
+                        email.Erro = retorno;
+                        new EmailEnvioDAO(db).atualizarEmailEnvio(email);
+                    }
+                }
+            }
+        }
     }
 }

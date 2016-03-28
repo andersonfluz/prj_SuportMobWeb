@@ -46,15 +46,21 @@
     <div class="form-group">
         @Html.Label("Perfil", new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.perfil, new SelectList(ViewBag.Perfis, "IdPerfil", "Descricao"), new { @class = "form-control" })
-            @*@Html.DropDownList("Perfis", "---- Selecione ----")*@
+            @if (Session["PerfilUsuario"].ToString().Equals("9"))
+            {
+                @Html.DropDownListFor(m => m.perfil, new SelectList(new prj_chamadosBRA.Repositories.PerfilUsuarioDAO().BuscarPerfis(), "IdPerfil", "Descricao"), new { @class = "form-control" })
+            }
+            else
+            {
+                @Html.DropDownListFor(m => m.perfil, new SelectList(ViewBag.Perfis, "IdPerfil", "Descricao"), new { @class = "form-control" })
+            }
             @Html.ValidationMessageFor(m => m.perfil)
         </div>
     </div>
 
     if ((bool)Session["ObraVisivel"])
     {
-        if (Session["PerfilUsuario"].ToString() == "1")
+        if (Session["PerfilUsuario"].ToString() == "1" || Session["PerfilUsuario"].ToString() == "9")
         {
             <div class="form-group">
                 @Html.Label("Obra", new { @class = "col-md-2 control-label" })

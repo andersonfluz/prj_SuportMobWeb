@@ -35,5 +35,6 @@ namespace prj_chamadosBRA.Models
         public virtual ApplicationUser ResponsavelCancelamento { get; set; }
         public string Diagnostico { get; set; }
         public string FerramentaSolucao { get; set; }
+        public DateTime? UltimaInteracao { get; set; }
     }
 }

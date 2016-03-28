@@ -34,14 +34,21 @@ namespace prj_chamadosBRA.Controllers
 
         public UserManager<ApplicationUser> UserManager { get; private set; }
         #endregion
-        
+
         //
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
+            if (Session["PerfilUsuario"] != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewBag.ReturnUrl = returnUrl;
+                return View();
+            }
         }
 
         //
@@ -69,7 +76,7 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult Edit(string id)
         {
             var user = new ApplicationUserDAO().retornarUsuario(id);
-            if(user.EnvioEmailSuperior == null)
+            if (user.EnvioEmailSuperior == null)
             {
                 user.EnvioEmailSuperior = false;
             }
@@ -194,7 +201,7 @@ namespace prj_chamadosBRA.Controllers
             };
             return View(userRecovery);
         }
-        
+
         [HttpPost]
         public ActionResult RedefinicaoSenha(RecoveryViewModel user, string password)
         {
@@ -212,7 +219,7 @@ namespace prj_chamadosBRA.Controllers
                 return RedirectToAction("Login", "Account");
             }
         }
-        
+
         [Authorize]
         public ActionResult ReiniciarSenha(string id)
         {
@@ -344,7 +351,7 @@ namespace prj_chamadosBRA.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         //
         // POST: /Account/Login
         [HttpPost]
@@ -434,8 +441,8 @@ namespace prj_chamadosBRA.Controllers
                         };
                         ControllerContext.HttpContext.Response.Cookies.Add(cookie);
                         //Session["UsuarioSetorCorporativo"] = false;
-                    }                   
-                    
+                    }
+
                     await SignInAsync(user, model.RememberMe);
                     if (returnUrl == null)
                     {
@@ -483,7 +490,7 @@ namespace prj_chamadosBRA.Controllers
             }
             //ViewBag.Superiores = new SelectList(new ApplicationUserDAO().retornarUsuariosObras(obras, null), "Id", "Nome","-- Selecione o superior do usuario --");
 
-            if (Session["PerfilUsuario"].ToString().Equals("1"))
+            if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("9"))
             {
                 ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
             }
@@ -585,6 +592,114 @@ namespace prj_chamadosBRA.Controllers
             return View(model);
         }
 
+        [AllowAnonymous]
+        public ActionResult RegisterExternal()
+        {
+            var obras = new ObraDAO().BuscarObrasPorUsuario(User.Identity.GetUserId());
+            ViewBag.UserId = User.Identity.GetUserId();
+            var listObra = new SelectList(obras, "IDO", "Descricao");
+            ViewBag.ObraDestino = listObra;
+            if (listObra.Count() == 1)
+            {
+                ViewBag.ObraDestino = obras[0].IDO;
+            }
+            else
+            {
+                ViewBag.SetorDestino = new SelectList(new SetorDAO().BuscarSetores(), "Id", "Nome");
+            }
+            ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
+            return View();
+        }
+
+
+        //
+        // POST: /Account/Register
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> RegisterExternal(RegisterExternalViewModel model)
+        {
+            try
+            {
+                using (ApplicationDbContext context = new ApplicationDbContext())
+                {
+                    if (ModelState.IsValid)
+                    {
+                        var dominios = System.Configuration.ConfigurationManager.AppSettings["dominiosEmail"].ToString();
+                        var dominiosLista = dominios.Split('|');
+                        var EmailValido = false;
+                        foreach (var dominio in dominiosLista)
+                        {
+                            if (model.UserName.Contains(dominio))
+                            {
+                                EmailValido = true;
+                            }
+                        }
+                        if (EmailValido)
+                        {
+                            var user = new ApplicationUser { UserName = model.UserName, PerfilUsuario = 4, Nome = model.Nome, Contato = model.Contato, Email = model.UserName, Chapa = model.Chapa, Superior = model.Superior, EnvioEmailSuperior = true };
+                            var result = UserManager.Create(user, model.Password);
+                            if (result.Succeeded)
+                            {
+                                var usuarioObra = new UsuarioObra
+                                {
+                                    Usuario = user.Id,
+                                    Obra = new ObraDAO(context).BuscarObraId(Convert.ToInt32(model.Obra))
+                                };
+                                if (new UsuarioObraDAO(context).salvarUsuarioObra(usuarioObra))
+                                {
+                                    if (model.Setor != null)
+                                    {
+                                        var usuarioSetor = new UsuarioSetor
+                                        {
+                                            Usuario = user.Id,
+                                            Setor = new SetorDAO(context).BuscarSetorId(Convert.ToInt32(model.Setor))
+                                        };
+                                        if (new UsuarioSetorDAO(context).salvarUsuarioSetor(usuarioSetor))
+                                        {
+                                            new EmailEnvioDAO(context).salvarEmailEnvio(new EmailEnvio
+                                            {
+                                                InfoEmail = user.Id,
+                                                Data = DateTime.Now,
+                                                IdTipoEmail = (int)EmailTipo.EmailTipos.CadastroUsuarioExterno
+                                            });
+                                            TempData["notice"] = "Usuário criado com Sucesso!";
+                                            return RedirectToAction("Index");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        TempData["notice"] = "Usuário criado com Sucesso!";
+                                        return RedirectToAction("Index");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
+                                AddErrors(result);
+                            }
+                        }
+                        else
+                        {
+                            TempData["notice"] = "Email não permitido para cadastro na ferramenta";
+                            ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
+                            return View(model);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+
 
         public ActionResult RetornaSetoresPorObra(string selectedValue)
         {
@@ -620,7 +735,7 @@ namespace prj_chamadosBRA.Controllers
                     ActionResult json = Json(new SelectList(superiores, "Id", "Nome"));
                     return json;
                 }
-                
+
             }
             else
             {

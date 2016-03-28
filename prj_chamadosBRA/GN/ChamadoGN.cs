@@ -652,5 +652,10 @@ namespace prj_chamadosBRA.GN
             anexo.Chamado = new ChamadoDAO(db).BuscarChamadoId(idChamado);
             return caDAO.salvarChamadoAnexo(anexo);
         }
+
+        public void RegistrarUltimaInteracao(int idChamado)
+        {
+            new ChamadoDAO(db).ultimaInteracao(idChamado);
+        }
     }
 }

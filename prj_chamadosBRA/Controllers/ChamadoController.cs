@@ -174,7 +174,7 @@ namespace prj_chamadosBRA.Controllers
                 #endregion
 
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException e)
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -595,6 +595,7 @@ namespace prj_chamadosBRA.Controllers
                 var cGN = new ChamadoGN(db);
                 if (cGN.atualizarChamadoHistorico(chamadoInfo.Id, chamadoInfo.InformacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
                 {
+                    cGN.RegistrarUltimaInteracao(Convert.ToInt32(chamadoInfo.Id));
                     TempData["notice"] = "Chamado Atualizado Com Sucesso!";
                     return RedirectToAction("Acompanhamento");
                 }
@@ -725,6 +726,7 @@ namespace prj_chamadosBRA.Controllers
                     var chamadoRegistro = cGN.registrarChamado(chamado, upload, SetorDestino, ObraDestino, ResponsavelAberturaChamado, manager.FindById(User.Identity.GetUserId()));
                     if (chamadoRegistro != null)
                     {
+                        new ChamadoGN(db).RegistrarUltimaInteracao(Convert.ToInt32(chamadoRegistro.Id));
                         TempData["notice"] = "Chamado Criado com Sucesso!";
                         return RedirectToAction("Index");
                     }
@@ -886,6 +888,7 @@ namespace prj_chamadosBRA.Controllers
                     {
                         cGN.registarAnexo(Convert.ToInt32(id), fileContent);
                         cGN.atualizarChamadoHistorico(Convert.ToInt32(id), "Arquivo Inserido no Chamado N. " + id, manager.FindById(User.Identity.GetUserId()));
+                        cGN.RegistrarUltimaInteracao(Convert.ToInt32(id));
                     }
                 }
             }
@@ -926,6 +929,7 @@ namespace prj_chamadosBRA.Controllers
                     var cGN = new ChamadoGN(db);
                     if (cGN.atualizarChamado(id, chamado, SetorDestino, ddlResponsavelChamado, informacoesAcompanhamento, manager.FindById(User.Identity.GetUserId())))
                     {
+                        cGN.RegistrarUltimaInteracao(Convert.ToInt32(id));
                         TempData["notice"] = "Chamado Atualizado Com Sucesso!";
                         return RedirectToAction("Index");
                     }
@@ -1368,7 +1372,7 @@ namespace prj_chamadosBRA.Controllers
             var objCript = new Criptografia(id);
             var idChamado = Convert.ToInt32(objCript["id"].ToString());
             cGN.reaberturaChamado(idChamado, chamado.JustificativaReabertura, manager.FindById(User.Identity.GetUserId()));
-
+            cGN.RegistrarUltimaInteracao(Convert.ToInt32(id));
             TempData["notice"] = "Chamado Reaberto com Sucesso!";
             return RedirectToAction("Index");
         }
