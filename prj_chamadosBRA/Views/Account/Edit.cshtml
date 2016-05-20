@@ -15,7 +15,6 @@
         <h4>Usuário</h4>
         <div class="row">
             <div class="col-md-2"><input type="submit" value="Salvar" class="btn btn-default" /></div>
-            @*<div class="col-md-4 col-md-offset-6" align="right">@Html.ActionLink("Redefinir Senha do Usuario", "ReiniciarSenha", "Account", new { id = Model.Id }, new { @class = "btn btn-default" })</div>*@
         </div>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -24,7 +23,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control"} })
                 @Html.ValidationMessageFor(model => model.Nome, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -86,7 +85,7 @@
         </div>
 
 
-        @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("6"))
+        @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("9"))
         {
             <div class="form-group">
                 @Html.Label("Obras", htmlAttributes: new { @class = "control-label col-md-2" })

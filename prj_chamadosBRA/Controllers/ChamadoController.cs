@@ -43,8 +43,9 @@ namespace prj_chamadosBRA.Controllers
                 var dropdownItems = new List<SelectListItem>();
                 dropdownItems.AddRange(new[]{
                                                 new SelectListItem { Text = "Todos", Value = "-2" },
-                                                new SelectListItem { Text = "Totvs RM", Value = "1" },
-                                                new SelectListItem { Text = "Outros", Value = "2" }
+                                                new SelectListItem { Text = "TotvsRM", Value = "1" },
+                                                new SelectListItem { Text = "Infra", Value = "2" },
+                                                new SelectListItem { Text = "Outros", Value = "3" }
                                             });
                 ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", tipoChamado);
 
@@ -207,8 +208,9 @@ namespace prj_chamadosBRA.Controllers
                 var dropdownItems = new List<SelectListItem>();
                 dropdownItems.AddRange(new[]{
                                                 new SelectListItem { Text = "Todos", Value = "-2" },
-                                                new SelectListItem { Text = "Totvs RM", Value = "1" },
-                                                new SelectListItem { Text = "Outros", Value = "2" }
+                                                new SelectListItem { Text = "TotvsRM", Value = "1" },
+                                                new SelectListItem { Text = "Infra", Value = "2" },
+                                                new SelectListItem { Text = "Outros", Value = "3" }
                                             });
                 ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", tipoChamado);
 
@@ -317,8 +319,9 @@ namespace prj_chamadosBRA.Controllers
                 var dropdownItems = new List<SelectListItem>();
                 dropdownItems.AddRange(new[]{
                                                 new SelectListItem { Text = "Todos", Value = "-2" },
-                                                new SelectListItem { Text = "Totvs RM", Value = "1" },
-                                                new SelectListItem { Text = "Outros", Value = "2" }
+                                                new SelectListItem { Text = "TotvsRM", Value = "1" },
+                                                new SelectListItem { Text = "Infra", Value = "2" },
+                                                new SelectListItem { Text = "Outros", Value = "3" }
                                             });
                 ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", tipoChamado);
 
@@ -354,8 +357,9 @@ namespace prj_chamadosBRA.Controllers
                 var dropdownItems = new List<SelectListItem>();
                 dropdownItems.AddRange(new[]{
                                                 new SelectListItem { Text = "Todos", Value = "-2" },
-                                                new SelectListItem { Text = "Totvs RM", Value = "1" },
-                                                new SelectListItem { Text = "Outros", Value = "2" }
+                                                new SelectListItem { Text = "TotvsRM", Value = "1" },
+                                                new SelectListItem { Text = "Infra", Value = "2" },
+                                                new SelectListItem { Text = "Outros", Value = "3" }
                                             });
                 ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", tipoChamado);
 
@@ -417,19 +421,52 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult TriagemInfo(int id)
         {
             var chamado = new ChamadoGN(db).buscarChamadoId(id);
+            var perfil = chamado.TipoChamado == 1 ? 7 : 3;
             var user = manager.FindById(User.Identity.GetUserId());
             var dropdownResponsaveis = new List<SelectListItem>();
             dropdownResponsaveis.Add(new SelectListItem { Text = "-- Selecione o Responsavel --", Value = "-1" });
             var usuariosObras = new UsuarioSetorDAO(db).buscarUsuarioObradeSetoresCorporativosDoUsuario(user);
             foreach (var usuarioObra in usuariosObras)
             {
-                var NomeUsuario = new ApplicationUserDAO(db).retornarUsuario(usuarioObra.Usuario).Nome;
-                dropdownResponsaveis.Add(new SelectListItem { Text = NomeUsuario + " - " + usuarioObra.Obra.Descricao, Value = usuarioObra.Usuario });
+                var Usuario = new ApplicationUserDAO(db).retornarUsuarioPorPerfil(usuarioObra.Usuario, perfil);
+                if(Usuario != null) { 
+                    dropdownResponsaveis.Add(new SelectListItem { Text = Usuario.Nome + " - " + usuarioObra.Obra.Descricao, Value = usuarioObra.Usuario });
+                }
 
             }
             dropdownResponsaveis = dropdownResponsaveis.OrderBy(e => e.Text).ToList();
             ViewBag.ddlResponsavelChamado = new SelectList(dropdownResponsaveis, "Value", "Text", "-1");
+            ViewBag.podeassumirchamado = chamado.TipoChamado == 1 && (user.PerfilUsuario == 1 || user.PerfilUsuario == 7 || user.PerfilUsuario == 9) ? true : false;
             return View(chamado);
+        }
+
+
+        public ActionResult RetornaUsuariosPorTipoChamado(string selectedValue)
+        {
+            try
+            {
+                var perfil = selectedValue == "1" ? 7 : 3;
+                var user = manager.FindById(User.Identity.GetUserId());
+                var dropdownResponsaveis = new List<SelectListItem>();
+                dropdownResponsaveis.Add(new SelectListItem { Text = "-- Selecione o Responsavel --", Value = "-1" });
+                var usuariosObras = new UsuarioSetorDAO(db).buscarUsuarioObradeSetoresCorporativosDoUsuario(user);
+                foreach (var usuarioObra in usuariosObras)
+                {
+                    var Usuario = new ApplicationUserDAO(db).retornarUsuarioPorPerfil(usuarioObra.Usuario, perfil);
+                    if (Usuario != null)
+                    {
+                        dropdownResponsaveis.Add(new SelectListItem { Text = Usuario.Nome + " - " + usuarioObra.Obra.Descricao, Value = usuarioObra.Usuario });
+                    }
+
+                }
+                dropdownResponsaveis = dropdownResponsaveis.OrderBy(e => e.Text).ToList();
+                
+                return Json(new SelectList(dropdownResponsaveis, "Value", "Text"));
+            }
+            catch (Exception)
+            {
+                return Json(new SelectList(String.Empty, "Value", "Text")); ;
+            }
         }
 
         // POST: Chamado/TriagemInfo/5
@@ -703,6 +740,18 @@ namespace prj_chamadosBRA.Controllers
             }
         }
 
+        public ActionResult isSetorTICorporativo(string selectedValue)
+        {
+            var setor = new SetorDAO(db).BuscarSetorId(Convert.ToInt32(selectedValue));
+            if(setor.SetorCorporativo == 3)
+            {
+                return Json(true);
+            }else
+            {
+                return Json(false);
+            }
+        }
+
         // POST: Chamado/Create
         [HttpPost]
         public async Task<ActionResult> Create(NovoChamadoViewModel chamadoVM, HttpPostedFileBase upload, String SetorDestino, String ObraDestino, String ResponsavelAberturaChamado)
@@ -960,6 +1009,7 @@ namespace prj_chamadosBRA.Controllers
             var model = new EncerramentoChamadoViewModel
             {
                 Id = chamado.Id,
+                Assunto = chamado.Assunto,
                 StatusChamado = chamado.StatusChamado,
                 Solucao = chamado.Solucao,
                 DataHoraAtendimento = chamado.DataHoraAtendimento,
@@ -1176,7 +1226,8 @@ namespace prj_chamadosBRA.Controllers
                 dropdownItems.AddRange(new[]{
                                                 new SelectListItem { Text = "Todos", Value = "-2" },
                                                 new SelectListItem { Text = "Totvs RM", Value = "1" },
-                                                new SelectListItem { Text = "Outros", Value = "2" }
+                                                new SelectListItem { Text = "Infra", Value = "2" },
+                                                new SelectListItem { Text = "Outros", Value = "3" }
                                             });
                 ViewBag.TipoChamado = new SelectList(dropdownItems, "Value", "Text", tipoChamado);
 
@@ -1372,7 +1423,7 @@ namespace prj_chamadosBRA.Controllers
             var objCript = new Criptografia(id);
             var idChamado = Convert.ToInt32(objCript["id"].ToString());
             cGN.reaberturaChamado(idChamado, chamado.JustificativaReabertura, manager.FindById(User.Identity.GetUserId()));
-            cGN.RegistrarUltimaInteracao(Convert.ToInt32(id));
+            cGN.RegistrarUltimaInteracao(idChamado);
             TempData["notice"] = "Chamado Reaberto com Sucesso!";
             return RedirectToAction("Index");
         }

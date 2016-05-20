@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Web;
 
@@ -471,11 +472,11 @@ namespace prj_chamadosBRA.Repositories
             return chamadosList.ToList();
         }
 
-        public List<Chamado> BuscarChamadosSemResponsaveis(string filtro, string sortOrder, int? tipoChamado)
+        public List<Chamado> BuscarChamadosSemResponsaveis(string filtro, string sortOrder, int? tipoChamado, int? SetorCorporativo)
         {
             if (tipoChamado == -2)
             {
-                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.ResponsavelChamado == null select e);
+                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.ResponsavelChamado == null && (SetorCorporativo != 0? e.SetorDestino.SetorCorporativo == SetorCorporativo: true) select e);
                 if (filtro != null)
                 {
                     chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
@@ -512,18 +513,19 @@ namespace prj_chamadosBRA.Repositories
                         chamados = chamados.OrderByDescending(s => s.DataHoraAbertura);
                         break;
                 }
-
-                return chamados.ToList();
+                var chamadosLista = chamados.ToList();
+                return chamadosLista;
             }
             else
             {
-                var chamados = (from f in db.Chamado where f.StatusChamado == false && f.ResponsavelChamado == null && f.TipoChamado == tipoChamado select f);
+                var chamados = (from f in db.Chamado where f.StatusChamado == false && f.ResponsavelChamado == null && f.TipoChamado == tipoChamado && (SetorCorporativo != 0 ? f.SetorDestino.SetorCorporativo == SetorCorporativo : true) select f);
                 if (filtro != null)
                 {
                     chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
                                                                || s.Assunto.ToLower().Contains(filtro.ToLower())
                                                                || s.ObraDestino.Descricao.ToLower().Contains(filtro.ToLower())
                                                                || s.Descricao.ToLower().Contains(filtro.ToLower())
+
                                                                || (s.ResponsavelAberturaChamado != null && s.ResponsavelAberturaChamado.Nome.ToLower().Contains(filtro.ToLower())));
                 }
 
@@ -561,11 +563,11 @@ namespace prj_chamadosBRA.Repositories
 
         }
 
-        public List<Chamado> BuscarChamadosSemResponsaveisPorObra(Int32 obra, int? tipoChamado, string filtro, string sortOrder)
+        public List<Chamado> BuscarChamadosSemResponsaveisPorObra(Int32 obra, int? tipoChamado, string filtro, string sortOrder, int? SetorCorporativo)
         {
             if (tipoChamado == -2)
             {
-                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.ResponsavelChamado == null && e.ObraDestino.IDO == obra select e);
+                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.ResponsavelChamado == null && e.ObraDestino.IDO == obra && e.SetorDestino.SetorCorporativo == SetorCorporativo select e);
                 if (filtro != null)
                 {
                     chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
@@ -607,7 +609,7 @@ namespace prj_chamadosBRA.Repositories
             }
             else
             {
-                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.TipoChamado == tipoChamado && e.ResponsavelChamado == null && e.ObraDestino.IDO == obra select e);
+                var chamados = (from e in db.Chamado where e.StatusChamado == false && e.TipoChamado == tipoChamado && e.ResponsavelChamado == null && e.ObraDestino.IDO == obra && e.SetorDestino.SetorCorporativo == SetorCorporativo select e);
                 if (filtro != null)
                 {
                     chamados = chamados.Where(s => s.Id.ToString().Contains(filtro)
@@ -797,6 +799,54 @@ namespace prj_chamadosBRA.Repositories
         public Chamado BuscarChamadoId(int id)
         {
             return db.Set<Chamado>().Find(id);
+        }
+
+        public List<Chamado> BuscarChamadosAbertosHoje()
+        {
+            return db.Set<Chamado>().Where(e => e.DataHoraAbertura.Day == DateTime.Now.Day && 
+                                                e.DataHoraAbertura.Month == DateTime.Now.Month && 
+                                                e.DataHoraAbertura.Year == DateTime.Now.Year).ToList();
+        }
+
+        public List<Chamado> BuscarChamadosAbertosHoje(string idUsuario)
+        {
+            return db.Set<Chamado>().Where(e => e.DataHoraAbertura.Day == DateTime.Now.Day && 
+                                                e.DataHoraAbertura.Month == DateTime.Now.Month && 
+                                                e.DataHoraAbertura.Year == DateTime.Now.Year && 
+                                                e.ResponsavelChamado.Id == idUsuario).ToList();
+        }
+
+        public List<Chamado> BuscarChamadosEncerradosHoje()
+        {
+            return db.Set<Chamado>().Where(e => e.DataHoraAbertura.Day == DateTime.Now.Day && 
+                                                e.DataHoraAbertura.Month == DateTime.Now.Month && 
+                                                e.DataHoraAbertura.Year == DateTime.Now.Year && 
+                                                e.StatusChamado.Value).ToList();
+        }
+
+        public List<Chamado> BuscarChamadosEncerradosHoje(string idUsuario)
+        {
+            return db.Set<Chamado>().Where(e => e.DataHoraAbertura.Day == DateTime.Now.Day && 
+                                                e.DataHoraAbertura.Month == DateTime.Now.Month && 
+                                                e.DataHoraAbertura.Year == DateTime.Now.Year && 
+                                                e.StatusChamado.Value && 
+                                                e.ResponsavelChamado.Id == idUsuario).ToList();
+        }
+
+        public List<Chamado> BuscarChamadosAbertos()
+        {
+            return db.Set<Chamado>().Where(e => !e.StatusChamado.Value).ToList();
+        }
+
+        public List<Chamado> BuscarDezChamadosAbertosMaisAntigos()
+        {
+            return db.Set<Chamado>().Where(e => e.DataHoraAbertura.DayOfYear == DateTime.Now.DayOfYear).ToList();
+        }
+
+        public List<ChamadoViewBI> BuscarChamadosTIView()
+        {
+            var chamados = (from e in db.ChamadoViewBI select e).ToList();
+            return chamados;
         }
 
         public bool salvarChamado(Chamado chamado)

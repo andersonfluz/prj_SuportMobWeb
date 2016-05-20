@@ -40,3 +40,9 @@ D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\obj\Debu
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\obj\Debug\prj_chamadosBRA.Test.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\obj\Debug\prj_chamadosBRA.Test.pdb
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\bin\Debug\prj_chamadosBRA.Test.dll.config
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\bin\Debug\System.Web.Http.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\bin\Debug\System.Net.Http.Formatting.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\bin\Debug\Newtonsoft.Json.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\bin\Debug\System.Web.Http.xml
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\bin\Debug\System.Net.Http.Formatting.xml
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA.Test\bin\Debug\Newtonsoft.Json.xml

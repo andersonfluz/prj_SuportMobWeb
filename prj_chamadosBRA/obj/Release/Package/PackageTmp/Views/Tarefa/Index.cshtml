@@ -76,7 +76,7 @@
             {
                 <td></td>
             }
-            @if (item.TipoTarefa == 1)
+            @if (item.TipoTarefa == 1 || item.TipoTarefa == 2)
             {
                 <td>
                     <button class="btn btn-default encerrar" data-id="@item.Id"><i class="glyphicon glyphicon-remove-circle"></i></button>
@@ -86,7 +86,7 @@
             {
                 <td></td>
             }
-            @if (item.TipoTarefa == 2)
+            @if (item.TipoTarefa == 3)
             {
                 <td>
                     <button class="btn btn-default aprovar" data-id="@item.Id"><i class="glyphicon glyphicon-ok"></i></button>

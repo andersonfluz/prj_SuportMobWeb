@@ -1,11 +1,35 @@
 ﻿@model prj_chamadosBRA.Models.NovoChamadoViewModel
-<div class="form-group">
+<div class="form-group" id="tipoChamadoPartial" style="display: none">
     @Html.LabelFor(model => model.TipoChamado, new { @class = "control-label col-md-2" })
     <div class="col-md-10">
-        @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>&nbsp;Totvs RM</label>
+        @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>&nbsp;Suporte a Infraestrutura</label>
         <label>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</label>
-        @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>&nbsp;Outros</label>
+        @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>&nbsp;Suporte a Sistemas TotvsRM</label>
         <p>@Html.ValidationMessageFor(model => model.TipoChamado, "", new { @class = "text-danger" })</p>
     </div>
-
+    <div id="totvs" style="display: none">
+        @Html.Label(" ", new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">Suporte a Sistemas TotvsRM</div>
+                <div class="panel-body">Panel Content</div>
+            </div>
+        </div>
+    </div>
+    <div id="outros" style="display: none">
+        @Html.Label(" ", new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">Suporte a Infraestrutura</div>
+                <div class="panel-body">
+                    <p style="color:red">- Manutenção e revisão de equipamentos (computadores, câmeras de segurança e catracas)</p>
+                    <p style="color:red">- Instalação de softwares</p>
+                    <p style="color:red">- Rede de computadores (internet)</p>
+                    <p style="color:red">- E-mail institucional</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+

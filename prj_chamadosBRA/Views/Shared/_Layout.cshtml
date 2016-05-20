@@ -39,7 +39,6 @@
                                 @if (Session["PerfilUsuario"].ToString().Equals("1") || Session["PerfilUsuario"].ToString().Equals("3") || Session["PerfilUsuario"].ToString().Equals("5") || Session["PerfilUsuario"].ToString().Equals("6") || Session["PerfilUsuario"].ToString().Equals("7") || Session["PerfilUsuario"].ToString() == "9")
                                 {
                                     if (Convert.ToBoolean(Request.Cookies["UsuarioSetorCorporativo"].Value))
-                                    //(bool)Session["UsuarioSetorCorporativo"])
                                     {
                                         <li>@Html.ActionLink("Triagem", "Triagem", "Chamado", null, new { title = "Triagem das solicitações" })</li>
                                     }

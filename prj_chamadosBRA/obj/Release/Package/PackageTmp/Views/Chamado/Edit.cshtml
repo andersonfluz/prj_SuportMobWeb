@@ -4,7 +4,7 @@
     ViewBag.Title = "Chamado N. " + Model.Id;
 }
 
-<h2>Acompanhamento Chamado</h2>
+<h2>Dados do Chamado</h2>
 
 
 
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-6">
                     @Html.Label("Responsavel:")
                     @if (Model.ResponsavelChamado != null)
                     {
@@ -69,6 +69,10 @@
                     {
                         @Html.DropDownList("ddlResponsavelChamado", "-- Selecione o Responsavel --")
                     }
+                </div>
+                <div class="col-md-6">
+                    @Html.Label("Contato Solicitante:")
+                    @Html.DisplayFor(model => model.ResponsavelAberturaChamado.Contato)
                 </div>
             </div>
         </div>
@@ -99,14 +103,17 @@
                     @Html.DisplayFor(model => model.Observacao)
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-10">
-                    @Html.Label("Tipo do Chamado:") &nbsp;
-                    @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>Totvs RM</label>
-                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                    @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>Outros</label>
+            @if (Model.SetorDestino.SetorCorporativo == 3)
+            {
+                <div class="row">
+                    <div class="col-md-10">
+                        @Html.Label("Tipo do Chamado:") &nbsp;
+                        @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>Totvs RM</label>
+                        <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                        @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>Outros</label>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     </div>
 
@@ -140,7 +147,7 @@
                         @foreach (var item in ((List<prj_chamadosBRA.Models.Tarefa>)ViewBag.listaTarefa))
                         {
 
-                            <tr class="@(item.Aprovado == null ? item.StatusTarefa ? "info" : "warning" : item.Aprovado.Value? "success": "danger")" >
+                            <tr class="@(item.Aprovado == null ? item.StatusTarefa ? "info" : "warning" : item.Aprovado.Value? "success": "danger")">
                                 <td>
                                     @item.Assunto
                                 </td>

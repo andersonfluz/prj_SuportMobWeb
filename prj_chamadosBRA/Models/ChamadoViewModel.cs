@@ -34,6 +34,7 @@ namespace prj_chamadosBRA.Models
     {
         [Key]
         public int Id { get; set; }
+        public string Assunto { get; set; }
         public bool? StatusChamado { get; set; }
         [Display(Name = "Situação Analisada")]
         [Required(ErrorMessage = "Informe a situação analisada do Chamado")]

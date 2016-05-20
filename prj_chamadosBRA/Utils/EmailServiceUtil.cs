@@ -236,6 +236,11 @@ namespace prj_chamadosBRA.Utils
                     mail.From = new MailAddress(System.Configuration.ConfigurationManager.AppSettings["emailDe"].ToString());
 
                     mail.To.Add(new MailAddress(user.UserName));
+                    var usuariosCentralAtendimento = new ApplicationUserDAO().retornarUsuarioPorPerfil((int)PerfilUsuario.Perfis.CentralAtendimentoI);
+                    foreach (var usuario in usuariosCentralAtendimento)
+                    {
+                        mail.CC.Add(usuario.UserName);
+                    }                    
                     mail.Subject = "HelpMe! - Cadastro de novo usuário na plataforma";
                     mail.Body = montarCorpoMensagemCadastroUsuarioExterno(user);
                     mail.IsBodyHtml = true;

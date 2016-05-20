@@ -44,9 +44,9 @@
                         <div class="row">
                             <div class="col-md-10">
                                 @Html.Label("Tipo do Chamado:") &nbsp;
-                                @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>Totvs RM</label>
+                                @Html.RadioButtonFor(model => model.TipoChamado, "1")<label>TotvsRM</label>
                                 <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                                @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>Outros</label>
+                                @Html.RadioButtonFor(model => model.TipoChamado, "2")<label>Infra</label>
                             </div>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
             </div>
             <div class="modal-footer">
                 <div class="row">
-                    <div class="col-md-2"><i class="btn btn-default assumirChamado" data-id="@Model.Id">Assumir este chamado</i></div>
+                    <div class="col-md-2"><i class="btn btn-default assumirChamado" id="assumirChamado" data-id="@Model.Id">Assumir este chamado</i></div>
                         @*<div class="col-md-2">@Html.ActionLink("Assumir este chamado", "AssumirChamado", new { id = Model.Id, TipoChamado = Model.TipoChamado }, new { @class = "btn btn-default" })</div>*@
                         <div class="col-md-4 col-md-offset-6" align="right">
                             <input type="submit" value="Direcionar Chamado" id="confirmar" name="confirmar" class="btn btn-default" />
@@ -85,18 +85,14 @@
 </style>
 <script>
     $(document).ready(function () {
-        //if ($('#ddlResponsavelChamado').val() == "-1") //validation on doc load
-        //{
-        //    $('#DropDownVal').html("Selecione um Usuario.");
-        //    $('#confirmar').disabled("true");
-        //}
+
         $('#ddlResponsavelChamado').change(function () {
             if ($('#ddlResponsavelChamado').val() == "-1") {
                 $('#confirmar').attr("disable", "disable");
-                $('#DropDownVal').html("Por favor, selecione um Usuario.");               
+                $('#DropDownVal').html("Por favor, selecione um Usuario.");
             } else if ($('#ddlResponsavelChamado').val() != "-1") {
                 $('#confirmar').removeAttr("disable");
-                $('#DropDownVal').html("");               
+                $('#DropDownVal').html("");
             }
         });
         $(".assumirChamado").click(function () {
@@ -104,6 +100,35 @@
             var TipoChamado = $('input[name=TipoChamado]:checked', '#triagem').val();
             var url = '@Url.Action("AssumirChamado", "Chamado", new { id = "__id__", TipoChamado = "__TipoChamado__" })';
             window.location.href = url.replace('__id__', id).replace('__TipoChamado__', TipoChamado);
+        });
+        $("input:radio[name=TipoChamado]").click(function () {
+            selectedTotvsRM = $(this).val();
+            $("#ddlResponsavelChamado").empty();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RetornaUsuariosPorTipoChamado", "Chamado")',
+                dataType: 'json',
+                data: { selectedValue: selectedTotvsRM.toString() },
+                success: function (usuarios) {
+                    // states contains the JSON formatted list
+                    // of states passed from the controller
+                    $.each(usuarios, function (i, usuario) {
+                        $("#ddlResponsavelChamado").append('<option value="'
+                        + usuario.Value + '">'
+                        + usuario.Text + '</option>');
+                    });
+                    $("#ddlResponsavelChamado").val("-1");
+                    if (selectedTotvsRM == "1" && (@Session["PerfilUsuario"] == "1" || @Session["PerfilUsuario"] == "7" || @Session["PerfilUsuario"] == "9")) {
+                        $("#assumirChamado").attr("class", "btn btn-default assumirChamado");
+                    } else if (selectedTotvsRM == "2" && (@Session["PerfilUsuario"] == "1" || @Session["PerfilUsuario"] == "3" || @Session["PerfilUsuario"] == "9")) {
+                        $("#assumirChamado").attr("class", "btn btn-default assumirChamado");
+                    } else {
+                        $("#assumirChamado").attr("class", "btn btn-default disable");
+                    }
+                },
+                error: function (ex) {
+                }
+            });
         });
     });
 </script>

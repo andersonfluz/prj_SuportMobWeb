@@ -477,6 +477,7 @@ namespace prj_chamadosBRA.Controllers
         public ActionResult Register()
         {
             var obras = new ObraDAO().BuscarObrasPorUsuario(User.Identity.GetUserId());
+            var user = new ApplicationUserDAO().retornarUsuario(User.Identity.GetUserId());
             ViewBag.UserId = User.Identity.GetUserId();
             var listObra = new SelectList(obras, "IDO", "Descricao");
             ViewBag.ObraDestino = listObra;
@@ -497,6 +498,7 @@ namespace prj_chamadosBRA.Controllers
             else if (Session["PerfilUsuario"].ToString().Equals("5"))
             {
                 ViewBag.Perfis = PerfilUsuarioDAO.BuscarPerfisParaGestor();
+                ViewBag.ddlSetor = new SelectList(new UsuarioSetorDAO().buscarSetoresDoUsuario(user), "Id", "Nome", "-- Selecione o Setor --");
             }
             else if (Session["PerfilUsuario"].ToString().Equals("6"))
             {
@@ -610,8 +612,7 @@ namespace prj_chamadosBRA.Controllers
             ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
             return View();
         }
-
-
+        
         //
         // POST: /Account/Register
         [HttpPost]
@@ -665,13 +666,13 @@ namespace prj_chamadosBRA.Controllers
                                                 IdTipoEmail = (int)EmailTipo.EmailTipos.CadastroUsuarioExterno
                                             });
                                             TempData["notice"] = "Usuário criado com Sucesso!";
-                                            return RedirectToAction("Index");
+                                            return RedirectToAction("Login");
                                         }
                                     }
                                     else
                                     {
                                         TempData["notice"] = "Usuário criado com Sucesso!";
-                                        return RedirectToAction("Index");
+                                        return RedirectToAction("Login");
                                     }
                                 }
                             }
@@ -696,6 +697,7 @@ namespace prj_chamadosBRA.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            ViewBag.Perfis = new PerfilUsuarioDAO().BuscarPerfis();
             return View(model);
         }
 

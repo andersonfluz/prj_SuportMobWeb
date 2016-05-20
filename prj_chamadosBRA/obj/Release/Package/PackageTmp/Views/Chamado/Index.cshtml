@@ -14,11 +14,13 @@
 {
     using (Html.BeginForm("Index", "Chamado", FormMethod.Post, new { @class = "form-inline" }))
     {
-
-        @Html.Label("Tipo Chamado:", new { @class = "control-label" })
-        <label>&nbsp;</label>
-        @Html.DropDownList("TipoChamado", null, new { @class = "form-control" })
-        <label>&nbsp;</label>
+        if (Convert.ToBoolean(HttpContext.Current.Request.Cookies["UsuarioSetorCorporativo"].Value))
+        {
+            @Html.Label("Tipo Chamado:", new { @class = "control-label" })
+            <label>&nbsp;</label>
+            @Html.DropDownList("TipoChamado", null, new { @class = "form-control" })
+            <label>&nbsp;</label>
+        }
         @Html.Label("Consultar:", new { @class = "control-label" })
         <label>&nbsp;</label>
         @Html.TextBox("filtro", "", new { @class = "form-control", placeholder = "numero, assunto, descrição...", Style = "max-width:600px" })
@@ -88,21 +90,21 @@ else
         </th>
         <th>
             @Html.ActionLink("Obra", "Index", new
-           {
-               sortOrder = "obra",
-               pageAtual = Model.PageNumber,
-               tipoChamado = ViewBag.CurrentTipoChamado,
-               filtro = ViewBag.CurrentFiltro
-           })
+       {
+           sortOrder = "obra",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
             @Html.ActionLink("Setor", "Index", new
-           {
-               sortOrder = "setor",
-               pageAtual = Model.PageNumber,
-               tipoChamado = ViewBag.CurrentTipoChamado,
-               filtro = ViewBag.CurrentFiltro
-           })
+       {
+           sortOrder = "setor",
+           pageAtual = Model.PageNumber,
+           tipoChamado = ViewBag.CurrentTipoChamado,
+           filtro = ViewBag.CurrentFiltro
+       })
         </th>
         <th>
             @Html.DisplayName("Tipo Chamado")
@@ -146,6 +148,10 @@ else
                     <p>Totvs RM</p>
                 }
                 else if (item.TipoChamado == 2)
+                {
+                    <p>Infra</p>
+                }
+                else if(item.TipoChamado == 3)
                 {
                     <p>Outros</p>
                 }

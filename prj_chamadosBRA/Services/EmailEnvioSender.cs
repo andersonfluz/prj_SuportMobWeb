@@ -417,7 +417,7 @@ namespace prj_chamadosBRA.Service
                 foreach (var email in emailEnvio)
                 {
                     var User = new ApplicationUserDAO(db).retornarUsuario(email.InfoEmail);
-                    var retorno = EmailServiceUtil.envioEmailCriacaoUsuario(User);
+                    var retorno = EmailServiceUtil.envioEmailCadastroUsuarioExterno(User);
                     if (retorno == "0")
                     {
                         new EmailEnvioDAO(db).eliminarEmailEnvio(email);

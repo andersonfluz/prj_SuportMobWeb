@@ -9,8 +9,7 @@ namespace prj_chamadosBRA.Test
         [TestMethod]
         public void AlertaTrintaMinutos_Test()
         {
-            var chamados = Utils.AlertaSemResponsavel.AlertaTrintaMinutos();
-            
+            Service.AlertaSemResponsavel.AlertaTrintaMinutos();            
         }
     }
 }

@@ -59,9 +59,9 @@
        })
         </th>
         <th>
-            @Html.ActionLink("Responsavel", "MeusChamados", new
+            @Html.ActionLink("Última Interacao", "MeusChamados", new
        {
-           sortOrder = "responsavel",
+           sortOrder = "ultimainteracao",
            pageAtual = Model.PageNumber,
            tipoChamado = ViewBag.CurrentTipoChamado,
            filtro = ViewBag.CurrentFiltro
@@ -115,7 +115,7 @@
                 @Html.DisplayFor(modelItem => item.Assunto)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ResponsavelChamado.Nome)
+                @Html.DisplayFor(modelItem => item.UltimaInteracao)
             </td>
             @if ((bool)Session["ObraVisivel"])
             {

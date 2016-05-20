@@ -101,15 +101,16 @@ namespace prj_chamadosBRA.GN
                 }
                 else
                 {
-
-                    if (tipoChamado == null || tipoChamado == "-2")
-                    {
-                        return new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, false, sortOrder);
-                    }
-                    else
-                    {
-                        return new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
-                    }
+                    var setores = new UsuarioSetorDAO(db).buscarSetoresDoUsuario(user);
+                    return new ChamadoDAO(db).BuscarChamadosDeSetores(setores, filtro, false, sortOrder);
+                    //if (tipoChamado == null || tipoChamado == "-2")
+                    //{
+                    //    return new ChamadoDAO(db).BuscarChamadosDeObras(obras, filtro, false, sortOrder);
+                    //}
+                    //else
+                    //{
+                    //    return new ChamadoDAO(db).BuscarChamadosDeObrasTipoChamado(obras, Convert.ToInt32(tipoChamado), filtro, false, sortOrder);
+                    //}
                 }
 
             }
@@ -213,12 +214,12 @@ namespace prj_chamadosBRA.GN
             if (isSetorCorporativo)
             {
                 if (obraSelected == null || obraSelected == "-1")
-                {
-                    return new ChamadoDAO(db).BuscarChamadosSemResponsaveis(filtro, sortOrder, Convert.ToInt32(tipoChamado));
+                {                    
+                    return new ChamadoDAO(db).BuscarChamadosSemResponsaveis(filtro, sortOrder, Convert.ToInt32(tipoChamado), user.PerfilUsuario == 1 ? 0 : 3);
                 }
                 else
                 {
-                    return new ChamadoDAO(db).BuscarChamadosSemResponsaveisPorObra(Convert.ToInt32(obraSelected), Convert.ToInt32(tipoChamado), filtro, sortOrder);
+                    return new ChamadoDAO(db).BuscarChamadosSemResponsaveisPorObra(Convert.ToInt32(obraSelected), Convert.ToInt32(tipoChamado), filtro, sortOrder, user.PerfilUsuario == 1 ? 0 : 3);
                 }
 
             }
@@ -326,7 +327,7 @@ namespace prj_chamadosBRA.GN
                 chamado.StatusChamado = false;
                 if (chamado.TipoChamado == null)
                 {
-                    chamado.TipoChamado = 2;
+                    chamado.TipoChamado = 3;
                 }
                 if (user != null)
                 {

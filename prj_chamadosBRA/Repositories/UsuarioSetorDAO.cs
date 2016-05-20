@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Collections;
 
 namespace prj_chamadosBRA.Repositories
 {
@@ -107,6 +108,15 @@ namespace prj_chamadosBRA.Repositories
                                   where uo.Usuario == user.Id
                                   select uo).ToList();
             return usuariosetores;
+        }
+
+        internal List<Setor> buscarSetoresPorUsuarioEObra(Int32 Obra, string idUsuario)
+        {
+            var setores = (from o in db.Setor
+                             join us in db.UsuarioSetor on o equals us.Setor
+                             where us.Usuario == idUsuario && o.obra.IDO == Obra
+                             select o).ToList();
+            return setores;
         }
 
         public bool salvarUsuarioSetor(UsuarioSetor usuarioSetor)

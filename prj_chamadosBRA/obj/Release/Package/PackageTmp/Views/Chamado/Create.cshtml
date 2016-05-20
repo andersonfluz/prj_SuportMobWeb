@@ -14,7 +14,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Assunto, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Assunto, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Assunto, new { htmlAttributes = new { @class = "form-control", maxlength = "50" } })
                 @Html.ValidationMessageFor(model => model.Assunto, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -39,16 +39,20 @@
                 @Html.Label("Tamanho Maximo do Arquivo: 10Mb.")
             </div>
         </div>
+        
+        <div id="obraSetor">
+            @if ((bool)Session["ObraVisivel"])
+            {@Html.Partial("_ChamadoObraPartial", Model);
+            }
+
+
+            @if ((bool)Session["SetorVisivel"])
+            {@Html.Partial("_ChamadoSetorPartial", Model);
+            }
+        </div>
+
         @if ((bool)Session["TipoChamadoVisivel"])
         {@Html.Partial("_ChamadoTipoChamadoPartial", Model);
-        }
-
-        @if ((bool)Session["ObraVisivel"])
-        {@Html.Partial("_ChamadoObraPartial", Model);
-        }
-
-        @if ((bool)Session["SetorVisivel"])
-        {@Html.Partial("_ChamadoSetorPartial", Model);
         }
 
         @if ((bool)Session["SelecionarResponsavelAbertura"])
@@ -106,6 +110,7 @@
         });        
     </script>
     <script type="text/javascript">
+        var selectedTotvsRM;
         $(window).load(function () {
             if ($('#notice').val() != "") {
                 //alert($('#notice').val());
@@ -120,6 +125,14 @@
                     waitingDialog.hide();
                 } else {
                     waitingDialog.show('Salvando Chamado...');
+                }
+            });
+            $("input:radio[name=TipoChamado]").click(function () {
+                selectedTotvsRM = $(this);
+                if (selectedTotvsRM.val() == 1) {
+                    $("#outros").hide('fast');
+                } else {
+                    $("#outros").show('fast');
                 }
             });
             $("#ObraDestino").change(function () {
@@ -139,6 +152,9 @@
                             + setor.Value + '">'
                             + setor.Text + '</option>');
                         });
+                        if (selectedTotvsRM == 1) {
+                            $("#SetorDestino").val("3");
+                        }
                     },
                     error: function (ex) {
                     }
@@ -148,11 +164,11 @@
                     url: '@Url.Action("RetornaUsuariosPorObra", "Chamado")',
                     dataType: 'json',
                     data: { selectedValue: $("#ObraDestino").val() },
-                    success: function (usaurios) {
+                    success: function (usuarios) {
                         // states contains the JSON formatted list
                         // of states passed from the controller
                         $("#ResponsavelAberturaChamado").append('<option value="">-- Selecione o usuário --</option>');
-                        $.each(usaurios, function (i, usuario) {
+                        $.each(usuarios, function (i, usuario) {
                             $("#ResponsavelAberturaChamado").append('<option value="'
                             + usuario.Value + '">'
                             + usuario.Text + '</option>');
@@ -163,7 +179,24 @@
                 });
                 return false;
             })
-
+            $("#SetorDestino").change(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("isSetorTICorporativo", "Chamado")',
+                    dataType: 'json',
+                    data: { selectedValue: $("#SetorDestino").val() },
+                    success: function (isSetorTICorporativo) {
+                        if (isSetorTICorporativo) {
+                            $("#tipoChamadoPartial").show('fast');
+                        } else {
+                            $("#tipoChamadoPartial").hide('fast');
+                            $("TipoChamado").val("3");
+                        }
+                    },
+                    error: function (ex) {
+                    }
+                });
+            });
         });
     </script>
 }

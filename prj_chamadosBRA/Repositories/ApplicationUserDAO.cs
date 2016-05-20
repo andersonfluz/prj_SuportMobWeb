@@ -35,6 +35,12 @@ namespace prj_chamadosBRA.Repositories
             return user;
         }
 
+        public ApplicationUser retornarUsuarioPorPerfil(string idUser, int? perfil)
+        {
+            var user = (from e in db.Users where e.Id == idUser && (e.PerfilUsuario == perfil || e.PerfilUsuario == 1 || e.PerfilUsuario == 9) select e).SingleOrDefault();
+            return user;
+        }
+
         public ApplicationUser retornarUsuarioPorUsername(string Username)
         {
             var user = (from e in db.Users where e.UserName == Username select e).SingleOrDefault();
@@ -146,6 +152,9 @@ namespace prj_chamadosBRA.Repositories
             db.SaveChanges();
         }
 
-
+        public List<ApplicationUser> retornarUsuarioPorPerfil(int PerfilUsuario)
+        {
+            return db.Set<ApplicationUser>().Where(e => e.PerfilUsuario == PerfilUsuario).ToList();
+        }
     }
 }

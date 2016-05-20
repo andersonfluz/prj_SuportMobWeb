@@ -47,6 +47,7 @@ namespace prj_chamadosBRA.Service
                     EmailEnvioSender.EnvioEmailAberturaTarefa();
                     EmailEnvioSender.EnvioEmailPrevisaoEntregaTarefa();
                     EmailEnvioSender.EnvioEmailEntregaTarefa();
+                    EmailEnvioSender.EnvioEmailCadastroUsuarioExterno();
                     EmailEnvioSender.EnvioEmailAlertaSemResponsavelTrintaMinutos();
                     EmailEnvioSender.EnvioEmailAlertaSemResponsavelUmaHora();
                     EmailEnvioSender.EnvioEmailAlertaSemResponsavelDuasHoras();

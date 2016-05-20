@@ -120,3 +120,9 @@ D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MvcExtens
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\MvcExtensions.Foolproof.xml
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\PagedList.xml
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\PagedList.Mvc.xml
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Net.Http.Formatting.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Web.Http.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Web.Http.WebHost.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Net.Http.Formatting.xml
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Web.Http.xml
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Web.Http.WebHost.xml

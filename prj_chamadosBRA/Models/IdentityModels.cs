@@ -47,6 +47,7 @@ namespace prj_chamadosBRA.Models
         public DbSet<EmailEnvio> EmailEnvio { get; set; }
         public DbSet<EmailTipo> EmailTipo { get; set; }
         public DbSet<Tarefa> Tarefa { get; set; }
+        public DbSet<ChamadoViewBI> ChamadoViewBI { get; set; }
 
         public ApplicationDbContext()
             : base("ChamadosBRAConnectionString", throwIfV1Schema: false)

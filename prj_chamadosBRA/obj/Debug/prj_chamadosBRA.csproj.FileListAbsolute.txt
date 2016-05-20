@@ -119,4 +119,10 @@ D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\Microsoft
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Debug\prj_chamadosBRA.dll
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Debug\prj_chamadosBRA.pdb
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Net.Http.Formatting.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Web.Http.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Web.Http.WebHost.dll
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Net.Http.Formatting.xml
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Web.Http.xml
+D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\bin\System.Web.Http.WebHost.xml
 D:\Projetos\prj_ChamadosBRA\prjWeb\prj_chamadosBRA\prj_chamadosBRA\obj\Debug\prj_chamadosBRA.csprojResolveAssemblyReference.cache

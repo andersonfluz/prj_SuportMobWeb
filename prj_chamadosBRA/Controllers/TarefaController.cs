@@ -88,22 +88,69 @@ namespace prj_chamadosBRA.Controllers
                 ViewBag.SetorDestinoClassificacao = new SelectList(new ChamadoClassificacaoDAO(db).BuscarClassificacoesPorSetor(tarefa.Chamado.SetorDestino), "Id", "Descricao");
             }
             var user = manager.FindById(User.Identity.GetUserId());
-            var dropdownResponsaveis = new List<SelectListItem>();
-            dropdownResponsaveis.Add(new SelectListItem { Text = "-- Selecione o Responsavel --", Value = "-1" });
-            var usuariosObras = new UsuarioSetorDAO(db).buscarUsuarioObradeSetoresCorporativosDoUsuario(user);
-            foreach (var usuarioObra in usuariosObras)
-            {
-                var NomeUsuario = new ApplicationUserDAO(db).retornarUsuario(usuarioObra.Usuario).Nome;
-                dropdownResponsaveis.Add(new SelectListItem { Text = NomeUsuario + " - " + usuarioObra.Obra.Descricao, Value = usuarioObra.Usuario });
+                    
+            //var dropdownResponsaveis = new List<SelectListItem>();            
+            //dropdownResponsaveis.Add(new SelectListItem { Text = "-- Selecione o Responsavel --", Value = "-1" });
+            //var usuariosObras = new UsuarioSetorDAO(db).buscarUsuarioObradeSetoresCorporativosDoUsuario(user);
+            //foreach (var usuarioObra in usuariosObras)
+            //{
+            //    var NomeUsuario = new ApplicationUserDAO(db).retornarUsuario(usuarioObra.Usuario).Nome;
+            //    dropdownResponsaveis.Add(new SelectListItem { Text = NomeUsuario + " - " + usuarioObra.Obra.Descricao, Value = usuarioObra.Usuario });
 
-            }
-            dropdownResponsaveis = dropdownResponsaveis.OrderBy(e => e.Text).ToList();
-            ViewBag.ddlResponsavelChamado = new SelectList(dropdownResponsaveis, "Value", "Text", "-1");
+            //}
+            //dropdownResponsaveis = dropdownResponsaveis.OrderBy(e => e.Text).ToList();
+            //ViewBag.ddlResponsavelChamado = new SelectList(dropdownResponsaveis, "Value", "Text", "-1");
 
+            ViewBag.ddlObrasUsuario = new SelectList(new UsuarioObraDAO(db).buscarObrasDoUsuario(user), "IDO", "Descricao");
             ViewBag.ddlResponsavelTerceirizado = new SelectList(new ApplicationUserDAO(db).retornarUsuariosTerceirizados(), "Id", "Nome");
             
             return View(tarefa);
         }
+
+        public ActionResult RetornaSetoresUsuarioPorObra(string selectedValue)
+        {
+            try
+            {
+                return Json(new SelectList(new UsuarioSetorDAO(db).buscarSetoresPorUsuarioEObra(Convert.ToInt32(selectedValue),User.Identity.GetUserId()), "Id", "Nome"));
+            }
+            catch (Exception)
+            {
+                return Json(new SelectList(String.Empty, "Id", "Nome")); ;
+            }
+        }
+
+        public ActionResult RetornaUsuarioPorSetor(string selectedValue)
+        {
+            try
+            {
+                var setor = new SetorDAO(db).BuscarSetorId(Convert.ToInt32(selectedValue));
+                
+                if(setor.SetorCorporativo != null)
+                {
+                    var user = manager.FindById(User.Identity.GetUserId());
+                    var dropdownResponsaveis = new List<SelectListItem>();
+                    dropdownResponsaveis.Add(new SelectListItem { Text = "-- Selecione o Responsavel --", Value = "-1" });
+                    var usuariosObras = new UsuarioSetorDAO(db).buscarUsuarioObradeSetoresCorporativosDoUsuario(user);
+                    foreach (var usuarioObra in usuariosObras)
+                    {
+                        var NomeUsuario = new ApplicationUserDAO(db).retornarUsuario(usuarioObra.Usuario).Nome;
+                        dropdownResponsaveis.Add(new SelectListItem { Text = NomeUsuario + " - " + usuarioObra.Obra.Descricao, Value = usuarioObra.Usuario });
+                    }
+                    dropdownResponsaveis = dropdownResponsaveis.OrderBy(e => e.Text).ToList();
+                    return Json(new SelectList(dropdownResponsaveis, "Value", "Text", "-1"));
+                }
+                else
+                {
+                    return Json(new SelectList(new ApplicationUserDAO(db).retornarUsuariosSetor(setor, null), "Id", "Nome"));
+                }
+                
+            }
+            catch (Exception)
+            {
+                return Json(new SelectList(String.Empty, "Id", "Nome")); ;
+            }
+        }
+
 
         // POST: Tarefa/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 

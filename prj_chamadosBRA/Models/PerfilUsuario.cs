@@ -11,8 +11,21 @@ namespace prj_chamadosBRA.Models
     public class PerfilUsuario
     {
         [Key]
-        public Int32 IdPerfil { get; set; }
+        public int IdPerfil { get; set; }
         public string Descricao { get; set; }
-        public Int32? Role { get; set; }
+        public int? Role { get; set; }
+        public enum Perfis
+        {
+            Administrador = 1,
+            SuperiorBRA = 2,
+            Tecnico = 3,
+            Usuario = 4,
+            Gestor = 5,
+            AdministradorObra = 6,
+            TecnicoTotvs = 7,
+            Terceirizado = 8,
+            CentralAtendimentoI = 9
+        }
+
     }
 }
